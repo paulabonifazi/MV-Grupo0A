@@ -11,6 +11,10 @@ char set_cod_op(char codigo);
 
 char set_offset(char codigo);
 
+/*  ----------------------------------------- FUNCIONES ----------------------------------------------*/
+
+void mov(char op1, char op2);
+
 
 /*
 FUNCIONES
