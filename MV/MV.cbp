@@ -37,6 +37,7 @@
 		<Unit filename="MV.h" />
 		<Unit filename="funciones.c">
 			<Option compilerVar="CC" />
+			<Option target="Release" />
 		</Unit>
 		<Unit filename="funciones.h" />
 		<Unit filename="main.c">
