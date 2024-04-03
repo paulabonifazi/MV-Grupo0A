@@ -35,6 +35,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="MV.h" />
+		<Unit filename="Operando.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Operando.h" />
 		<Unit filename="funciones.c">
 			<Option compilerVar="CC" />
 			<Option target="Release" />

@@ -1,5 +1,6 @@
 #define cantSeg 2;
 #define cantReg 16;
+#include Operando.h
 
 typedef struct {
     char segmento;
@@ -11,16 +12,7 @@ typedef struct {
     char RAM[16384];
     tabla_segmentos  tabla_de_segmentos[cantSeg];
     char tabla_de_registros[cantReg];
+    TOpeando op1;
+    TOperando op2;
+    char cod_op;
 } MV;
-
-
-/*typedef struct {
-    char mnemonico[4];
-
-}*/
-
-
-
-
-
-
