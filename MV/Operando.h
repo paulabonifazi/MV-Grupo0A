@@ -1,16 +1,25 @@
-typedef struct TOperando{
+typedef struct{
     char tipo;
     unsigned int posicion;
     char parteReg; //la posicion se usa solo para registros y memoria y partereg solo para registros
     long int valor;
+    long int offset;
 } TOperando;
 /* podríamos usar este tipo para los operandos así almacenamos toda la info
     no sé si op1 y op2 sean parte de la MV o definirlas en el main*/
 
-void decodifica_cod_op(char *op1,char *op2,char *cod_op);
+void decodifica_cod_op(TOperando *op1,TOperando *op2,char *cod_op);
 
-char set_operando(char codigo);
+void set_operando(TOperando op, char tipo, long int valor);
 
-char set_cod_op(char codigo);
+void set_parteReg(TOperando op, char parteReg);
 
-char set_offset(char codigo);
+void set_posicion(TOperando op, unsigned int pos);
+
+void set_offset(TOperando op, long int offset);
+
+TOperando get_operando();
+
+char set_cod_op(char* cod_op);
+
+

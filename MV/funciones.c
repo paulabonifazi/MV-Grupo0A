@@ -1,120 +1,120 @@
-
+#include "funciones.h"
 
 /*  ----------------------------------------- FUNCIONES ----------------------------------------------*/
 
 //2 operandos
-void MOV(char *op1, char *op2);
+void MOV(TOperando *op1, TOperando *op2);
 /*
-asigna a un registro o posición de memoria un valor, que puede ser el contenido de otro registro,
-posición de memoria o un valor inmediato.
+asigna a un registro o posiciï¿½n de memoria un valor, que puede ser el contenido de otro registro,
+posiciï¿½n de memoria o un valor inmediato.
 
 -> modifico op2 con el valor del op1
 */
 
-void ADD(char *op1, char *op2);
+void ADD(TOperando *op1, TOperando *op2);
 
-void SUB(char *op1, char *op2);
+void SUB(TOperando *op1, TOperando *op2);
 
-void MUL(char *op1, char *op2);
+void MUL(TOperando *op1, TOperando *op2);
 
-void DIV(char *op1, char *op2);
+void DIV(TOperando *op1, TOperando *op2);
 
 /*
-realizan las cuatro operaciones matemáticas básicas. El primer operando debe
+realizan las cuatro operaciones matemï¿½ticas bï¿½sicas. El primer operando debe
 ser de registro o memoria, ya que es donde se guarda el resultado. El resultado de estas instrucciones
 afecta el valor del registro CC
 
-El DIV tiene la particularidad de que además guarda el resto de la división
-entera (módulo) en AC.
+El DIV tiene la particularidad de que ademï¿½s guarda el resto de la divisiï¿½n
+entera (mï¿½dulo) en AC.
 
 -> el registro CC: bit mas significativo es el de signo (1 negativo) y el 2do mas significativo bit de cero (1 si es cero)
 */
 
-void SWAP(char *op1, char *op2);
+void SWAP(TOperando *op1, TOperando *op2);
 
 /*
 intercambia los valores de los dos operandos (ambos deben ser registros y/o celdas de
 memoria).
 */
 
-void CMP(char *op1, char *op2);
+void CMP(TOperando *op1, TOperando *op2);
 /*
-el segundo operando se resta del primero, pero éste no almacena el
+el segundo operando se resta del primero, pero ï¿½ste no almacena el
 resultado, solamente se modifican los bits NZ del registro CC.
 */
 
-void SHL(char *op1, char *op2);
+void SHL(TOperando *op1, TOperando *op2);
 
-void SHR(char *op1, char *op2);
+void SHR(TOperando *op1, TOperando *op2);
 
 /*
 realizan desplazamientos a izquierda o a derecha, respectivamente, de los bits
-almacenados en un registro o una posición de memoria. También afectan al registro CC.
+almacenados en un registro o una posiciï¿½n de memoria. Tambiï¿½n afectan al registro CC.
 En SHL los bits derechos que quedan libres se completan con ceros.
-En SHR los bits de la derecha propagan el bit anterior, es decir si el contenido es un número negativo
-el resultado seguirá siendo negativo, porque agrega 1. Si era un número positivo, agrega 0.
+En SHR los bits de la derecha propagan el bit anterior, es decir si el contenido es un nï¿½mero negativo
+el resultado seguirï¿½ siendo negativo, porque agrega 1. Si era un nï¿½mero positivo, agrega 0.
 */
 
-void AND(char *op1, char *op2);
+void AND(TOperando *op1, TOperando *op2);
 
-void OR(char *op1, char *op2);
+void OR(TOperando *op1, TOperando *op2);
 
-void XOR(char *op1, char *op2);
+void XOR(TOperando *op1, TOperando *op2);
 
 /*
-efectúan las operaciones lógicas básicas bit a bit entre los operandos y afectan al
-registro CC. El resultado se almacena en el primer operando.(calculo que será el op2 ya que es el primero que decodificamos)
+efectï¿½an las operaciones lï¿½gicas bï¿½sicas bit a bit entre los operandos y afectan al
+registro CC. El resultado se almacena en el primer operando.(calculo que serï¿½ el op2 ya que es el primero que decodificamos)
 */
 
-void RND(char *op1, char *op2);
+void RND(TOperando *op1, TOperando *op2);
 
 /*
-carga en el primer operando un número aleatorio entre 0 y el valor del segundo operando.
+carga en el primer operando un nï¿½mero aleatorio entre 0 y el valor del segundo operando.
 
-vamos a tener que crear una semilla para la selección de un nro aleatorio
+vamos a tener que crear una semilla para la selecciï¿½n de un nro aleatorio
 */
 
 //1 operando
-void SYS(char *op2);
+void SYS(TOperando *op2);
 
-void JMP(char *op2);
+void JMP(TOperando *op2);
 
-void JZ(char *op2);
+void JZ(TOperando *op2);
 
-void JP(char *op2);
+void JP(TOperando *op2);
 
-void JN(char *op2);
+void JN(TOperando *op2);
 
-void JNZ(char *op2);
+void JNZ(TOperando *op2);
 
-void JNP(char *op2);
+void JNP(TOperando *op2);
 
-void JNN(char *op2);
+void JNN(TOperando *op2);
 
 /*
 los saltos se dan analizando el valor del CC
 */
 
-void LDL(char *op2);
+void LDL(TOperando *op2);
 
 /*
 carga en los 2 bytes menos significativos del registro AC, con los 2 bytes menos significativos del
-operando. Esta instrucción está especialmente pensada para poder cargar un inmediato de 16 bits,
-aunque también se puede utilizar con otro tipo de operando.
+operando. Esta instrucciï¿½n estï¿½ especialmente pensada para poder cargar un inmediato de 16 bits,
+aunque tambiï¿½n se puede utilizar con otro tipo de operando.
 */
 
-void LDH(char *op2);
+void LDH(TOperando *op2);
 
 /*
-carga en los 2 bytes más significativos del registro AC, con los 2 bytes menos significativos del
-operando. Esta instrucción está especialmente pensada para poder cargar un inmediato de 16 bits,
-aunque también se puede utilizar con otro tipo de operando.
+carga en los 2 bytes mï¿½s significativos del registro AC, con los 2 bytes menos significativos del
+operando. Esta instrucciï¿½n estï¿½ especialmente pensada para poder cargar un inmediato de 16 bits,
+aunque tambiï¿½n se puede utilizar con otro tipo de operando.
 */
 
-void NOT(char *op2);
+void NOT(TOperando *op2);
 
 /*
-not lógico bit a bit, afecta al CC
+not lï¿½gico bit a bit, afecta al CC
 */
 
 //0 operandos
@@ -155,6 +155,41 @@ void stop();
 
 */
 
-void decodifica_cod_op(char *op1,char *op2,char *cod_op) {
-        /*en base a los cod de op hay que hacer un switch con los cod de arriba para que se ejecute la función*/
+void decodifica_cod_op(TOperando *op1,TOperando *op2,TOperando *cod_op) {
+        /*en base a los cod de op hay que hacer un switch con los cod de arriba para que se ejecute la funciï¿½n*/
+        /* con el bit mï¿½s significativo del cod_op mï¿½s los ï¿½ltimos 4 se genera el nro de operaciï¿½n. Los ï¿½ltimos 4 se pasan a hexa y luego buscamos en el vec de funciones */
+}
+
+
+/*           MODIFICAR NROS!!!                                    */
+
+void iniciaVectorFunciones(VectorFunciones vecF)
+{
+    vecF[0x00]=&MOV;
+    vecF[0x01]=&ADD;
+    vecF[0x02]=&SUB;
+    vecF[0x03]=&SWAP;
+    vecF[0x04]=&MUL;
+    vecF[0x05]=&DIV;
+    vecF[0x06]=&CMP;
+    vecF[0x07]=&SHL;
+    vecF[0x08]=&SHR;
+    vecF[0x09]=&AND;
+    vecF[0x0A]=&OR;
+    vecF[0x0B]=&XOR;
+
+    vecF[0xF0]=&SYS;
+    vecF[0xF1]=&JMP;
+    vecF[0xF2]=&JZ;
+    vecF[0xF3]=&JP;
+    vecF[0xF4]=&JN;
+    vecF[0xF5]=&JNZ;
+    vecF[0xF6]=&JNP;
+    vecF[0xF7]=&JNN;
+    vecF[0xF8]=&LDL;
+    vecF[0xF9]=&LDH;
+    vecF[0xFA]=&RND;
+    vecF[0xFB]=&NOT;
+
+    vecF[0xFF1]=&STOP;
 }

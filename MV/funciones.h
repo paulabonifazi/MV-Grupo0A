@@ -1,57 +1,61 @@
+typedef void (*VectorFunciones[32])(MV);    //hasta el 1F
+
+void iniciaVectorFunciones(VectorFunciones);
+
 /*cambiar cabeceras de las funciones, poner TOperando!! y pasar la MV
 */
 
 /*  ----------------------------------------- FUNCIONES ----------------------------------------------*/
 
 //2 operandos
-void MOV(char *op1, char *op2);
+void MOV(TOperando *op1, TOperando *op2);
 
-void ADD(char *op1, char *op2);
+void ADD(TOperando *op1, TOperando *op2);
 
-void SUB(char *op1, char *op2);
+void SUB(TOperando *op1, TOperando *op2);
 
-void SWAP(char *op1, char *op2);
+void SWAP(TOperando *op1, TOperando *op2);
 
-void MUL(char *op1, char *op2);
+void MUL(TOperando *op1, TOperando *op2);
 
-void DIV(char *op1, char *op2);
+void DIV(TOperando *op1, TOperando *op2);
 
-void CMP(char *op1, char *op2);
+void CMP(TOperando *op1, TOperando *op2);
 
-void SHL(char *op1, char *op2);
+void SHL(TOperando *op1, TOperando *op2);
 
-void SHR(char *op1, char *op2);
+void SHR(TOperando *op1, TOperando *op2);
 
-void AND(char *op1, char *op2);
+void AND(TOperando *op1, TOperando *op2);
 
-void OR(char *op1, char *op2);
+void OR(TOperando *op1, TOperando *op2);
 
-void XOR(char *op1, char *op2);
+void XOR(TOperando *op1, TOperando *op2);
 
-void RND(char *op1, char *op2);
+void RND(TOperando *op1, TOperando *op2);
 
 //1 operando
-void SYS(char *op2);
+void SYS(TOperando *op2);
 
-void JMP(char *op2);
+void JMP(TOperando *op2);
 
-void JZ(char *op2);
+void JZ(TOperando *op2);
 
-void JP(char *op2);
+void JP(TOperando *op2);
 
-void JN(char *op2);
+void JN(TOperando *op2);
 
-void JNZ(char *op2);
+void JNZ(TOperando *op2);
 
-void JNP(char *op2);
+void JNP(TOperando *op2);
 
-void JNN(char *op2);
+void JNN(TOperando *op2);
 
-void LDL(char *op2);
+void LDL(TOperando *op2);
 
-void LDH(char *op2);
+void LDH(TOperando *op2);
 
-void NOT(char *op2);
+void NOT(TOperando *op2);
 
 //0 operandos
 void stop();
