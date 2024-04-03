@@ -1,7 +1,10 @@
-//types
-//cabeceras de las funciones
-
-//decodifica_cod_op
+typedef struct TOperando{
+    char tipo;
+    unsigned int posicion;
+    char parteReg; //la posicion se usa solo para registros y memoria y partereg solo para registros
+    long int valor;
+} TOperando;
+/* podríamos usar este tipo para los operandos así almacenamos toda la info*/
 
 void decodifica_cod_op(char *op1,char *op2,char *cod_op);
 
