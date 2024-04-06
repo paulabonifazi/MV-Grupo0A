@@ -8,6 +8,7 @@
 //char -> operacion
 
 //La ejecucion corta solo con stop o tambien sin stop?
+//Corta la ejecucion cuando hay un STOP o cuando IP apunta fuera del CS
 
 
 // con el vector de arg sabemos que hay que ejecutar, ver los flags!
