@@ -8,8 +8,8 @@
  */
 void decodifica_cod_op(TOperando *op1,TOperando *op2,char *cod_op,MV *mv){
     char ip = mv->tabla_de_registros[5];
-    char posSeg = mv->tabla_de_segmentos[ip & 0xF0]; //Busca indice de IP y devuelve el codigo en tabla segmentos
-    char posRAM = (mv->tabla_de_segmentos[posSeg] & 0xF0)>>4 + (ip & 0x0F); //Posicion DS en tabla segmento + offset IP
+    char posSeg = mv->tabla_de_segmentos[ip & 0xF0].segmento; //Busca indice de IP y devuelve el codigo en tabla segmentos
+    char posRAM = (mv->tabla_de_segmentos[posSeg].offset & 0xF0)>>4 + (ip & 0x0F); //Posicion DS en tabla segmento + offset IP
     char inst = mv->RAM[posRAM];
 
     /* primer linea: bbaooooo
@@ -27,14 +27,19 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,char *cod_op,MV *mv){
         (*cod_op)[i] = (inst >> (5-i+1)) & 0x01;
 }
 
-void set_operando(TOperando op, char tipo, long int valor);
+void set_operando(TOperando *op, char tipo, long int valor){
+    (*op).valor = valor;
+    (*op).tipo = tipo;
+}
 
-void set_parteReg(TOperando op, char parteReg);
+void set_parteReg(TOperando *op, char parteReg){
+    (*op).parteReg = parteReg;
+}
 
-void set_posicion(TOperando op, unsigned int pos);
+void set_posicion(TOperando *op, unsigned int pos){
+        (*op).posicion = pos;
+}
 
-void set_offset(TOperando op, long int offset);
-
-TOperando get_operando();
-
-char set_cod_op(char* cod_op);
+void set_offset(TOperando *op, long int offset){
+    (*op).offset = offset;
+}
