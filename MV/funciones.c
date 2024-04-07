@@ -7,7 +7,10 @@ void MOV(TOperando *op1, TOperando *op2) {
     op1->valor=op2->valor;
 }
 
-/* habria que ver el tipo??*/
+/* habria que ver el tipo??
+aunque hay que hacerlo para todas las funciones, tal vez se podría realizar la verificación de tipo antes del llamado a cada función y que los operandos
+tengan la responsabilidad de ver que hacer para cada caso (cambiar el tipo, posicion, etc)
+*/
 /*
 asigna a un registro o posici�n de memoria un valor, que puede ser el contenido de otro registro,
 posici�n de memoria o un valor inmediato.
