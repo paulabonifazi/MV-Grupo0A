@@ -4,6 +4,7 @@
 
 //2 operandos
 void MOV(TOperando *op1, TOperando *op2) {
+    //analizaoperandos()
     op1->valor=op2->valor;
 }
 
