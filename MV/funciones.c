@@ -123,47 +123,11 @@ not l�gico bit a bit, afecta al CC
 void stop();
 
 
-/*
-  2 operandos:
-        MOV 00
-        ADD 01
-        SUB 02
-        SWAP 03
-        MUL 04
-        DIV 05
-        CMP 06
-        SHL 07
-        SHR 08
-        AND 09
-        OR 0A
-        XOR 0B
-        RND 0C
-
-    1 operando:
-        SYS 10
-        JMP 11
-        JZ 12
-        JP 13
-        JN 14
-        JNZ 15
-        JNP 16
-        JNN 17
-        LDL 18
-        LDH 19
-        NOT 1A
-
-    0 operandos:
-        STOP 1F
-
-*/
-
 void decodifica_cod_op(TOperando *op1,TOperando *op2,TOperando *cod_op) {
         /*en base a los cod de op hay que hacer un switch con los cod de arriba para que se ejecute la funci�n*/
         /* con el bit m�s significativo del cod_op m�s los �ltimos 4 se genera el nro de operaci�n. Los �ltimos 4 se pasan a hexa y luego buscamos en el vec de funciones */
 }
 
-
-/*           MODIFICAR NROS!!!                                    */
 
 void iniciaVectorFunciones(VectorFunciones vecF)
 {
@@ -179,19 +143,19 @@ void iniciaVectorFunciones(VectorFunciones vecF)
     vecF[0x09]=&AND;
     vecF[0x0A]=&OR;
     vecF[0x0B]=&XOR;
+    vecF[0x0C]=&RND;
 
-    vecF[0xF0]=&SYS;
-    vecF[0xF1]=&JMP;
-    vecF[0xF2]=&JZ;
-    vecF[0xF3]=&JP;
-    vecF[0xF4]=&JN;
-    vecF[0xF5]=&JNZ;
-    vecF[0xF6]=&JNP;
-    vecF[0xF7]=&JNN;
-    vecF[0xF8]=&LDL;
-    vecF[0xF9]=&LDH;
-    vecF[0xFA]=&RND;
-    vecF[0xFB]=&NOT;
+    vecF[0x10]=&SYS;
+    vecF[0x11]=&JMP;
+    vecF[0x12]=&JZ;
+    vecF[0x13]=&JP;
+    vecF[0x14]=&JN;
+    vecF[0x15]=&JNZ;
+    vecF[0x16]=&JNP;
+    vecF[0x17]=&JNN;
+    vecF[0x18]=&LDL;
+    vecF[0x19]=&LDH;
+    vecF[0x1A]=&NOT;
 
-    vecF[0xFF1]=&STOP;
+    vecF[0x1F]=&STOP;
 }
