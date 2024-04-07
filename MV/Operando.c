@@ -15,10 +15,11 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,char cod_op[],MV *mv){
         b = tipo b -> 000000bb
         o = cod op -> bbaooooo & 00011111 (0x1F) -> es vector asi que es bit a bit
     */
-
+    /*
     //set operando
     (*op2).tipo = inst>>6;
     (*op1).tipo = (inst>>5) & 0x01;
+    */
 
     //set cod operacion
     for(int i=0; i<5; i++)
@@ -28,54 +29,17 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,char cod_op[],MV *mv){
         // dos operandos
         (*op2).tipo = inst>>6; //opB
         (*op1).tipo = (inst>>5) & 0x01; //opA
-        //lectura op en base a tipo (opA)
-        //lectura op en base a tipo (opB)
+        lee_operando(op1, mv); //lectura op en base a tipo (opA)
+        lee_operando(op2, mv); //lectura op en base a tipo (opB)
     }
     else if(inst>>6 == 0b11){
         // un operando
         (*op1).tipo = inst>>6; //opA
-        //lectura op en base a tipo (opA)
+        lee_operando(op1, mv);  //lectura op en base a tipo (opA)
     }
     else {
         // sin operando
     }
-
-    //Lectura de operando en base a tipo
-    //Encerrar switch en funcion
-    switch((*op1).tipo){
-        case 0:{
-            char cod_reg = get_instruccion(mv);
-            unsigned int pos = cod_reg;
-            set_posicion(op1,pos);
-            char offset_h = get_instruccion(mv);
-            long int offset = offset_h;
-            offset = offset<<8;
-            char offset_l = get_instruccion(mv);
-            offset += offset_l;
-            set_offset(op1, offset);
-            break;
-        }
-        case 1:{
-            char valor_h = get_instruccion(mv);
-            long int valor = valor_h;
-            valor = valor<<8;
-            char valor_l = get_instruccion(mv);
-            valor += valor_l;
-            set_valor(op1, valor);
-            break;
-        }
-        case 2:{
-            char sec_reg = get_instruccion(mv);
-            set_parteReg(op1,sec_reg);
-            char cod_reg = get_instruccion(mv);
-            unsigned int pos = cod_reg;
-            set_posicion(op1,pos);
-            break;
-        }
-    }
-
-
-
 }
 
 void set_valor(TOperando *op, long int valor){
@@ -98,6 +62,39 @@ void set_offset(TOperando *op, long int offset){
     (*op).offset = offset;
 }
 
+void lee_operando(TOperando *op, MV *mv){
+    switch((*op).tipo){
+        case 0: {
+            char cod_reg = get_instruccion(mv);
+            unsigned int pos = cod_reg;
+            set_posicion(op,pos);
+            char offset_h = get_instruccion(mv);
+            long int offset = offset_h;
+            offset = offset<<8;
+            char offset_l = get_instruccion(mv);
+            offset += offset_l;
+            set_offset(op, offset);
+            break;
+        }
+        case 1:{
+            char valor_h = get_instruccion(mv);
+            long int valor = valor_h;
+            valor = valor<<8;
+            char valor_l = get_instruccion(mv);
+            valor += valor_l;
+            set_valor(op, valor);
+            break;
+        }
+        case 2:{
+            char sec_reg = get_instruccion(mv);
+            set_parteReg(op,sec_reg);
+            char cod_reg = get_instruccion(mv);
+            unsigned int pos = cod_reg;
+            set_posicion(op,pos);
+            break;
+        }
+    }
+}
 
 char get_instruccion(MV *mv){
     char ip = mv->tabla_de_registros[5];

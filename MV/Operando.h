@@ -31,7 +31,7 @@ void set_posicion(TOperando *op, unsigned int pos);
 
 void set_offset(TOperando *op, long int offset);
 
-TOperando get_operando();
+void lee_operando(TOperando *op, MV *mv);
 
 char get_instruccion(MV *mv); //Nose si char o void porque hace dos cosas: devuleve instruccion y suma 1 al offset de IP
 
