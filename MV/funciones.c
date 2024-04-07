@@ -3,7 +3,9 @@
 /*  ----------------------------------------- FUNCIONES ----------------------------------------------*/
 
 //2 operandos
-void MOV(TOperando *op1, TOperando *op2);
+void MOV(TOperando *op1, TOperando *op2){
+    op1->valor=op2->valor;
+}
 /*
 asigna a un registro o posici�n de memoria un valor, que puede ser el contenido de otro registro,
 posici�n de memoria o un valor inmediato.
