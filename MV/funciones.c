@@ -238,17 +238,6 @@ void DIV(TOperando *op1, TOperando *op2, MV *mv){
     }
 }
 
-/*
-realizan las cuatro operaciones matem�ticas b�sicas. El primer operando debe
-ser de registro o memoria, ya que es donde se guarda el resultado. El resultado de estas instrucciones
-afecta el valor del registro CC
-
-El DIV tiene la particularidad de que adem�s guarda el resto de la divisi�n
-entera (m�dulo) en AC.
-
--> el registro CC: bit mas significativo es el de signo (1 negativo) y el 2do mas significativo bit de cero (1 si es cero)
-*/
-
 void SWAP(TOperando *op1, TOperando *op2, MV *mv);
 
 /*
