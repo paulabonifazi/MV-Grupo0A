@@ -184,7 +184,59 @@ void MUL(TOperando *op1, TOperando *op2, MV *mv){
     setea_cc(aux, mv);
 }
 
-void DIV(TOperando *op1, TOperando *op2, MV *mv);
+void DIV(TOperando *op1, TOperando *op2, MV *mv){
+    unsigned int aux;
+
+    if(op2.posicion != 0){
+        if (op1.tipo == 0x00) {     //de memoria
+            aux = op1.posicion | op2.posicion;
+            mv.RAM[mv.tabla_de_segmentos[op1.posicion] + mv.tabla_de_segmentos[op1.offset]] = aux;
+            mv.tabla_de_registros[9] = op1.posicion % op2.posicion;
+        }
+        else if(op1.tipo == 0x10) {     //de registro
+            unsigned int posAux;
+            switch(op1.parteReg) {
+                case 0x00: {
+                    //registro de 4 bytes
+                    aux = op1.posicion | op2.posicion;
+                    mv.tabla_de_registros[op1.posicion] = aux;
+                    mv.tabla_de_registros[9] = op1.posicion % op2.posicion;
+                    break;}
+                case 0x01: {
+                    //4to byte del registro
+                    aux = (op1.posicion | op2.posicion) & 0xFF;   //me quedo con el byte menos significativo
+                    mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFFFF00) + aux;
+                    mv.tabla_de_registros[9] = (op1.posicion % op2.posicion) & 0xFF;
+                    if((0x80 & aux) != 0) {
+                        aux<<24;
+                        aux>>24;
+                    }
+                    break;}
+                case 0x10: {
+                    //3er byte del registro
+                    aux = (op1.posicion | op2.posicion) & 0xFF;   //me quedo con el byte menos significativo
+                    mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF00FF) + aux;
+                    mv.tabla_de_registros[9] = (op1.posicion % op2.posicion) & 0xFF;
+                    if((0x800 & aux) != 0) {
+                        aux<<16;
+                        aux>>16;
+                    }
+                    break;}
+                case 0x11: {
+                    //registro de 2 bytes
+                    aux = (op1.posicion | op2.posicion) & 0xFFFF;   //me quedo con los ultimos 2 bytes
+                    mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF0000) + aux;
+                    mv.tabla_de_registros[9] = (op1.posicion % op2.posicion) & 0xFFFF;
+                    if((0x800 & aux) != 0) {
+                        aux<<16;
+                        aux>>16;
+                    }
+                    break;}
+            }
+        }
+        setea_cc(aux, mv);
+    }
+}
 
 /*
 realizan las cuatro operaciones matem�ticas b�sicas. El primer operando debe
