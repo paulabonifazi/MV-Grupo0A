@@ -3,23 +3,45 @@
 /*  ----------------------------------------- FUNCIONES ----------------------------------------------*/
 
 //2 operandos
-void MOV(TOperando *op1, TOperando *op2){
-    op1->valor=op2->valor;
+void MOV(TOperando *op1, TOperando *op2, MV *mv){
+    //op1->valor=op2->valor;
+    if (op1.tipo == 0x00) {     //de memoria
+        mv.RAM[mv.tabla_de_segmentos[op1.posicion] + mv.tabla_de_segmentos[op1.offset]] = op2;
+    }
+    else if(op1.tipo == 0x10) {     //de registro
+        unsigned int posAux;
+        switch(op1.parteReg) {
+            case 0x00: {
+                //registro de 4 bytes
+                mv.tabla_de_registros[op1.posicion] = op2;
+                break;}
+            case 0x01: {
+                //4to byte del registro
+                posAux = op2.posicion & 0xFF;   //me quedo con el byte menos significativo
+                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFFFF00) + aux; //me hace ruido la mascara, no se cuantos bytes son. Supongo que 4
+                break;}
+            case 0x10: {
+                //3er byte del registro
+                posAux = op2.posicion & 0xFF;   //me quedo con el byte menos significativo
+                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF00FF) + aux;
+                break;}
+            case 0x11: {
+                //registro de 2 bytes
+                posAux = op2.posicion & 0xFFFF;   //me quedo con los ultimos 2 bytes
+                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF0000) + aux;
+                break;}
+        }
+    }
+    //op1 no puede ser inmediato (cte)
 }
-/*
-asigna a un registro o posici�n de memoria un valor, que puede ser el contenido de otro registro,
-posici�n de memoria o un valor inmediato.
 
--> modifico op2 con el valor del op1
-*/
+void ADD(TOperando *op1, TOperando *op2, MV *mv);
 
-void ADD(TOperando *op1, TOperando *op2);
+void SUB(TOperando *op1, TOperando *op2, MV *mv);
 
-void SUB(TOperando *op1, TOperando *op2);
+void MUL(TOperando *op1, TOperando *op2, MV *mv);
 
-void MUL(TOperando *op1, TOperando *op2);
-
-void DIV(TOperando *op1, TOperando *op2);
+void DIV(TOperando *op1, TOperando *op2, MV *mv);
 
 /*
 realizan las cuatro operaciones matem�ticas b�sicas. El primer operando debe
@@ -32,22 +54,22 @@ entera (m�dulo) en AC.
 -> el registro CC: bit mas significativo es el de signo (1 negativo) y el 2do mas significativo bit de cero (1 si es cero)
 */
 
-void SWAP(TOperando *op1, TOperando *op2);
+void SWAP(TOperando *op1, TOperando *op2, MV *mv);
 
 /*
 intercambia los valores de los dos operandos (ambos deben ser registros y/o celdas de
 memoria).
 */
 
-void CMP(TOperando *op1, TOperando *op2);
+void CMP(TOperando *op1, TOperando *op2, MV *mv);
 /*
 el segundo operando se resta del primero, pero �ste no almacena el
 resultado, solamente se modifican los bits NZ del registro CC.
 */
 
-void SHL(TOperando *op1, TOperando *op2);
+void SHL(TOperando *op1, TOperando *op2, MV *mv);
 
-void SHR(TOperando *op1, TOperando *op2);
+void SHR(TOperando *op1, TOperando *op2, MV *mv);
 
 /*
 realizan desplazamientos a izquierda o a derecha, respectivamente, de los bits
@@ -57,18 +79,18 @@ En SHR los bits de la derecha propagan el bit anterior, es decir si el contenido
 el resultado seguir� siendo negativo, porque agrega 1. Si era un n�mero positivo, agrega 0.
 */
 
-void AND(TOperando *op1, TOperando *op2);
+void AND(TOperando *op1, TOperando *op2, MV *mv);
 
-void OR(TOperando *op1, TOperando *op2);
+void OR(TOperando *op1, TOperando *op2, MV *mv);
 
-void XOR(TOperando *op1, TOperando *op2);
+void XOR(TOperando *op1, TOperando *op2, MV *mv);
 
 /*
 efect�an las operaciones l�gicas b�sicas bit a bit entre los operandos y afectan al
 registro CC. El resultado se almacena en el primer operando.(calculo que ser� el op2 ya que es el primero que decodificamos)
 */
 
-void RND(TOperando *op1, TOperando *op2);
+void RND(TOperando *op1, TOperando *op2, MV *mv);
 
 /*
 carga en el primer operando un n�mero aleatorio entre 0 y el valor del segundo operando.
@@ -77,27 +99,27 @@ vamos a tener que crear una semilla para la selecci�n de un nro aleatorio
 */
 
 //1 operando
-void SYS(TOperando *op2);
+void SYS(TOperando *op2, MV *mv);
 
-void JMP(TOperando *op2);
+void JMP(TOperando *op2, MV *mv);
 
-void JZ(TOperando *op2);
+void JZ(TOperando *op2, MV *mv);
 
-void JP(TOperando *op2);
+void JP(TOperando *op2, MV *mv);
 
-void JN(TOperando *op2);
+void JN(TOperando *op2, MV *mv);
 
-void JNZ(TOperando *op2);
+void JNZ(TOperando *op2, MV *mv);
 
-void JNP(TOperando *op2);
+void JNP(TOperando *op2, MV *mv);
 
-void JNN(TOperando *op2);
+void JNN(TOperando *op2, MV *mv);
 
 /*
 los saltos se dan analizando el valor del CC
 */
 
-void LDL(TOperando *op2);
+void LDL(TOperando *op2, MV *mv);
 
 /*
 carga en los 2 bytes menos significativos del registro AC, con los 2 bytes menos significativos del
@@ -105,7 +127,7 @@ operando. Esta instrucci�n est� especialmente pensada para poder cargar un i
 aunque tambi�n se puede utilizar con otro tipo de operando.
 */
 
-void LDH(TOperando *op2);
+void LDH(TOperando *op2, MV *mv);
 
 /*
 carga en los 2 bytes m�s significativos del registro AC, con los 2 bytes menos significativos del
@@ -113,7 +135,7 @@ operando. Esta instrucci�n est� especialmente pensada para poder cargar un i
 aunque tambi�n se puede utilizar con otro tipo de operando.
 */
 
-void NOT(TOperando *op2);
+void NOT(TOperando *op2, MV *mv);
 
 /*
 not l�gico bit a bit, afecta al CC

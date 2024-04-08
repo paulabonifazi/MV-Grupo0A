@@ -1,61 +1,58 @@
-typedef void (*VectorFunciones[32])(MV);    //hasta el 1F
+typedef void (*VectorFunciones[32])(MV *mv);    //hasta el 1F
 
 void iniciaVectorFunciones(VectorFunciones);
-
-/*cambiar cabeceras de las funciones, poner TOperando!! y pasar la MV
-*/
 
 /*  ----------------------------------------- FUNCIONES ----------------------------------------------*/
 
 //2 operandos
-void MOV(TOperando *op1, TOperando *op2);
+void MOV(TOperando *op1, TOperando *op2, MV *mv);
 
-void ADD(TOperando *op1, TOperando *op2);
+void ADD(TOperando *op1, TOperando *op2, MV *mv);
 
-void SUB(TOperando *op1, TOperando *op2);
+void SUB(TOperando *op1, TOperando *op2, MV *mv);
 
-void SWAP(TOperando *op1, TOperando *op2);
+void SWAP(TOperando *op1, TOperando *op2, MV *mv);
 
-void MUL(TOperando *op1, TOperando *op2);
+void MUL(TOperando *op1, TOperando *op2, MV *mv);
 
-void DIV(TOperando *op1, TOperando *op2);
+void DIV(TOperando *op1, TOperando *op2, MV *mv);
 
-void CMP(TOperando *op1, TOperando *op2);
+void CMP(TOperando *op1, TOperando *op2, MV *mv);
 
-void SHL(TOperando *op1, TOperando *op2);
+void SHL(TOperando *op1, TOperando *op2, MV *mv);
 
-void SHR(TOperando *op1, TOperando *op2);
+void SHR(TOperando *op1, TOperando *op2, MV *mv);
 
-void AND(TOperando *op1, TOperando *op2);
+void AND(TOperando *op1, TOperando *op2, MV *mv);
 
-void OR(TOperando *op1, TOperando *op2);
+void OR(TOperando *op1, TOperando *op2, MV *mv);
 
-void XOR(TOperando *op1, TOperando *op2);
+void XOR(TOperando *op1, TOperando *op2, MV *mv);
 
-void RND(TOperando *op1, TOperando *op2);
+void RND(TOperando *op1, TOperando *op2, MV *mv);
 
 //1 operando
-void SYS(TOperando *op2);
+void SYS(TOperando *op2, MV *mv);
 
-void JMP(TOperando *op2);
+void JMP(TOperando *op2, MV *mv);
 
-void JZ(TOperando *op2);
+void JZ(TOperando *op2, MV *mv);
 
-void JP(TOperando *op2);
+void JP(TOperando *op2, MV *mv);
 
-void JN(TOperando *op2);
+void JN(TOperando *op2, MV *mv);
 
-void JNZ(TOperando *op2);
+void JNZ(TOperando *op2, MV *mv);
 
-void JNP(TOperando *op2);
+void JNP(TOperando *op2, MV *mv);
 
-void JNN(TOperando *op2);
+void JNN(TOperando *op2, MV *mv);
 
-void LDL(TOperando *op2);
+void LDL(TOperando *op2, MV *mv);
 
-void LDH(TOperando *op2);
+void LDH(TOperando *op2, MV *mv);
 
-void NOT(TOperando *op2);
+void NOT(TOperando *op2, MV *mv);
 
 //0 operandos
 void stop();

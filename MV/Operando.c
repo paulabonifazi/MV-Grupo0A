@@ -64,7 +64,7 @@ void set_offset(TOperando *op, long int offset){
 
 void lee_operando(TOperando *op, MV *mv){
     switch((*op).tipo){
-        case 0: {
+        case 0: {   //memoria
             char cod_reg = get_instruccion(mv);
             unsigned int pos = cod_reg;
             set_posicion(op,pos);
@@ -76,7 +76,7 @@ void lee_operando(TOperando *op, MV *mv){
             set_offset(op, offset);
             break;
         }
-        case 1:{
+        case 1:{    //inmediato
             char valor_h = get_instruccion(mv);
             long int valor = valor_h;
             valor = valor<<8;
@@ -85,7 +85,7 @@ void lee_operando(TOperando *op, MV *mv){
             set_valor(op, valor);
             break;
         }
-        case 2:{
+        case 2:{    //registro
             char sec_reg = get_instruccion(mv);
             set_parteReg(op,sec_reg);
             char cod_reg = get_instruccion(mv);
