@@ -1,10 +1,18 @@
 #include "funciones.h"
 
+void setea_cc(unsigned int resultadoFunc, MV *mv){
+    if (resultadoFunc < 0)
+        mv.tabla_de_registros[8] = 0x10000000;
+    else if (resultadoFunc == 0)
+         mv.tabla_de_registros[8] = 0x01000000;
+    else
+        mv.tabla_de_registros[8] = 0;
+}
+
 /*  ----------------------------------------- FUNCIONES ----------------------------------------------*/
 
 //2 operandos
 void MOV(TOperando *op1, TOperando *op2, MV *mv){
-    //op1->valor=op2->valor;
     if (op1.tipo == 0x00) {     //de memoria
         mv.RAM[mv.tabla_de_segmentos[op1.posicion] + mv.tabla_de_segmentos[op1.offset]] = op2;
     }
@@ -18,24 +26,69 @@ void MOV(TOperando *op1, TOperando *op2, MV *mv){
             case 0x01: {
                 //4to byte del registro
                 posAux = op2.posicion & 0xFF;   //me quedo con el byte menos significativo
-                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFFFF00) + aux; //me hace ruido la mascara, no se cuantos bytes son. Supongo que 4
+                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFFFF00) + posAux;
                 break;}
             case 0x10: {
                 //3er byte del registro
                 posAux = op2.posicion & 0xFF;   //me quedo con el byte menos significativo
-                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF00FF) + aux;
+                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF00FF) + posAux;
                 break;}
             case 0x11: {
                 //registro de 2 bytes
                 posAux = op2.posicion & 0xFFFF;   //me quedo con los ultimos 2 bytes
-                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF0000) + aux;
+                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF0000) + posAux;
                 break;}
         }
     }
     //op1 no puede ser inmediato (cte)
 }
 
-void ADD(TOperando *op1, TOperando *op2, MV *mv);
+void ADD(TOperando *op1, TOperando *op2, MV *mv){
+    unsigned int suma;
+
+    if (op1.tipo == 0x00) {     //de memoria
+        suma = op1.posicion + op2.posicion;
+        mv.RAM[mv.tabla_de_segmentos[op1.posicion] + mv.tabla_de_segmentos[op1.offset]] = suma;
+    }
+    else if(op1.tipo == 0x10) {     //de registro
+        unsigned int posAux;
+        switch(op1.parteReg) {
+            case 0x00: {
+                //registro de 4 bytes
+                suma = op1.posicion + op2.posicion;
+                mv.tabla_de_registros[op1.posicion] = suma;
+                break;}
+            case 0x01: {
+                //4to byte del registro
+                suma = (op1.posicion + op2.posicion) & 0xFF;   //me quedo con el byte menos significativo
+                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFFFF00) + suma;
+                if((0x80 & suma) != 0) {
+                    suma<<24;
+                    suma>>24;
+                }
+                break;}
+            case 0x10: {
+                //3er byte del registro
+                suma = (op1.posicion + op2.posicion) & 0xFF;   //me quedo con el byte menos significativo
+                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF00FF) + suma;
+                if((0x800 & suma) != 0) {
+                    suma<<16;
+                    suma>>16;
+                }
+                break;}
+            case 0x11: {
+                //registro de 2 bytes
+                suma = (op1.posicion + op2.posicion) & 0xFFFF;   //me quedo con los ultimos 2 bytes
+                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF0000) + suma;
+                if((0x800 & suma) != 0) {
+                    suma<<16;
+                    suma>>16;
+                }
+                break;}
+        }
+    }
+    setea_cc(suma, mv);
+}
 
 void SUB(TOperando *op1, TOperando *op2, MV *mv);
 
