@@ -6,15 +6,15 @@
 
 
 typedef struct {
-    char segmento;
-    char offset;
+    short int segmento;
+    short int tam;
 } tabla_segmentos;
 
 
 typedef struct {
     char RAM[16384];
     tabla_segmentos  tabla_de_segmentos[cantSeg];
-    char tabla_de_registros[cantReg];
+    int tabla_de_registros[cantReg];
 } MV;
 
 #endif
