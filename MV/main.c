@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
     mv.tabla_de_segmentos[0].segmento = 0;
     mv.tabla_de_segmentos[0].tam = 6;
     mv.tabla_de_segmentos[1].segmento = 6;
+
     //Instruccion ADD [5], 10
     mv.RAM[0] = 0b01000001;
     mv.RAM[1] = 0b00000000;

@@ -75,7 +75,7 @@ void lee_operando(TOperando *op, MV *mv){
             char offset_l = get_instruccion(mv);
             offset += offset_l;
             set_offset(op, offset);
-            set_valor_op(op,mv);
+            set_valor_op(op,mv); // En base a la posicion y el offset se obtiene el valor de esa posicion de memoria y se almacena en op.valor
             break;
         }
         case 1:{    //inmediato
@@ -94,7 +94,7 @@ void lee_operando(TOperando *op, MV *mv){
             char cod_reg = get_instruccion(mv);
             unsigned int pos = cod_reg;
             set_posicion(op,pos);
-            set_valor_op(op,mv);
+            set_valor_op(op,mv); // En base al sector y el codigo de reg se obtiene el valor de ese registro y se almacena en op.valor
             break;
         }
     }
