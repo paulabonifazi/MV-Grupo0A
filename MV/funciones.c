@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <time.h>
 #include "funciones.h"
 
 void setea_cc(long int resultadoFunc, MV *mv){
@@ -85,9 +87,9 @@ el segundo operando se resta del primero, pero �ste no almacena el
 resultado, solamente se modifican los bits NZ del registro CC.
 */
 
-void SHL(TOperando *op1, TOperando *op2, MV *mv);
+void SHL(TOperando *op1, TOperando *op2, MV *mv){}
 
-void SHR(TOperando *op1, TOperando *op2, MV *mv);
+void SHR(TOperando *op1, TOperando *op2, MV *mv){}
 
 /*
 realizan desplazamientos a izquierda o a derecha, respectivamente, de los bits
@@ -127,6 +129,7 @@ registro CC. El resultado se almacena en el primer operando.(calculo que ser� 
 */
 
 void RND(TOperando *op1, TOperando *op2, MV *mv){
+    srand (time(NULL));
     op1->valor = rand() % (op2->valor + 1);
     reset_valor_op(op1,mv);
 }
@@ -138,21 +141,21 @@ vamos a tener que crear una semilla para la selecci�n de un nro aleatorio
 */
 
 //1 operando
-void SYS(TOperando *op, MV *mv);
+void SYS(TOperando *op, MV *mv){}
 
-void JMP(TOperando *op, MV *mv);
+void JMP(TOperando *op, MV *mv){}
 
-void JZ(TOperando *op, MV *mv);
+void JZ(TOperando *op, MV *mv){}
 
-void JP(TOperando *op, MV *mv);
+void JP(TOperando *op, MV *mv){}
 
-void JN(TOperando *op, MV *mv);
+void JN(TOperando *op, MV *mv){}
 
-void JNZ(TOperando *op, MV *mv);
+void JNZ(TOperando *op, MV *mv){}
 
-void JNP(TOperando *op, MV *mv);
+void JNP(TOperando *op, MV *mv){}
 
-void JNN(TOperando *op, MV *mv);
+void JNN(TOperando *op, MV *mv){}
 
 /*
 los saltos se dan analizando el valor del CC
@@ -195,12 +198,12 @@ not l�gico bit a bit, afecta al CC
 */
 
 //0 operandos
-void STOP();
+void STOP(){}
 
 
 /*void decodifica_cod_op(TOperando *op1,TOperando *op2,TOperando *cod_op) {
-        /*en base a los cod de op hay que hacer un switch con los cod de arriba para que se ejecute la funci�n*/
-        /* con el bit m�s significativo del cod_op m�s los �ltimos 4 se genera el nro de operaci�n. Los �ltimos 4 se pasan a hexa y luego buscamos en el vec de funciones
+        en base a los cod de op hay que hacer un switch con los cod de arriba para que se ejecute la funci�n
+         con el bit m�s significativo del cod_op m�s los �ltimos 4 se genera el nro de operaci�n. Los �ltimos 4 se pasan a hexa y luego buscamos en el vec de funciones
 }
 */
 

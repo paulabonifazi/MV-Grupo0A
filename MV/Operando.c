@@ -23,14 +23,14 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,char cod_op[],MV *mv){
 
     //set cod operacion
     for(int i=0; i<5; i++)
-        cod_op[i] = (inst >> (5-i+1)) & 0x01;
+        cod_op[i] = (inst >> (4-i)) & 0x01;
 
     if(cod_op[0] == 0){
         // dos operandos
         op2->tipo = inst>>6; //opB
         op1->tipo = (inst>>5) & 0x01; //opA
-        lee_operando(op1, mv); //lectura op en base a tipo (opA)
-        lee_operando(op2, mv); //lectura op en base a tipo (opB)
+        lee_operando(op2, mv); //lectura op en base a tipo (opA)
+        lee_operando(op1, mv); //lectura op en base a tipo (opB)
     }
     else if(inst>>6 == 0b11){
         // un operando
@@ -103,8 +103,8 @@ void lee_operando(TOperando *op, MV *mv){
 char get_instruccion(MV *mv){
     // REVISAR
     char ip = mv->tabla_de_registros[5];
-    char posSeg = mv->tabla_de_segmentos[ip & 0xF0].segmento; //Busca indice de IP y devuelve el codigo en tabla segmentos
-    char posRAM = ((mv->tabla_de_segmentos[posSeg].tam & 0xF0)>>4) + (ip & 0x0F); //Posicion DS en tabla segmento + offset IP
+    char posSeg = mv->tabla_de_segmentos[ip & 0xFFFF0000].segmento; //Busca indice de IP y devuelve el codigo en tabla segmentos
+    char posRAM = posSeg + (ip & 0x0000FFFF);//((mv->tabla_de_segmentos[posSeg].tam & 0xF0)>>4) + (ip & 0x0F); //Posicion DS en tabla segmento + offset IP
     char inst = mv->RAM[posRAM];
 
     mv->tabla_de_registros[5] += 0x01; //Suma 1 al offset de ip
@@ -143,7 +143,7 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
 void reset_valor_op(TOperando *op,MV *mv){ //Guarda en la posicion a la cual apunta op en memoria o en registro el valor almacenado en op->valor
     if(op->tipo == 0b00){   //Memoria
         for(int i=0; i<4; i++)
-            mv->RAM[mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i] = (op->valor>>(i*8)) & 0x000000FF;
+            mv->RAM[mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i] = (op->valor>>(24-i*8)) & 0x000000FF;
     }
     else if(op->tipo == 0b10){  //Registro
         switch(op->parteReg) {
