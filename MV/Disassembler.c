@@ -54,8 +54,65 @@ void cargaOp(TDisassembler *dis, int nrodeop, char tipo, long int codOp, long in
         (*dis).op2 = operando;
 }
 
+void imprimeReg(long int registro, long int parteReg,char *registros[],char *muestra){
+    if(parteReg==0){
+        strcat(muestra,registros[registro]);
+    }
+    else{
+        sprintf(muestra, "%1X", registro); //copia a muestra un string con el formato ("XXX")
+        switch(parteReg){
+            case 1: strcat(muestra,"L");
+                    break;
+            case 2: strcat(muestra,"H");
+                    break;
+            case 3: strcat(muestra,"X");
+                    break;
+        }
+    }
+}
 
-void muestraop( int nroOp, TOp operando,char *registros[]){}
+void muestraop( int nroOp, TOp operando,char *registros[]){
+     char muestra[15];
+    char stnro[6];
+    int espacio,i;
+    strcpy(muestra,"");
+    strcpy(stnro,"");
+    switch(operando.tipo){
+        case 0: if(operando.tamaniocelda==4)
+                    strcpy(muestra,"l");
+                else
+                    if(operando.tamaniocelda==2)
+                       strcpy(muestra,"w");
+                    else
+                        strcpy(muestra,"b");
+
+                strcat(muestra,"[");
+                imprimeReg(operando.registro,0,registros,muestra);
+                if(operando.nro!=0){
+                    if(operando.nro>0){
+                        strcat(muestra,"+");
+                    }
+                    sprintf(stnro,"%d",operando.nro);
+                    strcat(muestra,stnro);
+                }
+                strcat(muestra,"]");
+                break;
+        case 1: sprintf(muestra,"%ld",operando.nro);
+                break;
+        case 2: imprimeReg(operando.registro,operando.nro,registros,muestra);
+                break;
+
+    }
+    //crea string luego lo muestra dependiendo el operador que debe ir
+    if(nroOp==1){
+        espacio=10-strlen(muestra);
+        for(i=0;i<=espacio;i++)
+            printf(" ");
+        printf("%s, ",muestra);
+    }
+    else
+        printf("%s",muestra);
+}
 
 void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
     int tamanio, i, espacio = 0;
@@ -80,8 +137,8 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
     for(i=0; i<=espacio; i++)
         printf("   ");
     printf(" | %s ", dis.codoperacion);
-    if(dis.op1.tipo != 0b11){
-        if(dis.op2.tipo != 0b11){ //2 operandos
+    if(dis.op1.tipo != 0x01){
+        if(dis.op2.tipo != 0x01){ //2 operandos
             muestraop(1, dis.op1, dis.reg);
             muestraop(2, dis.op2, dis.reg);
         }
@@ -89,7 +146,7 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
             muestraop(2, dis.op1,dis.reg);
         }
     }
-    //deberia de imprimir el de 1 op o 0 op??
+    //deberia de imprimir el de 0 op??
     printf("\n");
 }
 

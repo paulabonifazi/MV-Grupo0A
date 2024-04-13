@@ -255,10 +255,6 @@ void JNN(TOperando *op, TOperando *op2, MV *mv){
 }
 
 
-/*
-los saltos se dan analizando el valor del CC
-*/
-
 void LDL(TOperando *op, TOperando *op2, MV *mv){
     int ms;
     ms = op->valor & 0x0000FFFF;
