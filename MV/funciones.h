@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-typedef void (*VectorFunciones[32])(MV *mv);    //hasta el 1F
-=======
 #ifndef FUNCIONES_H
 #define FUNCIONES_H
 
@@ -8,7 +5,6 @@ typedef void (*VectorFunciones[32])(MV *mv);    //hasta el 1F
 #include "Operando.h"
 
 typedef void (*VectorFunciones[32])(TOperando *op1, TOperando *op2, MV *mv);    //hasta el 1F
->>>>>>> Stashed changes
 
 void iniciaVectorFunciones(VectorFunciones);
 
@@ -16,10 +12,6 @@ void valorOp(TOperando *op,MV *mv);
 
 /*  ----------------------------------------- FUNCIONES ----------------------------------------------*/
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 //2 operandos
 void MOV(TOperando *op1, TOperando *op2, MV *mv);
 
@@ -48,32 +40,6 @@ void XOR(TOperando *op1, TOperando *op2, MV *mv);
 void RND(TOperando *op1, TOperando *op2, MV *mv);
 
 //1 operando
-<<<<<<< Updated upstream
-void SYS(TOperando *op2, MV *mv);
-
-void JMP(TOperando *op2, MV *mv);
-
-void JZ(TOperando *op2, MV *mv);
-
-void JP(TOperando *op2, MV *mv);
-
-void JN(TOperando *op2, MV *mv);
-
-void JNZ(TOperando *op2, MV *mv);
-
-void JNP(TOperando *op2, MV *mv);
-
-void JNN(TOperando *op2, MV *mv);
-
-void LDL(TOperando *op2, MV *mv);
-
-void LDH(TOperando *op2, MV *mv);
-
-void NOT(TOperando *op2, MV *mv);
-
-//0 operandos
-void stop();
-=======
 void SYS(TOperando *op, TOperando *op2, MV *mv);
 
 void JMP(TOperando *op, TOperando *op2, MV *mv);
@@ -100,5 +66,4 @@ void NOT(TOperando *op, TOperando *op2, MV *mv);
 void STOP(TOperando *op, TOperando *op2, MV *mv);
 
 #endif
->>>>>>> Stashed changes
 
