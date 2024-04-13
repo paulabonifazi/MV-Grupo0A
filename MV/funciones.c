@@ -73,20 +73,13 @@ void SWAP(TOperando *op1, TOperando *op2, MV *mv){
     }
 }
 
-/*
-intercambia los valores de los dos operandos (ambos deben ser registros y/o celdas de
-memoria).
-*/
 
 void CMP(TOperando *op1, TOperando *op2, MV *mv){
     long int aux;
     aux = op1->valor - op1->valor;
     setea_cc(aux, mv);
 }
-/*
-el segundo operando se resta del primero, pero �ste no almacena el
-resultado, solamente se modifican los bits NZ del registro CC.
-*/
+
 
 void SHL(TOperando *op1, TOperando *op2, MV *mv){
     long int aux;
@@ -96,15 +89,14 @@ void SHL(TOperando *op1, TOperando *op2, MV *mv){
     reset_valor_op(op1,mv);
 }
 
-void SHR(TOperando *op1, TOperando *op2, MV *mv){}
+void SHR(TOperando *op1, TOperando *op2, MV *mv){
+    long int aux;
+    aux = op1->valor >> op2->valor;
+    setea_cc(aux,mv);
+    op1->valor = aux;
+    reset_valor_op(op1,mv);
+}
 
-/*
-realizan desplazamientos a izquierda o a derecha, respectivamente, de los bits
-almacenados en un registro o una posici�n de memoria. Tambi�n afectan al registro CC.
-En SHL los bits derechos que quedan libres se completan con ceros.
-En SHR los bits de la derecha propagan el bit anterior, es decir si el contenido es un n�mero negativo
-el resultado seguir� siendo negativo, porque agrega 1. Si era un n�mero positivo, agrega 0.
-*/
 
 void AND(TOperando *op1, TOperando *op2, MV *mv){
     long int and;
@@ -130,22 +122,11 @@ void XOR(TOperando *op1, TOperando *op2, MV *mv){
     reset_valor_op(op1,mv);
 }
 
-/*
-efect�an las operaciones l�gicas b�sicas bit a bit entre los operandos y afectan al
-registro CC. El resultado se almacena en el primer operando.(calculo que ser� el op2 ya que es el primero que decodificamos)
-*/
-
 void RND(TOperando *op1, TOperando *op2, MV *mv){
     srand (time(NULL));
     op1->valor = rand() % (op2->valor + 1);
     reset_valor_op(op1,mv);
 }
-
-/*
-carga en el primer operando un n�mero aleatorio entre 0 y el valor del segundo operando.
-
-vamos a tener que crear una semilla para la selecci�n de un nro aleatorio
-*/
 
 //1 operando
 
