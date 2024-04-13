@@ -21,7 +21,7 @@ typedef struct{
 
 void decodifica_cod_op(TOperando *op1,TOperando *op2,char cod_op[],MV *mv);
 
-void set_valor(TOperando *op, long int valor);
+void set_valor_inmediato(TOperando *op, long int valor);
 
 char tam_operando(TOperando op, char tipo);
 
@@ -34,5 +34,9 @@ void set_offset(TOperando *op, long int offset);
 void lee_operando(TOperando *op, MV *mv);
 
 char get_instruccion(MV *mv); //Nose si char o void porque hace dos cosas: devuleve instruccion y suma 1 al offset de IP
+
+void set_valor_op(TOperando *op,MV *mv);
+
+void reset_valor_op(TOperando *op,MV *mv);
 
 #endif

@@ -1,259 +1,95 @@
+#include <stdlib.h>
+#include <time.h>
 #include "funciones.h"
 
-void setea_cc(unsigned int resultadoFunc, MV *mv){
+void setea_cc(long int resultadoFunc, MV *mv){
     if (resultadoFunc < 0)
-        mv.tabla_de_registros[8] = 0x10000000;
+        mv->tabla_de_registros[8] = 0x10000000;
     else if (resultadoFunc == 0)
-         mv.tabla_de_registros[8] = 0x01000000;
+         mv->tabla_de_registros[8] = 0x01000000;
     else
-        mv.tabla_de_registros[8] = 0;
+        mv->tabla_de_registros[8] = 0;
 }
 
 /*  ----------------------------------------- FUNCIONES ----------------------------------------------*/
 
 //2 operandos
+
 void MOV(TOperando *op1, TOperando *op2, MV *mv){
-    if (op1.tipo == 0x00) {     //de memoria
-        mv.RAM[mv.tabla_de_segmentos[op1.posicion] + mv.tabla_de_segmentos[op1.offset]] = op2;
-    }
-    else if(op1.tipo == 0x10) {     //de registro
-        unsigned int posAux;
-        switch(op1.parteReg) {
-            case 0x00: {
-                //registro de 4 bytes
-                mv.tabla_de_registros[op1.posicion] = op2;
-                break;}
-            case 0x01: {
-                //4to byte del registro
-                posAux = op2.posicion & 0xFF;   //me quedo con el byte menos significativo
-                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFFFF00) + posAux;
-                break;}
-            case 0x10: {
-                //3er byte del registro
-                posAux = op2.posicion & 0xFF;   //me quedo con el byte menos significativo
-                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF00FF) + posAux;
-                break;}
-            case 0x11: {
-                //registro de 2 bytes
-                posAux = op2.posicion & 0xFFFF;   //me quedo con los ultimos 2 bytes
-                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF0000) + posAux;
-                break;}
-        }
-    }
-    //op1 no puede ser inmediato (cte)
+    op1->valor = op2->valor;
+    reset_valor_op(op1,mv);
 }
 
 void ADD(TOperando *op1, TOperando *op2, MV *mv){
-    unsigned int suma;
-
-    if (op1.tipo == 0x00) {     //de memoria
-        suma = op1.posicion + op2.posicion;
-        mv.RAM[mv.tabla_de_segmentos[op1.posicion] + mv.tabla_de_segmentos[op1.offset]] = suma;
-    }
-    else if(op1.tipo == 0x10) {     //de registro
-        unsigned int posAux;
-        switch(op1.parteReg) {
-            case 0x00: {
-                //registro de 4 bytes
-                suma = op1.posicion + op2.posicion;
-                mv.tabla_de_registros[op1.posicion] = suma;
-                break;}
-            case 0x01: {
-                //4to byte del registro
-                suma = (op1.posicion + op2.posicion) & 0xFF;   //me quedo con el byte menos significativo
-                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFFFF00) + suma;
-                if((0x80 & suma) != 0) {
-                    suma<<24;
-                    suma>>24;
-                }
-                break;}
-            case 0x10: {
-                //3er byte del registro
-                suma = (op1.posicion + op2.posicion) & 0xFF;   //me quedo con el byte menos significativo
-                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF00FF) + suma;
-                if((0x800 & suma) != 0) {
-                    suma<<16;
-                    suma>>16;
-                }
-                break;}
-            case 0x11: {
-                //registro de 2 bytes
-                suma = (op1.posicion + op2.posicion) & 0xFFFF;   //me quedo con los ultimos 2 bytes
-                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF0000) + suma;
-                if((0x800 & suma) != 0) {
-                    suma<<16;
-                    suma>>16;
-                }
-                break;}
-        }
-    }
+    long int suma;
+    suma = op1->valor + op2->valor;
+    op1->valor = suma; //Creo que puede evitarse la variable auxiliar en ADD SUB MUL DIV
     setea_cc(suma, mv);
+    reset_valor_op(op1,mv);
 }
 
 void SUB(TOperando *op1, TOperando *op2, MV *mv){
-    unsigned int resta;
-
-    if (op1.tipo == 0x00) {     //de memoria
-        resta = op1.posicion - op2.posicion;
-        mv.RAM[mv.tabla_de_segmentos[op1.posicion] + mv.tabla_de_segmentos[op1.offset]] = resta;
-    }
-    else if(op1.tipo == 0x10) {     //de registro
-        unsigned int posAux;
-        switch(op1.parteReg) {
-            case 0x00: {
-                //registro de 4 bytes
-                resta = op1.posicion - op2.posicion;
-                mv.tabla_de_registros[op1.posicion] = resta;
-                break;}
-            case 0x01: {
-                //4to byte del registro
-                resta = (op1.posicion - op2.posicion) & 0xFF;   //me quedo con el byte menos significativo
-                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFFFF00) + resta;
-                if((0x80 & resta) != 0) {
-                    resta<<24;
-                    resta>>24;
-                }
-                break;}
-            case 0x10: {
-                //3er byte del registro
-                resta = (op1.posicion - op2.posicion) & 0xFF;   //me quedo con el byte menos significativo
-                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF00FF) + resta;
-                if((0x800 & resta) != 0) {
-                    resta<<16;
-                    resta>>16;
-                }
-                break;}
-            case 0x11: {
-                //registro de 2 bytes
-                resta = (op1.posicion - op2.posicion) & 0xFFFF;   //me quedo con los ultimos 2 bytes
-                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF0000) + resta;
-                if((0x800 & resta) != 0) {
-                    resta<<16;
-                    resta>>16;
-                }
-                break;}
-        }
-    }
+    long int resta;
+    resta = op1->valor - op2->valor;
+    op1->valor = resta;
     setea_cc(resta, mv);
+    reset_valor_op(op1,mv);
 }
 
 void MUL(TOperando *op1, TOperando *op2, MV *mv){
-    unsigned int aux;
-
-    if (op1.tipo == 0x00) {     //de memoria
-        aux = op1.posicion * op2.posicion;
-        mv.RAM[mv.tabla_de_segmentos[op1.posicion] + mv.tabla_de_segmentos[op1.offset]] = aux;
-    }
-    else if(op1.tipo == 0x10) {     //de registro
-        unsigned int posAux;
-        switch(op1.parteReg) {
-            case 0x00: {
-                //registro de 4 bytes
-                aux = op1.posicion * op2.posicion;
-                mv.tabla_de_registros[op1.posicion] = aux;
-                break;}
-            case 0x01: {
-                //4to byte del registro
-                aux = (op1.posicion * op2.posicion) & 0xFF;   //me quedo con el byte menos significativo
-                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFFFF00) + aux;
-                if((0x80 & aux) != 0) {
-                    aux<<24;
-                    aux>>24;
-                }
-                break;}
-            case 0x10: {
-                //3er byte del registro
-                aux = (op1.posicion * op2.posicion) & 0xFF;   //me quedo con el byte menos significativo
-                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF00FF) + aux;
-                if((0x800 & aux) != 0) {
-                    aux<<16;
-                    aux>>16;
-                }
-                break;}
-            case 0x11: {
-                //registro de 2 bytes
-                aux = (op1.posicion * op2.posicion) & 0xFFFF;   //me quedo con los ultimos 2 bytes
-                mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF0000) + aux;
-                if((0x800 & aux) != 0) {
-                    aux<<16;
-                    aux>>16;
-                }
-                break;}
-        }
-    }
-    setea_cc(aux, mv);
+    long int prod;
+    prod = op1->valor - op2->valor;
+    op1->valor = prod;
+    setea_cc(prod, mv);
+    reset_valor_op(op1,mv);
 }
 
 void DIV(TOperando *op1, TOperando *op2, MV *mv){
-    unsigned int aux;
-
-    if(op2.posicion != 0){
-        if (op1.tipo == 0x00) {     //de memoria
-            aux = op1.posicion | op2.posicion;
-            mv.RAM[mv.tabla_de_segmentos[op1.posicion] + mv.tabla_de_segmentos[op1.offset]] = aux;
-            mv.tabla_de_registros[9] = op1.posicion % op2.posicion;
-        }
-        else if(op1.tipo == 0x10) {     //de registro
-            unsigned int posAux;
-            switch(op1.parteReg) {
-                case 0x00: {
-                    //registro de 4 bytes
-                    aux = op1.posicion | op2.posicion;
-                    mv.tabla_de_registros[op1.posicion] = aux;
-                    mv.tabla_de_registros[9] = op1.posicion % op2.posicion;
-                    break;}
-                case 0x01: {
-                    //4to byte del registro
-                    aux = (op1.posicion | op2.posicion) & 0xFF;   //me quedo con el byte menos significativo
-                    mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFFFF00) + aux;
-                    mv.tabla_de_registros[9] = (op1.posicion % op2.posicion) & 0xFF;
-                    if((0x80 & aux) != 0) {
-                        aux<<24;
-                        aux>>24;
-                    }
-                    break;}
-                case 0x10: {
-                    //3er byte del registro
-                    aux = (op1.posicion | op2.posicion) & 0xFF;   //me quedo con el byte menos significativo
-                    mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF00FF) + aux;
-                    mv.tabla_de_registros[9] = (op1.posicion % op2.posicion) & 0xFF;
-                    if((0x800 & aux) != 0) {
-                        aux<<16;
-                        aux>>16;
-                    }
-                    break;}
-                case 0x11: {
-                    //registro de 2 bytes
-                    aux = (op1.posicion | op2.posicion) & 0xFFFF;   //me quedo con los ultimos 2 bytes
-                    mv.tabla_de_registros[op1.posicion] = (mv.tabla_de_registros[op1.posicion] & 0xFFFF0000) + aux;
-                    mv.tabla_de_registros[9] = (op1.posicion % op2.posicion) & 0xFFFF;
-                    if((0x800 & aux) != 0) {
-                        aux<<16;
-                        aux>>16;
-                    }
-                    break;}
-            }
-        }
-        setea_cc(aux, mv);
+    long int div;
+    long int res;
+    if(op2->valor != 0){
+        div = op1->valor / op2->valor;
+        res = op1->valor % op2->valor;
+        op1->valor = div;
+        mv->tabla_de_registros[9] = res; //reg[9] -> AC
+        setea_cc(div,mv);
+        reset_valor_op(op1,mv);
     }
+    else{
+        //  Aca se lanza error de division por cero
+    }
+
 }
 
-void SWAP(TOperando *op1, TOperando *op2, MV *mv);
+void SWAP(TOperando *op1, TOperando *op2, MV *mv){
+    if(op2->tipo != 1){ //  Operando B distinto de inmediato, el A nunca puede ser inmediato
+        long int aux;
+        aux = op1->valor;
+        op1->valor = op2->valor;
+        op2->valor = aux;
+        reset_valor_op(op1,mv);
+        reset_valor_op(op2,mv);
+    }
+}
 
 /*
 intercambia los valores de los dos operandos (ambos deben ser registros y/o celdas de
 memoria).
 */
 
-void CMP(TOperando *op1, TOperando *op2, MV *mv);
+void CMP(TOperando *op1, TOperando *op2, MV *mv){
+    long int aux;
+    aux = op1->valor - op1->valor;
+    setea_cc(aux, mv);
+}
 /*
 el segundo operando se resta del primero, pero �ste no almacena el
 resultado, solamente se modifican los bits NZ del registro CC.
 */
 
-void SHL(TOperando *op1, TOperando *op2, MV *mv);
+void SHL(TOperando *op1, TOperando *op2, MV *mv){}
 
-void SHR(TOperando *op1, TOperando *op2, MV *mv);
+void SHR(TOperando *op1, TOperando *op2, MV *mv){}
 
 /*
 realizan desplazamientos a izquierda o a derecha, respectivamente, de los bits
@@ -263,18 +99,40 @@ En SHR los bits de la derecha propagan el bit anterior, es decir si el contenido
 el resultado seguir� siendo negativo, porque agrega 1. Si era un n�mero positivo, agrega 0.
 */
 
-void AND(TOperando *op1, TOperando *op2, MV *mv);
+void AND(TOperando *op1, TOperando *op2, MV *mv){
+    long int and;
+    and = op1->valor & op2->valor;
+    op1->valor = and;
+    setea_cc(and,mv);
+    reset_valor_op(op1,mv);
+}
 
-void OR(TOperando *op1, TOperando *op2, MV *mv);
+void OR(TOperando *op1, TOperando *op2, MV *mv){
+    long int or;
+    or = op1->valor | op2->valor;
+    op1->valor = or;
+    setea_cc(or,mv);
+    reset_valor_op(op1,mv);
+}
 
-void XOR(TOperando *op1, TOperando *op2, MV *mv);
+void XOR(TOperando *op1, TOperando *op2, MV *mv){
+    long int xor;
+    xor = op1->valor ^ op2->valor;
+    op1->valor = xor;
+    setea_cc(xor,mv);
+    reset_valor_op(op1,mv);
+}
 
 /*
 efect�an las operaciones l�gicas b�sicas bit a bit entre los operandos y afectan al
 registro CC. El resultado se almacena en el primer operando.(calculo que ser� el op2 ya que es el primero que decodificamos)
 */
 
-void RND(TOperando *op1, TOperando *op2, MV *mv);
+void RND(TOperando *op1, TOperando *op2, MV *mv){
+    srand (time(NULL));
+    op1->valor = rand() % (op2->valor + 1);
+    reset_valor_op(op1,mv);
+}
 
 /*
 carga en el primer operando un n�mero aleatorio entre 0 y el valor del segundo operando.
@@ -333,11 +191,11 @@ void STOP(TOperando *op, TOperando *op2, MV *mv){
 
 
 
-void decodifica_cod_op(TOperando *op1,TOperando *op2,TOperando *cod_op) {
-        /*en base a los cod de op hay que hacer un switch con los cod de arriba para que se ejecute la funci�n*/
-        /* con el bit m�s significativo del cod_op m�s los �ltimos 4 se genera el nro de operaci�n. Los �ltimos 4 se pasan a hexa y luego buscamos en el vec de funciones */
+/*void decodifica_cod_op(TOperando *op1,TOperando *op2,TOperando *cod_op) {
+        en base a los cod de op hay que hacer un switch con los cod de arriba para que se ejecute la funci�n
+         con el bit m�s significativo del cod_op m�s los �ltimos 4 se genera el nro de operaci�n. Los �ltimos 4 se pasan a hexa y luego buscamos en el vec de funciones
 }
-
+*/
 
 void iniciaVectorFunciones(VectorFunciones vecF)
 {

@@ -12,6 +12,8 @@ void valorOp(TOperando *op,MV *mv);
 
 /*  ----------------------------------------- FUNCIONES ----------------------------------------------*/
 
+void valorOp(TOperando *op,MV *mv);
+
 //2 operandos
 void MOV(TOperando *op1, TOperando *op2, MV *mv);
 
