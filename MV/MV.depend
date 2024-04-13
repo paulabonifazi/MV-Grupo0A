@@ -14,9 +14,12 @@
 1712361406 source:c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.c
 	"MV.h"
 
-1712101351 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\funciones.c
+1713014235 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\funciones.c
+	<stdlib.h>
+	<time.h>
+	"funciones.h"
 
-1712446404 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\main.c
+1713013933 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\main.c
 	<stdio.h>
 	<stdlib.h>
 	"Operando.h"
@@ -26,10 +29,10 @@
 1712446404 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\mv.c
 	"MV.h"
 
-1712534805 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\operando.c
+1713013933 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\operando.c
 	"Operando.h"
 
-1712531304 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\operando.h
+1713013933 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\operando.h
 	"MV.h"
 
 1713033220 c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.h
@@ -44,7 +47,17 @@
 1713033220 source:c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.c
 	"Operando.h"
 
-1712446404 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\mv.h
+1713013933 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\mv.h
 
-1712533015 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\funciones.h
+1713014198 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\funciones.h
+	"MV.h"
+	"Operando.h"
+
+1713018219 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.c
+	"Disassembler.h"
+
+1713018219 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
 
