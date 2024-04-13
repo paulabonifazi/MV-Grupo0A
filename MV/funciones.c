@@ -283,23 +283,6 @@ vamos a tener que crear una semilla para la selecci�n de un nro aleatorio
 */
 
 //1 operando
-<<<<<<< Updated upstream
-void SYS(TOperando *op2, MV *mv);
-
-void JMP(TOperando *op2, MV *mv);
-
-void JZ(TOperando *op2, MV *mv);
-
-void JP(TOperando *op2, MV *mv);
-
-void JN(TOperando *op2, MV *mv);
-
-void JNZ(TOperando *op2, MV *mv);
-
-void JNP(TOperando *op2, MV *mv);
-
-void JNN(TOperando *op2, MV *mv);
-=======
 void SYS(TOperando *op, TOperando *op2, MV *mv){}
 
 void JMP(TOperando *op, TOperando *op2, MV *mv){}
@@ -315,47 +298,25 @@ void JNZ(TOperando *op, TOperando *op2, MV *mv){}
 void JNP(TOperando *op, TOperando *op2, MV *mv){}
 
 void JNN(TOperando *op, TOperando *op2, MV *mv){}
->>>>>>> Stashed changes
 
 /*
 los saltos se dan analizando el valor del CC
 */
 
-<<<<<<< Updated upstream
-void LDL(TOperando *op2, MV *mv);
-=======
 void LDL(TOperando *op, TOperando *op2, MV *mv){
     int ms;
     ms = op->valor & 0x0000FFFF;
     mv->tabla_de_registros[9] = ms;
 }
->>>>>>> Stashed changes
 
-/*
-carga en los 2 bytes menos significativos del registro AC, con los 2 bytes menos significativos del
-operando. Esta instrucci�n est� especialmente pensada para poder cargar un inmediato de 16 bits,
-aunque tambi�n se puede utilizar con otro tipo de operando.
-*/
 
-<<<<<<< Updated upstream
-void LDH(TOperando *op2, MV *mv);
-=======
 void LDH(TOperando *op, TOperando *op2, MV *mv){
     long int ms;
     ms = (op->valor & 0x0000FFFF) << 16;
     mv->tabla_de_registros[9] = ms;
 }
->>>>>>> Stashed changes
 
-/*
-carga en los 2 bytes m�s significativos del registro AC, con los 2 bytes menos significativos del
-operando. Esta instrucci�n est� especialmente pensada para poder cargar un inmediato de 16 bits,
-aunque tambi�n se puede utilizar con otro tipo de operando.
-*/
 
-<<<<<<< Updated upstream
-void NOT(TOperando *op2, MV *mv);
-=======
 void NOT(TOperando *op, TOperando *op2, MV *mv){
     long int not;
     not = ~(op->valor);
@@ -363,20 +324,13 @@ void NOT(TOperando *op, TOperando *op2, MV *mv){
     setea_cc(not,mv);
     reset_valor_op(op,mv);
 }
->>>>>>> Stashed changes
 
-/*
-not l�gico bit a bit, afecta al CC
-*/
 
 //0 operandos
-<<<<<<< Updated upstream
-void stop();
-=======
 void STOP(TOperando *op, TOperando *op2, MV *mv){
-
+    mv.tabla_de_registros[5] = 0bFFFFFFFF;
 }
->>>>>>> Stashed changes
+
 
 
 void decodifica_cod_op(TOperando *op1,TOperando *op2,TOperando *cod_op) {
