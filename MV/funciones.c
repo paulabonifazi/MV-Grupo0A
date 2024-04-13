@@ -1,12 +1,13 @@
 #include <stdlib.h>
 #include <time.h>
+#include <stdio.h>
 #include "funciones.h"
 
 void setea_cc(long int resultadoFunc, MV *mv){
     if (resultadoFunc < 0)
-        mv->tabla_de_registros[8] = 0x10000000;
+        mv->tabla_de_registros[8] = 0x10000000; //  indicador signo
     else if (resultadoFunc == 0)
-         mv->tabla_de_registros[8] = 0x01000000;
+         mv->tabla_de_registros[8] = 0x01000000; // indicador 0
     else
         mv->tabla_de_registros[8] = 0;
 }
@@ -87,7 +88,13 @@ el segundo operando se resta del primero, pero �ste no almacena el
 resultado, solamente se modifican los bits NZ del registro CC.
 */
 
-void SHL(TOperando *op1, TOperando *op2, MV *mv){}
+void SHL(TOperando *op1, TOperando *op2, MV *mv){
+    long int aux;
+    aux = op1->valor << op2->valor;
+    setea_cc(aux,mv);
+    op1->valor = aux;
+    reset_valor_op(op1,mv);
+}
 
 void SHR(TOperando *op1, TOperando *op2, MV *mv){}
 
@@ -141,21 +148,131 @@ vamos a tener que crear una semilla para la selecci�n de un nro aleatorio
 */
 
 //1 operando
-void SYS(TOperando *op, MV *mv){}
 
-void JMP(TOperando *op, MV *mv){}
+void SYS(TOperando *op, TOperando *op2, MV *mv){
+    unsigned int entrada;
+    long int salida;
+    char tamCeldas = (mv->tabla_de_registros[12] & 0x0000FF00) >> 8; // CH
+    char cantCeldas = mv->tabla_de_registros[12] & 0x000000FF; // CL
+    if(op->valor == 1){ //  READ
+        switch(op->valor){
+            case 0b0001:{ // Decimal
+                for(int i = 0; i<cantCeldas; i++){
+                    printf("[%d]: ",mv->tabla_de_registros[13]);
+                    scanf("%d \n",&entrada);
+                    for(int j=0; j<tamCeldas; j++)
+                        mv->RAM[mv->tabla_de_registros[13]++] = entrada & (0x000000FF << (8*(tamCeldas-(j+1))));
+                }
+                break;
+            }
+            case 0b0010:{ // Caracter
+                for(int i = 0; i<cantCeldas; i++){
+                    printf("[%d]: ",mv->tabla_de_registros[13]);
+                    scanf("%c \n",&entrada);
+                    for(int j=0; j<tamCeldas; j++)
+                        mv->RAM[mv->tabla_de_registros[13]++] = entrada;
+                }
+                break;
+            }
+            case 0b0100:{ // Octal
+                for(int i = 0; i<cantCeldas; i++){
+                    printf("[%d]: ",mv->tabla_de_registros[13]);
+                    scanf("%o \n",&entrada);
+                    for(int j=0; j<tamCeldas; j++)
+                        mv->RAM[mv->tabla_de_registros[13]++] = entrada & (0x000000FF << (8*(tamCeldas-(j+1))));
+                }
+                break;
+            }
+            case 0b1000:{ // Hexa
+                for(int i = 0; i<cantCeldas; i++){
+                    printf("[%d]: ",mv->tabla_de_registros[13]);
+                    scanf("%x \n",&entrada);
+                    for(int j=0; j<tamCeldas; j++)
+                        mv->RAM[mv->tabla_de_registros[13]++] = entrada & (0x000000FF << (8*(tamCeldas-(j+1))));
+                }
+                break;
+            }
+        }
+    }
+    else if(op->valor == 2){
+        switch(op->valor){
+            case 0b0001:{ // Decimal
+                for(int i = 0; i<cantCeldas; i++){
+                    printf("[%d]: ",mv->tabla_de_registros[13]);
+                    for(int j=0; j<tamCeldas; j++)
+                        salida = mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)));
+                    printf("%d \n",salida);
+                }
+                break;
+            }
+            case 0b0010:{ // Caracter
+                for(int i = 0; i<cantCeldas; i++){
+                    printf("[%d]: ",mv->tabla_de_registros[13]);
+                    for(int j=0; j<tamCeldas; j++)
+                        salida = mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)));
+                    if(salida >= 32 && salida <= 126)
+                        printf("%d \n",salida);
+                    else
+                        printf(". \n");
+                }
+                break;
+            }
+            case 0b0100:{ // Octal
+                for(int i = 0; i<cantCeldas; i++){
+                    printf("[%d]: ",mv->tabla_de_registros[13]);
+                    for(int j=0; j<tamCeldas; j++)
+                        salida = mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)));
+                    printf("%o \n",salida);
+                }
+                break;
+            }
+            case 0b1000:{ // Hexa
+                for(int i = 0; i<cantCeldas; i++){
+                    printf("[%d]: ",mv->tabla_de_registros[13]);
+                    for(int j=0; j<tamCeldas; j++)
+                        salida = mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)));
+                    printf("%x \n",salida);
+                }
+                break;
+            }
+        }
+    }
+}
 
-void JZ(TOperando *op, MV *mv){}
+void JMP(TOperando *op, TOperando *op2, MV *mv){
+    mv->tabla_de_registros[5] = op->valor;
+}
 
-void JP(TOperando *op, MV *mv){}
+void JZ(TOperando *op, TOperando *op2, MV *mv){
+    if(mv->tabla_de_registros[8] == 0x01000000) // == 0
+        mv->tabla_de_registros[5] = op->valor;
+}
 
-void JN(TOperando *op, MV *mv){}
+void JP(TOperando *op, TOperando *op2, MV *mv){
+    if(mv->tabla_de_registros[8] != 0x01000000 && mv->tabla_de_registros[8] == 0x10000000) // >0
+        mv->tabla_de_registros[5] = op->valor;
+}
 
-void JNZ(TOperando *op, MV *mv){}
+void JN(TOperando *op, TOperando *op2, MV *mv){
+    if(mv->tabla_de_registros[8] == 0x10000000) // <0
+        mv->tabla_de_registros[5] = op->valor;
+}
 
-void JNP(TOperando *op, MV *mv){}
+void JNZ(TOperando *op, TOperando *op2, MV *mv){
+    if(mv->tabla_de_registros[8] != 0x01000000) // !=0
+        mv->tabla_de_registros[5] = op->valor;
+}
 
-void JNN(TOperando *op, MV *mv){}
+void JNP(TOperando *op, TOperando *op2, MV *mv){
+    if(mv->tabla_de_registros[8] == 0x01000000 || mv->tabla_de_registros[8] == 0x10000000) // <=0
+        mv->tabla_de_registros[5] = op->valor;
+}
+
+void JNN(TOperando *op, TOperando *op2, MV *mv){
+    if(mv->tabla_de_registros[8] != 0x10000000) // >=0
+        mv->tabla_de_registros[5] = op->valor;
+}
+
 
 /*
 los saltos se dan analizando el valor del CC
