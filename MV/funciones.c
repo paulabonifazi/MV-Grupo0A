@@ -186,16 +186,9 @@ void NOT(TOperando *op, TOperando *op2, MV *mv){
 
 //0 operandos
 void STOP(TOperando *op, TOperando *op2, MV *mv){
-    mv.tabla_de_registros[5] = 0bFFFFFFFF;
+    mv->tabla_de_registros[5] = 0xFFFFFFFF;
 }
 
-
-
-/*void decodifica_cod_op(TOperando *op1,TOperando *op2,TOperando *cod_op) {
-        en base a los cod de op hay que hacer un switch con los cod de arriba para que se ejecute la funci�n
-         con el bit m�s significativo del cod_op m�s los �ltimos 4 se genera el nro de operaci�n. Los �ltimos 4 se pasan a hexa y luego buscamos en el vec de funciones
-}
-*/
 
 void iniciaVectorFunciones(VectorFunciones vecF)
 {
