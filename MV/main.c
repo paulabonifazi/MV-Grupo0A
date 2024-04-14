@@ -244,10 +244,7 @@ int main(int argc, char *argv[])
     mv.RAM[1] = 0b00000000;
     mv.RAM[2] = 0b00000010;
 
-
-
-
-    decodifica_cod_op(opa,opb,cod_op,&mv);
+    decodifica_cod_op(opa,opb,cod_op, &mv);
 
     SYS(opa,opb,&mv);
     return 0;
