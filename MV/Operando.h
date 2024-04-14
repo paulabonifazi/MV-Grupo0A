@@ -3,6 +3,7 @@
 
 #include "MV.h"
 
+
 typedef struct{
     char tipo;
     unsigned int posicion;

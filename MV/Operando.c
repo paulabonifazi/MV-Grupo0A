@@ -32,7 +32,7 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,char cod_op[],MV *mv){
         lee_operando(op2, mv); //lectura op en base a tipo (opA)
         lee_operando(op1, mv); //lectura op en base a tipo (opB)
     }
-    else if(inst>>6 == 0b11){
+    else if(inst>>6 != 0b11){
         // un operando
         op1->tipo = inst>>6; //opA
         lee_operando(op1, mv);  //lectura op en base a tipo (opA)

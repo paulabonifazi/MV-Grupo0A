@@ -1,7 +1,9 @@
+#include "funciones.h"
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
-#include "funciones.h"
+
+
 
 void setea_cc(long int resultadoFunc, MV *mv){
     if (resultadoFunc < 0)
@@ -39,7 +41,7 @@ void SUB(TOperando *op1, TOperando *op2, MV *mv){
 
 void MUL(TOperando *op1, TOperando *op2, MV *mv){
     long int prod;
-    prod = op1->valor - op2->valor;
+    prod = op1->valor * op2->valor;
     op1->valor = prod;
     setea_cc(prod, mv);
     reset_valor_op(op1,mv);
@@ -76,7 +78,7 @@ void SWAP(TOperando *op1, TOperando *op2, MV *mv){
 
 void CMP(TOperando *op1, TOperando *op2, MV *mv){
     long int aux;
-    aux = op1->valor - op1->valor;
+    aux = op1->valor - op2->valor;
     setea_cc(aux, mv);
 }
 
@@ -91,7 +93,9 @@ void SHL(TOperando *op1, TOperando *op2, MV *mv){
 
 void SHR(TOperando *op1, TOperando *op2, MV *mv){
     long int aux;
+    long int maskN = op1->valor & 0x80000000;
     aux = op1->valor >> op2->valor;
+    aux = aux | maskN; // Si era negativo, pone 1 en bit mas significativo, sino se mantiene en 0
     setea_cc(aux,mv);
     op1->valor = aux;
     reset_valor_op(op1,mv);
@@ -132,7 +136,7 @@ void RND(TOperando *op1, TOperando *op2, MV *mv){
 
 void SYS(TOperando *op, TOperando *op2, MV *mv){
     unsigned int entrada;
-    long int salida;
+    long int salida = 0;
     char tamCeldas = (mv->tabla_de_registros[12] & 0x0000FF00) >> 8; // CH
     char cantCeldas = mv->tabla_de_registros[12] & 0x000000FF; // CL
     if(op->valor == 1){ //  READ
@@ -192,7 +196,7 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
                     for(int j=0; j<tamCeldas; j++)
                         salida = mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)));
                     if(salida >= 32 && salida <= 126)
-                        printf("%d \n",salida);
+                        printf("%c \n",salida);
                     else
                         printf(". \n");
                 }
@@ -230,7 +234,7 @@ void JZ(TOperando *op, TOperando *op2, MV *mv){
 }
 
 void JP(TOperando *op, TOperando *op2, MV *mv){
-    if(mv->tabla_de_registros[8] != 0x01000000 && mv->tabla_de_registros[8] == 0x10000000) // >0
+    if(mv->tabla_de_registros[8] != 0x01000000 && mv->tabla_de_registros[8] != 0x10000000) // >0
         mv->tabla_de_registros[5] = op->valor;
 }
 
