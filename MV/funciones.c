@@ -59,7 +59,8 @@ void DIV(TOperando *op1, TOperando *op2, MV *mv){
         reset_valor_op(op1,mv);
     }
     else{
-        //  Aca se lanza error de division por cero
+        printf("Division por cero");
+        STOP(op1,op2,mv);
     }
 
 }
