@@ -26,8 +26,8 @@ int main(int argc, char *argv[])
 
     MV mv;
     mv.tabla_de_segmentos[0].segmento = 0;
-    mv.tabla_de_segmentos[0].tam = 4; // 6 para dos operando mem e inmediato, 4 para un operando mem
-    mv.tabla_de_segmentos[1].segmento = 4; // 6 para dos operando mem e inmediato, 4 para un operando mem
+    mv.tabla_de_segmentos[0].tam = 3; // 6 para dos operando mem e inmediato, 4 para un operando mem
+    mv.tabla_de_segmentos[1].segmento = 3; // 6 para dos operando mem e inmediato, 4 para un operando mem
 
     /*Instruccion MOV [5], 37
     mv.RAM[0] = 0b01000000;
@@ -101,6 +101,16 @@ int main(int argc, char *argv[])
     /*Instruccion SHL [5], 4 con [5] conteniendo 2
     mv.RAM[14] = 0b00000010;
     mv.RAM[0] = 0b01000111;
+    mv.RAM[1] = 0b00000000;
+    mv.RAM[2] = 0b00000100;
+    mv.RAM[3] = 0b00000001;
+    mv.RAM[4] = 0b00000000;
+    mv.RAM[5] = 0b00000101;
+    */
+
+    /*Instruccion SHR [5], 4 con [5] conteniendo 16
+    mv.RAM[14] = 0b00010000;
+    mv.RAM[0] = 0b01001000;
     mv.RAM[1] = 0b00000000;
     mv.RAM[2] = 0b00000100;
     mv.RAM[3] = 0b00000001;
@@ -201,23 +211,52 @@ int main(int argc, char *argv[])
     mv.RAM[3] = 0b00000101;
     */
 
-    //*Instruccion JNP [5] con [5] conteniendo 9
+    /*Instruccion JNP [5] con [5] conteniendo 9
     mv.tabla_de_registros[8] = 0x00000000;
     mv.RAM[12] = 0b00001001;
     mv.RAM[0] = 0b00110111;
     mv.RAM[1] = 0b00000001;
     mv.RAM[2] = 0b00000000;
     mv.RAM[3] = 0b00000101;
+    */
+
+    /*Instruccion SWAP [5], [9] con [5] conteniendo 2 y [9] conteniendo 16
+    mv.RAM[15] = 0b00000010;
+    mv.RAM[19] = 0b00010000;
+    mv.RAM[0] = 0b00000011;
+    mv.RAM[1] = 0b00000001;
+    mv.RAM[2] = 0b00000000;
+    mv.RAM[3] = 0b00001001;
+    mv.RAM[4] = 0b00000001;
+    mv.RAM[5] = 0b00000000;
+    mv.RAM[6] = 0b00000101;
+    */
+
+    //*Instruccion SYS 2
+    mv.RAM[3] = 'h';
+    mv.RAM[4] = 'o';
+    mv.RAM[5] = 'l';
+    mv.RAM[6] = 'a';
+    mv.tabla_de_registros[13] = 3;
+    mv.tabla_de_registros[12] = 0b0000000100000100;
+    mv.tabla_de_registros[10] = 2;
+    mv.RAM[0] = 0b01110000;
+    mv.RAM[1] = 0b00000000;
+    mv.RAM[2] = 0b00000010;
+
+
+
 
     decodifica_cod_op(opa,opb,cod_op,&mv);
 
-    JNN(opa,opb,&mv);
+    SYS(opa,opb,&mv);
+    return 0;
     //printf("%x",mv.tabla_de_registros[8]);return 0; // Muestra CC
 
-    printf("%d",mv.tabla_de_registros[5]);return 0; // Muestra IP
+    //printf("%d",mv.tabla_de_registros[5]);return 0; // Muestra IP
 
     long int aux = 0;
-    for(int i = 11; i<15; i++){
+    for(int i = 11; i<16; i++){
         aux = aux + (mv.RAM[i]<<(24-((i-11)*8)) & 0xFF000000 >> ((i-11)*8));
         //printf("%x \n",aux);
     }
@@ -232,18 +271,18 @@ int main(int argc, char *argv[])
         MOV: Funciona correctamente
         ADD: Funciona correctamente
         SUB: Funciona correctamente
-        SWAP: Sin probar
+        SWAP: Funciona correctamente
         MUL: Funciona correctamente
         DIV: Funciona correctamente
         CMP: Funciona correctamente
         SHL: Funciona correctamente
-        SHR: Sin probar
+        SHR: Funciona correctamente
         AND: Funciona correctamente
         OR: Funciona correctamente
         XOR: Funciona correctamente
         RND: Funciona correctamente
 
-        SYS: Sin probar
+        SYS: WRITE: Funciona correctamente / READ: Sin Probar
         JMP: Funciona correctamente
         JZ: Funciona correctamente
         JP: Funciona correctamente

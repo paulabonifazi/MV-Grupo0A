@@ -136,7 +136,7 @@ void RND(TOperando *op1, TOperando *op2, MV *mv){
 
 void SYS(TOperando *op, TOperando *op2, MV *mv){
     unsigned int entrada;
-    long int salida;
+    long int salida = 0;
     char tamCeldas = (mv->tabla_de_registros[12] & 0x0000FF00) >> 8; // CH
     char cantCeldas = mv->tabla_de_registros[12] & 0x000000FF; // CL
     if(op->valor == 1){ //  READ
@@ -196,7 +196,7 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
                     for(int j=0; j<tamCeldas; j++)
                         salida = mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)));
                     if(salida >= 32 && salida <= 126)
-                        printf("%d \n",salida);
+                        printf("%c \n",salida);
                     else
                         printf(". \n");
                 }
