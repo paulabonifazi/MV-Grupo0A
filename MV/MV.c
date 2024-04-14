@@ -19,8 +19,14 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
             fread(&tam, sizeof(tam), 1, programa);  //leo tam del codigo
             mv->tabla_de_segmentos[0].tam = tam;    //seteo tamaño del cs
             mv->tabla_de_segmentos[1].tam = 16384 - tam;    //al ds le asigno toda la memoria menos el cs
+            mv->tabla_de_registros[0] = 0;             //seteo pos del registro CS
             mv->tabla_de_registros[1] = tam;        //seteo pos del registo DS
             mv->tabla_de_registros[5] = 0;             //pongo el cero el IP
+
+            //cargo el codigo al code segment
+            for (int i=0; i<tam; i++ ){
+                fread(&mv->RAM[i], sizeof(char), 1, programa);
+            }
         }
         else
             printf("Version incorrecta");
