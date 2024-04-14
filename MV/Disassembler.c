@@ -1,4 +1,5 @@
 #include "Disassembler.h"
+#include <string.h>
 
 void inicializaDisassembler(TDisassembler *dis){
     dis->reg[CS] = "CS";
@@ -72,7 +73,7 @@ void imprimeReg(long int registro, long int parteReg,char *registros[],char *mue
 }
 
 void muestraop( int nroOp, TOp operando,char *registros[]){
-     char muestra[15];
+    char muestra[15];
     char stnro[6];
     int espacio,i;
     strcpy(muestra,"");
