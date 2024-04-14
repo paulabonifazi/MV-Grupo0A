@@ -31,6 +31,10 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="Disassembler.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Disassembler.h" />
 		<Unit filename="MV.c">
 			<Option compilerVar="CC" />
 		</Unit>

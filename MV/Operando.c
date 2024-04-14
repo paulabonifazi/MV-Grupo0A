@@ -32,7 +32,7 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,char cod_op[],MV *mv){
         lee_operando(op2, mv); //lectura op en base a tipo (opA)
         lee_operando(op1, mv); //lectura op en base a tipo (opB)
     }
-    else if(inst>>6 == 0b11){
+    else if(inst>>6 != 0b11){
         // un operando
         op1->tipo = inst>>6; //opA
         lee_operando(op1, mv);  //lectura op en base a tipo (opA)
@@ -114,8 +114,18 @@ char get_instruccion(MV *mv){
 
 void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almacenado en la posicion de memoria o de registro a la cual apunta op
     if(op->tipo == 0b00){   //Memoria
-        for(int i=0; i<4; i++)
-            op->valor = op->valor + (mv->RAM[mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i] << (24 - (i*8))); //0x11111111 22222222 33333333 44444444
+        int i = 0;
+        unsigned int posRAM = mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i;
+        while(i<4 && posRAM<16384){
+            op->valor = op->valor + (mv->RAM[posRAM] << (24 - (i*8)));
+            i += 1;
+            posRAM += 1;
+        }
+        if(posRAM>=16384){
+            //Lanzar fallo de segmento
+        }
+        //for(int i=0; i<4; i++)
+            //op->valor = op->valor + (mv->RAM[mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i] << (24 - (i*8))); //0x11111111 22222222 33333333 44444444
     }
     else if(op->tipo == 0b10){  //Registro
         switch(op->parteReg) {

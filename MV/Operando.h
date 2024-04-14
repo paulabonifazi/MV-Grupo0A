@@ -3,6 +3,7 @@
 
 #include "MV.h"
 
+
 typedef struct{
     char tipo;
     unsigned int posicion;
@@ -19,7 +20,7 @@ typedef struct{
 /* Para poder asignar los tipos y el codigo de operacion a las variables
     habria que pasar la MV como parametro para poder ir leyendo de la RAM */
 
-void decodifica_cod_op(TOperando *op1,TOperando *op2,char cod_op[],MV *mv);
+void decodifica_cod_op(TOperando *op1,TOperando *op2,char cod_op[], MV *mv);
 
 void set_valor_inmediato(TOperando *op, long int valor);
 
@@ -33,10 +34,10 @@ void set_offset(TOperando *op, long int offset);
 
 void lee_operando(TOperando *op, MV *mv);
 
-char get_instruccion(MV *mv); //Nose si char o void porque hace dos cosas: devuleve instruccion y suma 1 al offset de IP
-
 void set_valor_op(TOperando *op,MV *mv);
 
 void reset_valor_op(TOperando *op,MV *mv);
+
+char get_instruccion(MV *mv);
 
 #endif
