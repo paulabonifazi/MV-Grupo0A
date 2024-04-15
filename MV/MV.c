@@ -120,7 +120,7 @@ void ejecutaMV(char arch[], char disassembler[]){
                 decodifica_cod_op(&op1, &op2, &codOp, &mv, &inst);
 
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
-                    vecF[codOp](&op1, &op1, &mv);}
+                    vecF[codOp](&op1, &op2, &mv);}
                 else{
                     printf("Código de operación inválido.");
                     exit(1);
