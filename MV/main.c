@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
             argumento[0]=argv[i];
 
     }
-
-    ejecutaMV(argumento[0], argumento[1]);
+    if((argumento[1] != NULL) && (argumento[0] != NULL))
+        ejecutaMV(argumento[0], argumento[1]);
 
 }
