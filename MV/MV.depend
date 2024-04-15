@@ -35,7 +35,7 @@
 	"MV.h"
 	"Disassembler.h"
 
-1713192383 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\mv.c
+1713193220 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\mv.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -71,11 +71,11 @@
 	"MV.h"
 	"Operando.h"
 
-1713192399 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.c
+1713193873 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.c
 	"Disassembler.h"
 	<string.h>
 
-1713192383 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.h
+1713193890 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
