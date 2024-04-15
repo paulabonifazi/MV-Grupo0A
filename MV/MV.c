@@ -73,7 +73,7 @@ void printeaDisassembler(MV *mv){
                 dis.op1.codOp = *mnemonicos[codOp];
 
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
-                    vecF[codOp](&op1, &op1, mv);
+                    vecF[codOp](&op1, &op2, mv);
                     cargaIns(&dis,posInstr, instr, codOp);
                     muestra(dis);
                 }
@@ -120,7 +120,7 @@ void ejecutaMV(char arch[], char disassembler[]){
                 decodifica_cod_op(&op1, &op2, &codOp, &mv, &inst);
 
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
-                    vecF[codOp](&op1, &op1, &mv);}
+                    vecF[codOp](&op1, &op2, &mv);}
                 else{
                     printf("C�digo de operaci�n inv�lido.");
                     exit(1);
