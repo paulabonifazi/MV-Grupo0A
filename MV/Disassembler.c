@@ -40,7 +40,7 @@ void cargaIns(TDisassembler *dis, unsigned int posinstr, char instr, char codope
 }
 
 
-void cargaOp(TDisassembler *dis, int nrodeop, char tipo, long int codOp, long int nro, long int registro, char tamaniocelda){
+void cargaOp(TDisassembler *dis, int nrodeop, char tipo, short int codOp, long int nro, long int registro, char tamaniocelda){
     TOp operando;
 
     operando.tamaniocelda = tamaniocelda;
@@ -147,7 +147,6 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
             muestraop(2, dis.op1,dis.reg);
         }
     }
-    //deberia de imprimir el de 0 op??
     printf("\n");
 }
 

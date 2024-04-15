@@ -60,7 +60,7 @@ void DIV(TOperando *op1, TOperando *op2, MV *mv){
     }
     else{
         printf("Division por cero");
-        STOP(op1,op2,mv);
+        exit(1);
     }
 
 }
