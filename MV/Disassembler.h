@@ -39,12 +39,12 @@ typedef struct {
     short int posinstr; //pos para printear desde el principio
     char instr;
     TOp op1,op2;
-    short int codoperacion;
+    short int codOp;
 }TDisassembler;
 
 void inicializaDisassembler(TDisassembler *dis);
 void reiniciaOperandos(TDisassembler *dis);
-void cargaIns(TDisassembler *dis, short int posinstr, char instr, char codoperacion[]);
+void cargaIns(TDisassembler *dis, short int posinstr, char instr, char codOp[]);
 void cargaOp(TDisassembler *dis, int nrodeop, char tipo, char codOp[], long int nro, long int registro);
 void muestra(TDisassembler dis);
 

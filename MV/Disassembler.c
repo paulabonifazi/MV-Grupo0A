@@ -16,7 +16,7 @@ void inicializaDisassembler(TDisassembler *dis){
 }
 
 void reiniciaOperandos(TDisassembler *dis){
-    strcpy((*dis).codoperacion, "");
+    strcpy((*dis).codOp, "");
     (*dis).op1.codOp = 0;
     (*dis).op1.nro = 0;
     (*dis).op1.registro = 0;
@@ -31,10 +31,10 @@ void reiniciaOperandos(TDisassembler *dis){
 }
 
 
-void cargaIns(TDisassembler *dis, short int posinstr, char instr, char codoperacion[]){
+void cargaIns(TDisassembler *dis, short int posinstr, char instr, char codOp[]){
     (*dis).posinstr = posinstr;
     (*dis).instr = instr;
-    (*dis).codoperacion = codoperacion;
+    (*dis).codOp = codOp;
 }
 
 void cargaOp(TDisassembler *dis, int nrodeop, char tipo, char codOp[], long int nro, long int registro){
@@ -130,7 +130,7 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
 
     for(i=0; i<=espacio; i++)
         printf("   ");
-    printf(" | %s ", dis.codoperacion);
+    printf(" | %s ", dis.codOp);
     if(dis.op1.tipo != 0x01){
         if(dis.op2.tipo != 0x01){ //2 operandos
             muestraop(1, dis.op1, dis.reg);

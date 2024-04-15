@@ -69,12 +69,36 @@ void printeaDisassembler(MV *mv){
                 reiniciaOperandos(&dis);
                 decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
 
-                //deber�a de setear los operandos del dis con los calculados en decodifica op!!
-                dis.op1.codOp = *mnemonicos[codOp];
+
+                //seteo los operandos del disassembler
+                //rearmo toda la instrucción completa y se la seteo al disassembler para que la muestre por consola
+                if((codOp >> 4) == 0){
+                    //dos operandos
+                    cargaOp(&dis, 1, op1.tipo, *mnemonicos[codOp], op1.valor, op1.parteReg);
+                    cargaOp(&dis, 2, op2.tipo, *mnemonicos[codOp], op2.valor, op2.parteReg);
+                    instr = (instr<<2) + op1.tipo;
+                    instr = (instr<<2) + op2.tipo;
+                    instr = (instr<<4) + codOp;
+                    instr = (instr<<(~op1.tipo)&0x03) + op1.valor;
+                    instr = (instr<<(~op2.tipo)&0x03) + op2.valor;
+                }else if(instr>>6 != 0b11){
+                    //un operando
+                    cargaOp(&dis, 1, op1.tipo, *mnemonicos[codOp], op1.valor, op1.parteReg);
+                    instr = (instr<<2) + op1.tipo;
+                    instr = (instr<<4) + codOp;
+                    instr = (instr<<(~op1.tipo)&0x03) + op1.valor;
+                }else{
+                    //sin operandos, Los operandos del disassembler ya estan inicializados, no se setean
+                    instr = (instr<<4) + codOp;
+                }
+
+
+
+
 
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
                     vecF[codOp](&op1, &op2, mv);
-                    cargaIns(&dis,posInstr, instr, codOp);
+                    cargaIns(&dis, posInstr, instr, codOp);
                     muestra(dis);
                 }
                 else{
