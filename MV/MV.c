@@ -60,6 +60,7 @@ void printeaDisassembler(MV *mv){
 
     printf("Ejecucion Maquina Virtual: \n");
     inicializaDisassembler(&dis);
+    iniciaVectorFunciones(vecF);
 
     //la ejecucion se da cuando el IP no sobrepasa el code segment
             while(mv->tabla_de_registros[IP] < mv->tabla_de_segmentos[CS].tam){
@@ -69,11 +70,11 @@ void printeaDisassembler(MV *mv){
                 decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
 
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
-                    printf("deberia de llamar a la instruccion");
-                    vecF[codOp](&op1, &op1, mv);
-                    printf("ya llamo a la instr\n");
+                    vecF[codOp](&op1, &op2, mv);
+
+                    //copiar la info de los operandos de la mv a los de dis
+
                     cargaIns(&dis,posInstr, instr, codOp);
-                    printf("ya cargo la instr\n");
                     muestra(dis);
                 }
                 else{
@@ -119,8 +120,7 @@ void ejecutaMV(char arch[], char disassembler[]){
                 decodifica_cod_op(&op1, &op2, &codOp, &mv, &inst);
 
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
-                    vecF[codOp](&op1, &op1, &mv);
-                    printf("ya se llamo a la funcion");}
+                    vecF[codOp](&op1, &op1, &mv);}
                 else{
                     printf("Código de operación inválido.");
                     exit(1);
