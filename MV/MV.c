@@ -45,11 +45,7 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
 }
 
 /* metodo que se encarga de mostrar por pantalla el disassembler
-<<<<<<< Updated upstream
     setea los operandos y decifra instrucción ´para mostrarlos por pantalla*/
-void printeaDisassembler(MV mv){
-=======
-    setea los operandos y decifra instrucción para mostrarlos por pantalla*/
 void printeaDisassembler(MV *mv){
     TDisassembler dis;
     VectorFunciones vecF;
@@ -86,7 +82,6 @@ void printeaDisassembler(MV *mv){
                 printf("Fin de la ejecución");
                 exit(1);
             }
->>>>>>> Stashed changes
 
 }
 
@@ -97,6 +92,7 @@ void ejecutaMV(char arch[], char disassembler[]){
     int ejecuta;
     VectorFunciones vecF;
     FILE* programa;
+    char instr;
     unsigned char codOp;
     TOperando op1,op2;
 
@@ -112,19 +108,16 @@ void ejecutaMV(char arch[], char disassembler[]){
         fclose(arch);
 
         if (disassembler != NULL){
-            printeaDisassembler(mv);
+            printeaDisassembler(&mv);
         }
         else{
             //la ejecucion se da cuando el IP no sobrepasa el code segment
             while(mv.tabla_de_registros[IP] < mv.tabla_de_segmentos[CS].tam){
-                decodifica_cod_op(&op1, &op2, codOp, &mv);
+                decodifica_cod_op(&op1, &op2, codOp, &mv, &instr);
 
-                if((0x00 <= codOp) && (codOp <= 0x0C) || (0x10 <= codOp) && (codOp <= 0x1A) || (codOp == 0x1F))
+                if((0x00 <= codOp) && (codOp <= 0x0C) || (0x10 <= codOp) && (codOp <= 0x1A) || (codOp == 0x1F)){
                     vecF[codOp](&op1, &op1, &mv);
-<<<<<<< Updated upstream
-=======
                 }
->>>>>>> Stashed changes
                 else{
                     printf("Código de operación inválido.");
                     exit(1);

@@ -26,7 +26,7 @@ char *mnemonicos[NUM_MNEMONICOS] = {
     };
 
 typedef struct {
-    char tipo,tamaniocelda;
+    char tipo;
     long int nro;
     long int registro;
     short int codOp;
@@ -43,15 +43,9 @@ typedef struct {
 }TDisassembler;
 
 void inicializaDisassembler(TDisassembler *dis);
-<<<<<<< Updated upstream
-void reiniciaOperandos(TDisassembler *ins);
-void cargaIns(TDisassembler *dis, unsigned int posinstr, char instr, char codoperacion[]);
-void cargaOp(TDisassembler *dis, int nrodeop, char tipo, short int codOp, long int nro, long int registro, char tamaniocelda);
-=======
 void reiniciaOperandos(TDisassembler *dis);
-void cargaIns(TDisassembler *dis, short int posinstr, char instr, char codoperacion);
-void cargaOp(TDisassembler *dis, int nrodeop, char tipo, char codOp, long int nro, long int registro);
->>>>>>> Stashed changes
+void cargaIns(TDisassembler *dis, short int posinstr, char instr, char codoperacion[]);
+void cargaOp(TDisassembler *dis, int nrodeop, char tipo, char codOp[], long int nro, long int registro);
 void muestra(TDisassembler dis);
 
 
