@@ -133,7 +133,7 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
     char muestra[20];
     strcpy(muestra,"");
 
-    printf("\n\ninstr: %02X\n\n", dis.instr);
+    //printf("\n\ninstr: %02X\n\n", dis.instr);
 
     printf("[%04X] %02X ", dis.posinstr, ((unsigned int)dis.instr)&0xFF); // 0 en byte mas significativo para que se muestre bien,sino pone todo FFFFFF
 
@@ -141,11 +141,14 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
     //OP2
     tamanio = (~dis.op2.tipo)&0x03; //el complemento del tipo de operando es su tama�o
 
+    //printf("tamanio op2: %d\n",tamanio);
+
     switch (tamanio){
         case 1:{ // registro
             char aux = 0;
-            aux = dis.op2.parteReg << 4;
-            aux = aux + dis.op2.posicion;
+            aux = (dis.op2.parteReg << 2) & 0b00110000;
+            aux = aux + (dis.op2.posicion & 0b00001111);
+            //printf("aux reg: %d \n",aux);
             printf("%02X ", aux);
             break;
         }
@@ -213,31 +216,33 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
     printf(" | %s ", mnemonicos[dis.codOp]);
     if(dis.op2.tipo != 3){
         //Dos op
-        strcat(muestra,"[");
+
         if(dis.op1.tipo == 2){ //registro
             int aux = 0;
-            aux = dis.op1.parteReg << 4;
+            //aux = dis.op1.parteReg << 4;
             aux = aux + dis.op1.posicion;
             strcat(muestra,dis.reg[aux]);
         }
         else{
+            strcat(muestra,"[");
             char aux[6];
             strcat(muestra,dis.reg[dis.op1.posicion]);
             strcat(muestra," + ");
             sprintf(aux, "%d", dis.op1.offset);
             strcat(muestra,aux);
+            strcat(muestra,"]");
         }
-        strcat(muestra,"], ");
+        strcat(muestra,", ");
 
         //op2
 
         if(dis.op2.tipo == 2){ //registro
-            strcat(muestra,"[");
+            //strcat(muestra,"[");
             int aux = 0;
-            aux = dis.op2.parteReg << 4;
+            //aux = dis.op2.parteReg << 4;
             aux = aux + dis.op2.posicion;
             strcat(muestra,dis.reg[aux]);
-            strcat(muestra,"]");
+            //strcat(muestra,"]");
         }
         else if(dis.op2.tipo == 0){ //memoria
             strcat(muestra,"[");
@@ -261,7 +266,7 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
         strcat(muestra,"[");
         if(dis.op1.tipo == 2){ //registro
             int aux = 0;
-            aux = dis.op1.parteReg << 4;
+            //aux = dis.op1.parteReg << 4;
             aux = aux + dis.op1.posicion;
             strcat(muestra,dis.reg[aux]);
         }

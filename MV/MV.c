@@ -23,6 +23,7 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
             tam = aux << 8;
             fread(&aux, sizeof(aux), 1, programa);  //leo tam del codigo
             tam = tam + aux;
+            //printf("Tamanio: %d\n",tam);
             mv->tabla_de_segmentos[CS].tam = tam;    //seteo tama�o del cs
             mv->tabla_de_segmentos[DS].tam = 16384 - tam;    //al ds le asigno toda la memoria menos el cs
             mv->tabla_de_segmentos[CS].segmento = 0;
@@ -65,6 +66,8 @@ void printeaDisassembler(MV *mv){
     //la ejecucion se da cuando el IP no sobrepasa el code segment
             while(mv->tabla_de_registros[IP] < mv->tabla_de_segmentos[CS].tam){
                 //reiniciaOperandos(&dis);
+               // printf("mv->tabla_de_registros[IP]: %d \n",mv->tabla_de_registros[IP]);
+                //printf("mv->tabla_de_segmentos[CS].tam: %d \n",mv->tabla_de_segmentos[CS].tam);
                 posInstr = mv->tabla_de_registros[IP];
                 //reiniciaOperandos(&dis);
                 decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
