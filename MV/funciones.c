@@ -19,6 +19,7 @@ void setea_cc(long int resultadoFunc, MV *mv){
 //2 operandos
 
 void MOV(TOperando *op1, TOperando *op2, MV *mv){
+    printf("entro mov");
     op1->valor = op2->valor;
     reset_valor_op(op1,mv);
 }

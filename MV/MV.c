@@ -71,6 +71,7 @@ void printeaDisassembler(MV *mv){
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
                     printf("deberia de llamar a la instruccion");
                     vecF[codOp](&op1, &op1, mv);
+                    printf("ya llamo a la instr\n");
                     cargaIns(&dis,posInstr, instr, codOp);
                     printf("ya cargo la instr\n");
                     muestra(dis);
@@ -117,8 +118,9 @@ void ejecutaMV(char arch[], char disassembler[]){
             while(mv.tabla_de_registros[IP] < mv.tabla_de_segmentos[CS].tam){
                 decodifica_cod_op(&op1, &op2, &codOp, &mv, &inst);
 
-                if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F))
+                if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
                     vecF[codOp](&op1, &op1, &mv);
+                    printf("ya se llamo a la funcion");}
                 else{
                     printf("Código de operación inválido.");
                     exit(1);
