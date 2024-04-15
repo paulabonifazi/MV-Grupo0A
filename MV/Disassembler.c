@@ -34,7 +34,7 @@ void reiniciaOperandos(TDisassembler *dis){
 void cargaIns(TDisassembler *dis, short int posinstr, char instr, char codoperacion[]){
     (*dis).posinstr = posinstr;
     (*dis).instr = instr;
-    strcpy((*dis).codoperacion, codoperacion);
+    (*dis).codoperacion = codoperacion;
 }
 
 void cargaOp(TDisassembler *dis, int nrodeop, char tipo, char codOp[], long int nro, long int registro){
@@ -113,7 +113,7 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
 
     printf("[%04X] %02X ", dis.posinstr, ((unsigned int)dis.instr)&0xFF); // 0 en byte mas significativo para que se muestre bien,sino pone todo FFFFFF
 
-    tamanio = (~dis.op1.tipo)&0x03; //el complemento del tipo de operando es su tamaño
+    tamanio = (~dis.op1.tipo)&0x03; //el complemento del tipo de operando es su tamaï¿½o
     for(i=0; i<tamanio; i++){
         printf("%02X ", dis.op1.codOp&0xFF);
         dis.op1.codOp = dis.op1.codOp>>8;

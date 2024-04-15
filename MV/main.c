@@ -12,15 +12,12 @@ int main(int argc, char *argv[])
     argumento[0]=NULL;
     argumento[1]=NULL;
 
-    for(int i=0; i<argc; i++){
-        if (strcmp(argv[i],"-d")==0)
-            argumento[1]=argv[i];
+    argumento[0] = argv[1];
+    argumento[1] = argv[2];
 
-        if (strlen(argv[i])>4 && (strcmp(argv[i]+strlen(argv[i])-4,".vmx")==0))
-            argumento[0]=argv[i];
 
-    }
-    if((argumento[1] != NULL) && (argumento[0] != NULL))
-        ejecutaMV(argumento[0], argumento[1]);
+    ejecutaMV(argumento[0], argumento[1]);
 
+    return 0;
 }
+

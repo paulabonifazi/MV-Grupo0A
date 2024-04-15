@@ -10,6 +10,7 @@
 void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
       unsigned short int tam;           //tamanio del codigo
       char version, identificador[5];   //version 1, indentificador = "VMX24"
+      char aux;
 
       *ejecuta = 0;
       fread(identificador, sizeof(identificador),1, programa);
@@ -18,8 +19,12 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
       if (strcmp(identificador, "VMX24")){
         if (version == 1){
             *ejecuta = 1;
-            fread(&tam, sizeof(tam), 1, programa);  //leo tam del codigo
-            mv->tabla_de_segmentos[CS].tam = tam;    //seteo tamaño del cs
+            fread(&aux, sizeof(aux), 1, programa);
+            tam = aux << 8;
+            fread(&aux, sizeof(aux), 1, programa);  //leo tam del codigo
+            tam = tam + aux;
+
+            mv->tabla_de_segmentos[CS].tam = tam;    //seteo tamaï¿½o del cs
             mv->tabla_de_segmentos[DS].tam = 16384 - tam;    //al ds le asigno toda la memoria menos el cs
             mv->tabla_de_segmentos[CS].segmento = 0;
             mv->tabla_de_segmentos[DS].segmento =  tam;
@@ -41,11 +46,10 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
         printf("Identificador incorrecto");
         exit(1);
       }
-
 }
 
 /* metodo que se encarga de mostrar por pantalla el disassembler
-    setea los operandos y decifra instrucción ´para mostrarlos por pantalla*/
+    setea los operandos y decifra instrucciï¿½n ï¿½para mostrarlos por pantalla*/
 void printeaDisassembler(MV *mv){
     TDisassembler dis;
     VectorFunciones vecF;
@@ -65,7 +69,7 @@ void printeaDisassembler(MV *mv){
                 reiniciaOperandos(&dis);
                 decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
 
-                //debería de setear los operandos del dis con los calculados en decodifica op!!
+                //deberï¿½a de setear los operandos del dis con los calculados en decodifica op!!
                 dis.op1.codOp = *mnemonicos[codOp];
 
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
@@ -74,12 +78,12 @@ void printeaDisassembler(MV *mv){
                     muestra(dis);
                 }
                 else{
-                    printf("Código de operación inválido.");
+                    printf("Cï¿½digo de operaciï¿½n invï¿½lido.");
                     exit(1);
                 }
             }
             if(mv->tabla_de_registros[IP] == 0xFFFFFFFF){
-                printf("Fin de la ejecución");
+                printf("Fin de la ejecuciï¿½n");
                 exit(1);
             }
 
@@ -90,10 +94,10 @@ void printeaDisassembler(MV *mv){
 void ejecutaMV(char arch[], char disassembler[]){
     MV mv;
     int ejecuta;
+    char inst;
     VectorFunciones vecF;
     FILE* programa;
-    char instr;
-    unsigned char codOp;
+    short int codOp;
     TOperando op1,op2;
 
     iniciaVectorFunciones(vecF);
@@ -105,7 +109,7 @@ void ejecutaMV(char arch[], char disassembler[]){
     }
     else{
         iniciaMV(programa, &mv, &ejecuta);
-        fclose(arch);
+        fclose(programa);
 
         if (disassembler != NULL){
             printeaDisassembler(&mv);
@@ -113,19 +117,21 @@ void ejecutaMV(char arch[], char disassembler[]){
         else{
             //la ejecucion se da cuando el IP no sobrepasa el code segment
             while(mv.tabla_de_registros[IP] < mv.tabla_de_segmentos[CS].tam){
-                decodifica_cod_op(&op1, &op2, codOp, &mv, &instr);
+                decodifica_cod_op(&op1, &op2, &codOp, &mv, &inst);
 
-                if((0x00 <= codOp) && (codOp <= 0x0C) || (0x10 <= codOp) && (codOp <= 0x1A) || (codOp == 0x1F)){
-                    vecF[codOp](&op1, &op1, &mv);
-                }
+                if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
+                    vecF[codOp](&op1, &op1, &mv);}
                 else{
-                    printf("Código de operación inválido.");
+                    printf("Cï¿½digo de operaciï¿½n invï¿½lido.");
                     exit(1);
                 }
             }
-            if(mv.tabla_de_registros[IP] == 0xFFFFFFFF)
-                printf("Fin de la ejecución");
+
+            if(mv.tabla_de_registros[IP] == 0xFFFFFFFF){
+                printf("Fin de la ejecuciï¿½n");
                 exit(1);
+            }
         }
     }
 }
+

@@ -36,10 +36,10 @@ typedef struct {
 
 typedef struct {
     char* reg[16];
-    unsigned int posinstr; //pos para printear desde el principio
+    short int posinstr; //pos para printear desde el principio
     char instr;
     TOp op1,op2;
-    char codoperacion[TAMINSTR];
+    short int codoperacion;
 }TDisassembler;
 
 void inicializaDisassembler(TDisassembler *dis);
