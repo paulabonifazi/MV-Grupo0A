@@ -7,9 +7,9 @@
     Despues desarrolle un poco las otras funciones aca adentro, habria que pasarlas cada una a su funcion
     y cambiar las cabeceras para poder pasar la instruccion como parametro
  */
-void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv){
+void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv, char *inst){
 
-    char inst = get_instruccion(mv);
+    *inst = get_instruccion(mv);
     *cod_op = 0;
     /* primer linea: bbaooooo
         a = tipo a -> 00000bba & 00000001 (0x01)
@@ -23,18 +23,20 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv){
     */
 
     //set cod operacion
-    *cod_op = inst & 0x1F;
+    *cod_op = (*inst) & 0x1F;
+
+    printf("cod operacion: %d\n", cod_op);
 
     if((*cod_op >> 4) == 0){
         // dos operandos
-        op2->tipo = inst>>6; //opB
-        op1->tipo = (inst>>5) & 0x01; //opA
+        op2->tipo = (*inst)>>6; //opB
+        op1->tipo = ((*inst)>>5) & 0x01; //opA
         lee_operando(op2, mv); //lectura op en base a tipo (opA)
         lee_operando(op1, mv); //lectura op en base a tipo (opB)
     }
-    else if(inst>>6 != 0b11){
+    else if((*inst)>>6 != 0b11){
         // un operando
-        op1->tipo = inst>>6; //opA
+        op1->tipo = (*inst)>>6; //opA
         lee_operando(op1, mv);  //lectura op en base a tipo (opA)
     }
     else {

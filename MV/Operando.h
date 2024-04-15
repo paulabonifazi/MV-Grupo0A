@@ -11,16 +11,8 @@ typedef struct{
     long int valor;
     long int offset;
 } TOperando;
-/* podríamos usar este tipo para los operandos así almacenamos toda la info
-    no sé si op1 y op2 sean parte de la MV o definirlas en el main*/
 
-/* En funciones con dos operandos, el tipo del operando A(1) nunca puede ser un inmediato, puede ser
-    de memoria o de registro*/
-
-/* Para poder asignar los tipos y el codigo de operacion a las variables
-    habria que pasar la MV como parametro para poder ir leyendo de la RAM */
-
-void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op, MV *mv);
+void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op, MV *mv, char *inst);
 
 void set_valor_inmediato(TOperando *op, long int valor);
 

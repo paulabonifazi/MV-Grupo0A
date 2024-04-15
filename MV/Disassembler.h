@@ -20,7 +20,7 @@
 
 
 typedef struct {
-    char tipo,tamaniocelda;
+    char tipo;
     long int nro;
     long int registro;
     short int codOp;
@@ -38,8 +38,8 @@ typedef struct {
 
 void inicializaDisassembler(TDisassembler *dis);
 void reiniciaOperandos(TDisassembler *dis);
-void cargaIns(TDisassembler *dis, short int posinstr, char instr, short int *codoperacion);
-void cargaOp(TDisassembler *dis, int nrodeop, char tipo, short int codOp, long int nro, long int registro, char tamaniocelda);
+void cargaIns(TDisassembler *dis, short int posinstr, char instr, short int codoperacion);
+void cargaOp(TDisassembler *dis, int nrodeop, char tipo, short int codOp, long int nro, long int registro);
 void muestra(TDisassembler dis);
 
 

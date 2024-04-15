@@ -21,29 +21,26 @@ void reiniciaOperandos(TDisassembler *dis){
     (*dis).op1.nro = 0;
     (*dis).op1.registro = 0;
     (*dis).op1.tipo = 3;
-    (*dis).op1.tamaniocelda = 0;
 
     (*dis).op2.codOp = 0;
     (*dis).op2.nro = 0;
     (*dis).op2.registro = 0;
     (*dis).op2.tipo = 3;
-    (*dis).op2.tamaniocelda = 0;
     (*dis).instr = 0;
     (*dis).posinstr = 0;
 }
 
-
-void cargaIns(TDisassembler *dis, short int posinstr, char instr, short int *codoperacion){
+void cargaIns(TDisassembler *dis, short int posinstr, char instr, short int codoperacion){
+    printf("carga instr\n");
     (*dis).posinstr = posinstr;
     (*dis).instr = instr;
     (*dis).codoperacion = codoperacion;
 }
 
 
-void cargaOp(TDisassembler *dis, int nrodeop, char tipo, short int codOp, long int nro, long int registro, char tamaniocelda){
+void cargaOp(TDisassembler *dis, int nrodeop, char tipo, short int codOp, long int nro, long int registro){
     TOp operando;
 
-    operando.tamaniocelda = tamaniocelda;
     operando.codOp = codOp;
     operando.nro = nro;
     operando.registro = registro;
@@ -79,14 +76,7 @@ void muestraop( int nroOp, TOp operando,char *registros[]){
     strcpy(muestra,"");
     strcpy(stnro,"");
     switch(operando.tipo){
-        case 0: if(operando.tamaniocelda==4)
-                    strcpy(muestra,"l");
-                else
-                    if(operando.tamaniocelda==2)
-                       strcpy(muestra,"w");
-                    else
-                        strcpy(muestra,"b");
-
+        case 0:  strcpy(muestra,"l");
                 strcat(muestra,"[");
                 imprimeReg(operando.registro,0,registros,muestra);
                 if(operando.nro!=0){
