@@ -16,7 +16,7 @@
 
 int main(int argc, char *argv[])
 {
-
+/*
     TOperando* opa;
     opa = (TOperando *) malloc (sizeof(TOperando));
     TOperando* opb;
@@ -231,6 +231,7 @@ int main(int argc, char *argv[])
     mv.RAM[5] = 0b00000000;
     mv.RAM[6] = 0b00000101;
     */
+    /*
 
     //*Instruccion SYS 2
     mv.RAM[3] = 'h';
@@ -261,6 +262,8 @@ int main(int argc, char *argv[])
 
     printf("%ld \n",aux);
     //printf("%ld ",mv.tabla_de_registros[9]); // Muestra AL
+
+    */
     return 0;
     /* operandos: primero se hace el alloc y despues se llama a set_operando()*/
     /*

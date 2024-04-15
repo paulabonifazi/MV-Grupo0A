@@ -1,15 +1,16 @@
 #include "Operando.h"
-
+#include <stdlib.h>
+#include <stdio.h>
 
 /*
     A revisar, lo pense asi pero capaz hay alguna manera mejor de calcular las posiciones en la memoria
     Despues desarrolle un poco las otras funciones aca adentro, habria que pasarlas cada una a su funcion
     y cambiar las cabeceras para poder pasar la instruccion como parametro
  */
-void decodifica_cod_op(TOperando *op1,TOperando *op2,char cod_op[],MV *mv){
+void decodifica_cod_op(TOperando *op1,TOperando *op2,short int cod_op,MV *mv){
 
     char inst = get_instruccion(mv);
-
+    cod_op = 0;
     /* primer linea: bbaooooo
         a = tipo a -> 00000bba & 00000001 (0x01)
         b = tipo b -> 000000bb
@@ -22,10 +23,9 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,char cod_op[],MV *mv){
     */
 
     //set cod operacion
-    for(int i=0; i<5; i++)
-        cod_op[i] = (inst >> (4-i)) & 0x01;
+    cod_op = inst & 0x1F;
 
-    if(cod_op[0] == 0){
+    if((cod_op >> 4) == 0){
         // dos operandos
         op2->tipo = inst>>6; //opB
         op1->tipo = (inst>>5) & 0x01; //opA
@@ -122,7 +122,8 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
             posRAM += 1;
         }
         if(posRAM>=16384){
-            //Lanzar fallo de segmento
+            printf("Fallo de segmento");
+            exit(1);
         }
         //for(int i=0; i<4; i++)
             //op->valor = op->valor + (mv->RAM[mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i] << (24 - (i*8))); //0x11111111 22222222 33333333 44444444

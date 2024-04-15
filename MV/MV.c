@@ -21,6 +21,8 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
             fread(&tam, sizeof(tam), 1, programa);  //leo tam del codigo
             mv->tabla_de_segmentos[CS].tam = tam;    //seteo tamaño del cs
             mv->tabla_de_segmentos[DS].tam = 16384 - tam;    //al ds le asigno toda la memoria menos el cs
+            mv->tabla_de_segmentos[CS].segmento = 0;
+            mv->tabla_de_segmentos[DS].segmento =  tam;
             mv->tabla_de_registros[CS] = 0;             //seteo pos del registro CS
             mv->tabla_de_registros[DS] = tam;        //seteo pos del registo DS
             mv->tabla_de_registros[IP] = 0;             //pongo el cero el IP
@@ -30,11 +32,15 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
                 fread(&mv->RAM[i], sizeof(char), 1, programa);
             }
         }
-        else
+        else{
             printf("Version incorrecta");
+            exit(1);
+        }
       }
-      else
+      else{
         printf("Identificador incorrecto");
+        exit(1);
+      }
 
 }
 
@@ -51,7 +57,6 @@ void ejecutaMV(char arch[], char disassembler[]){
     int ejecuta;
     VectorFunciones vecF;
     FILE* programa;
-    char instr,car;
     unsigned char codOp;
     TOperando op1,op2;
 
@@ -60,6 +65,7 @@ void ejecutaMV(char arch[], char disassembler[]){
 
     if(programa == NULL) {
         printf("Error. No se encuentra el archivo.");
+        exit(1);
     }
     else{
         iniciaMV(programa, &mv, &ejecuta);
@@ -71,11 +77,18 @@ void ejecutaMV(char arch[], char disassembler[]){
         else{
             //la ejecucion se da cuando el IP no sobrepasa el code segment
             while(mv.tabla_de_registros[IP] < mv.tabla_de_segmentos[CS].tam){
-                instr = mv.RAM[(short int)mv.tabla_de_registros[IP]];
-                mv.tabla_de_registros[IP]++;     //muevo el IP a la prox instr
-                //decodifica_cod_op(&op1, &op2, codOp, inst, &mv);
+                decodifica_cod_op(&op1, &op2, codOp, &mv);
 
+                if((0x00 <= codOp) && (codOp <= 0x0C) || (0x10 <= codOp) && (codOp <= 0x1A) || (codOp == 0x1F))
+                    vecF[codOp](&op1, &op1, &mv);
+                else{
+                    printf("Código de operación inválido.");
+                    exit(1);
+                }
             }
+            if(mv.tabla_de_registros[IP] == 0xFFFFFFFF)
+                printf("Fin de la ejecución");
+                exit(1);
         }
     }
 }

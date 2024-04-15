@@ -23,7 +23,7 @@ typedef struct {
     char tipo,tamaniocelda;
     long int nro;
     long int registro;
-    long int codOp;
+    short int codOp;
 }TOp;
 
 //defino otro tipo de operando ya que el TOperando tiene info que no nos sirve para printear el debbuger
@@ -39,7 +39,7 @@ typedef struct {
 void inicializaDisassembler(TDisassembler *dis);
 void reiniciaOperandos(TDisassembler *ins);
 void cargaIns(TDisassembler *dis, unsigned int posinstr, char instr, char codoperacion[]);
-void cargaOp(TDisassembler *dis, int nrodeop, char tipo, long int codOp, long int nro, long int registro, char tamaniocelda);
+void cargaOp(TDisassembler *dis, int nrodeop, char tipo, short int codOp, long int nro, long int registro, char tamaniocelda);
 void muestra(TDisassembler dis);
 
 
