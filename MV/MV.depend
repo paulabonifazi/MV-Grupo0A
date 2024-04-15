@@ -1,11 +1,11 @@
 # depslib dependency file v1.0
-1713132704 source:c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.c
+1713196219 source:c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.c
 	"funciones.h"
 	<stdlib.h>
 	<time.h>
 	<stdio.h>
 
-1713110571 source:c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\main.c
+1713196164 source:c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\main.c
 	<stdio.h>
 	<stdlib.h>
 	"Operando.h"
@@ -13,13 +13,15 @@
 	"MV.h"
 	"Disassembler.h"
 
-1713132457 source:c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.c
+1713197180 source:c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	<unistd.h>
 	"MV.h"
 	"funciones.h"
+	"Disassembler.h"
+	"Operando.h"
 
 1713158043 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\funciones.c
 	"funciones.h"
@@ -53,17 +55,19 @@
 1713158402 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\operando.h
 	"MV.h"
 
-1713067490 c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.h
+1713196246 c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.h
 	"MV.h"
 
-1713066319 c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.h
+1713196230 c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.h
 	"MV.h"
 	"Operando.h"
 
-1713132457 c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.h
+1713196212 c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.h
 
-1713133385 source:c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.c
+1713196239 source:c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.c
 	"Operando.h"
+	<stdlib.h>
+	<stdio.h>
 
 1713134659 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\mv.h
 
@@ -80,11 +84,11 @@
 	<stdlib.h>
 	<string.h>
 
-1713074404 source:c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\disassembler.c
+1713197157 source:c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\disassembler.c
 	"Disassembler.h"
 	<string.h>
 
-1713066319 c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\disassembler.h
+1713197125 c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\disassembler.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>

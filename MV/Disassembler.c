@@ -107,6 +107,12 @@ void muestraop( int nroOp, TOp operando,char *registros[]){
 }
 
 void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
+    char *mnemonicos[NUM_MNEMONICOS] = {
+        "MOV", "ADD", "SUB", "SWAP", "MUL", "DIV", "CMP", "SHL",
+        "SHR", "AND", "OR", "XOR", "RND", NULL, NULL, NULL, "SYS", "JMP",
+        "JZ", "JP", "JN", "JNZ", "JNP", "JNN", "LDL", "LDH",
+        "NOT", NULL, NULL, NULL, NULL, "STOP"
+    };
     int tamanio, i, espacio = 0;
 
     printf("\n\ninstr: %02X\n\n", dis.instr);
@@ -130,7 +136,7 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
 
     for(i=0; i<=espacio; i++)
         printf("   ");
-    printf(" | %s ", dis.codOp);
+    printf(" | %s ", *mnemonicos[dis.codOp]);
     if(dis.op1.tipo != 0x01){
         if(dis.op2.tipo != 0x01){ //2 operandos
             muestraop(1, dis.op1, dis.reg);

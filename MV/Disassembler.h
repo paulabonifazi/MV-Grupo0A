@@ -18,12 +18,9 @@
 #define EEX 14
 #define EFX 15
 
-char *mnemonicos[NUM_MNEMONICOS] = {
-        "MOV", "ADD", "SUB", "SWAP", "MUL", "DIV", "CMP", "SHL",
-        "SHR", "AND", "OR", "XOR", "RND", NULL, NULL, NULL, "SYS", "JMP",
-        "JZ", "JP", "JN", "JNZ", "JNP", "JNN", "LDL", "LDH",
-        "NOT", NULL, NULL, NULL, NULL, "STOP"
-    };
+
+
+
 
 typedef struct {
     char tipo;

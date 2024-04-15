@@ -51,6 +51,7 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
 /* metodo que se encarga de mostrar por pantalla el disassembler
     setea los operandos y decifra instrucci�n �para mostrarlos por pantalla*/
 void printeaDisassembler(MV *mv){
+
     TDisassembler dis;
     VectorFunciones vecF;
     char instr;
@@ -69,20 +70,20 @@ void printeaDisassembler(MV *mv){
                 reiniciaOperandos(&dis);
                 decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
 
-
+                printf("%d",codOp);
                 //seteo los operandos del disassembler
                 //rearmo toda la instrucción completa y se la seteo al disassembler para que la muestre por consola
                 if((codOp >> 4) == 0){
                     //dos operandos
-                    cargaOp(&dis, 1, op1.tipo, *mnemonicos[codOp], op1.valor, op1.parteReg);
-                    cargaOp(&dis, 2, op2.tipo, *mnemonicos[codOp], op2.valor, op2.parteReg);
+                    cargaOp(&dis, 1, op1.tipo, codOp, op1.valor, op1.parteReg);
+                    cargaOp(&dis, 2, op2.tipo, codOp, op2.valor, op2.parteReg);
                     instr = (instr<<2) + op1.tipo;
                     instr = (instr<<2) + op2.tipo;
                     instr = (instr<<(~op1.tipo)&0x03) + op1.valor;
                     instr = (instr<<(~op2.tipo)&0x03) + op2.valor;
                 }else if(instr>>6 != 0b11){
                     //un operando
-                    cargaOp(&dis, 1, op1.tipo, *mnemonicos[codOp], op1.valor, op1.parteReg);
+                    cargaOp(&dis, 1, op1.tipo, codOp, op1.valor, op1.parteReg);
                     instr = (instr<<2) + op1.tipo;
                     instr = (instr<<(~op1.tipo)&0x03) + op1.valor;
                 }else{
