@@ -27,7 +27,7 @@
 	<time.h>
 	<stdio.h>
 
-1713136316 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\main.c
+1713140289 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\main.c
 	<stdio.h>
 	<stdlib.h>
 	"Operando.h"
@@ -71,7 +71,7 @@
 	"MV.h"
 	"Operando.h"
 
-1713134659 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.c
+1713139581 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.c
 	"Disassembler.h"
 	<string.h>
 
