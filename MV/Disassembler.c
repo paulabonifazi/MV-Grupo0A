@@ -16,7 +16,7 @@ void inicializaDisassembler(TDisassembler *dis){
 }
 
 void reiniciaOperandos(TDisassembler *dis){
-    (*dis).codoperacion = 0;
+    strcpy((*dis).codOp, "");
     (*dis).op1.codOp = 0;
     (*dis).op1.nro = 0;
     (*dis).op1.registro = 0;
@@ -30,18 +30,17 @@ void reiniciaOperandos(TDisassembler *dis){
     (*dis).posinstr = 0;
 }
 
-void cargaIns(TDisassembler *dis, short int posinstr, char instr, short int codoperacion){
-    printf("carga instr\n");
+
+void cargaIns(TDisassembler *dis, short int posinstr, char instr, char codOp[]){
     (*dis).posinstr = posinstr;
     (*dis).instr = instr;
-    (*dis).codoperacion = codoperacion;
+    (*dis).codOp = codOp;
 }
 
-
-void cargaOp(TDisassembler *dis, int nrodeop, char tipo, short int codOp, long int nro, long int registro){
+void cargaOp(TDisassembler *dis, int nrodeop, char tipo, char codOp[], long int nro, long int registro){
     TOp operando;
 
-    operando.codOp = codOp;
+    strcpy(operando.codOp, codOp);
     operando.nro = nro;
     operando.registro = registro;
     operando.tipo = tipo;
@@ -73,10 +72,12 @@ void muestraop( int nroOp, TOp operando,char *registros[]){
     char muestra[15];
     char stnro[6];
     int espacio,i;
+
     strcpy(muestra,"");
     strcpy(stnro,"");
     switch(operando.tipo){
-        case 0:  strcpy(muestra,"l");
+        case 0:  printf("\nsoy un op de memoria\n");
+                strcpy(muestra,"l");
                 strcat(muestra,"[");
                 imprimeReg(operando.registro,0,registros,muestra);
                 if(operando.nro!=0){
@@ -108,9 +109,11 @@ void muestraop( int nroOp, TOp operando,char *registros[]){
 void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
     int tamanio, i, espacio = 0;
 
+    printf("\n\ninstr: %02X\n\n", dis.instr);
+
     printf("[%04X] %02X ", dis.posinstr, ((unsigned int)dis.instr)&0xFF); // 0 en byte mas significativo para que se muestre bien,sino pone todo FFFFFF
 
-    tamanio = (~dis.op1.tipo)&0x03; //el complemento del tipo de operando es su tamaño
+    tamanio = (~dis.op1.tipo)&0x03; //el complemento del tipo de operando es su tamaï¿½o
     for(i=0; i<tamanio; i++){
         printf("%02X ", dis.op1.codOp&0xFF);
         dis.op1.codOp = dis.op1.codOp>>8;
@@ -127,7 +130,7 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
 
     for(i=0; i<=espacio; i++)
         printf("   ");
-    printf(" | %s ", dis.codoperacion);
+    printf(" | %s ", dis.codOp);
     if(dis.op1.tipo != 0x01){
         if(dis.op2.tipo != 0x01){ //2 operandos
             muestraop(1, dis.op1, dis.reg);

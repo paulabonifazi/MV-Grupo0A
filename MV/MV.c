@@ -24,7 +24,7 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
             fread(&aux, sizeof(aux), 1, programa);  //leo tam del codigo
             tam = tam + aux;
 
-            mv->tabla_de_segmentos[CS].tam = tam;    //seteo tamaño del cs
+            mv->tabla_de_segmentos[CS].tam = tam;    //seteo tamaï¿½o del cs
             mv->tabla_de_segmentos[DS].tam = 16384 - tam;    //al ds le asigno toda la memoria menos el cs
             mv->tabla_de_segmentos[CS].segmento = 0;
             mv->tabla_de_segmentos[DS].segmento =  tam;
@@ -49,7 +49,7 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
 }
 
 /* metodo que se encarga de mostrar por pantalla el disassembler
-    setea los operandos y decifra instrucción para mostrarlos por pantalla*/
+    setea los operandos y decifra instrucciï¿½n ï¿½para mostrarlos por pantalla*/
 void printeaDisassembler(MV *mv){
     TDisassembler dis;
     VectorFunciones vecF;
@@ -69,21 +69,38 @@ void printeaDisassembler(MV *mv){
                 reiniciaOperandos(&dis);
                 decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
 
+
+                //seteo los operandos del disassembler
+                //rearmo toda la instrucciÃ³n completa y se la seteo al disassembler para que la muestre por consola
+                if((codOp >> 4) == 0){
+                    //dos operandos
+                    cargaOp(&dis, 1, op1.tipo, *mnemonicos[codOp], op1.valor, op1.parteReg);
+                    cargaOp(&dis, 2, op2.tipo, *mnemonicos[codOp], op2.valor, op2.parteReg);
+                    instr = (instr<<2) + op1.tipo;
+                    instr = (instr<<2) + op2.tipo;
+                    instr = (instr<<(~op1.tipo)&0x03) + op1.valor;
+                    instr = (instr<<(~op2.tipo)&0x03) + op2.valor;
+                }else if(instr>>6 != 0b11){
+                    //un operando
+                    cargaOp(&dis, 1, op1.tipo, *mnemonicos[codOp], op1.valor, op1.parteReg);
+                    instr = (instr<<2) + op1.tipo;
+                    instr = (instr<<(~op1.tipo)&0x03) + op1.valor;
+                }else{
+                    //sin operandos, Los operandos del disassembler ya estan inicializados, no se setean
+                }
+
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
                     vecF[codOp](&op1, &op2, mv);
-
-                    //copiar la info de los operandos de la mv a los de dis
-
-                    cargaIns(&dis,posInstr, instr, codOp);
+                    cargaIns(&dis, posInstr, instr, codOp);
                     muestra(dis);
                 }
                 else{
-                    printf("Código de operación inválido.");
+                    printf("Codigo de operacion invalido.");
                     exit(1);
                 }
             }
             if(mv->tabla_de_registros[IP] == 0xFFFFFFFF){
-                printf("Fin de la ejecución");
+                printf("Fin de la ejecuciï¿½n");
                 exit(1);
             }
 
@@ -122,13 +139,13 @@ void ejecutaMV(char arch[], char disassembler[]){
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
                     vecF[codOp](&op1, &op2, &mv);}
                 else{
-                    printf("Código de operación inválido.");
+                    printf("Cï¿½digo de operaciï¿½n invï¿½lido.");
                     exit(1);
                 }
             }
 
             if(mv.tabla_de_registros[IP] == 0xFFFFFFFF){
-                printf("Fin de la ejecución");
+                printf("Fin de la ejecuciï¿½n");
                 exit(1);
             }
         }

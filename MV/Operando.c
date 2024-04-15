@@ -153,7 +153,7 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
                 break;}
         }
     }
-    //Si es inmediato ya tiene el valor seteado de cuando se leyó el codigo de operacion
+    //Si es inmediato ya tiene el valor seteado de cuando se leyï¿½ el codigo de operacion
 }
 
 void reset_valor_op(TOperando *op,MV *mv){ //Guarda en la posicion a la cual apunta op en memoria o en registro el valor almacenado en op->valor
