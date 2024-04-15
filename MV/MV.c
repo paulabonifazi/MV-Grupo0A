@@ -23,7 +23,6 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
             tam = aux << 8;
             fread(&aux, sizeof(aux), 1, programa);  //leo tam del codigo
             tam = tam + aux;
-
             mv->tabla_de_segmentos[CS].tam = tam;    //seteo tama�o del cs
             mv->tabla_de_segmentos[DS].tam = 16384 - tam;    //al ds le asigno toda la memoria menos el cs
             mv->tabla_de_segmentos[CS].segmento = 0;
@@ -65,27 +64,28 @@ void printeaDisassembler(MV *mv){
 
     //la ejecucion se da cuando el IP no sobrepasa el code segment
             while(mv->tabla_de_registros[IP] < mv->tabla_de_segmentos[CS].tam){
-                reiniciaOperandos(&dis);
+                //reiniciaOperandos(&dis);
                 posInstr = mv->tabla_de_registros[IP];
-                reiniciaOperandos(&dis);
+                //reiniciaOperandos(&dis);
                 decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
 
-                printf("%d",codOp);
+                //printf("%d",codOp);
                 //seteo los operandos del disassembler
                 //rearmo toda la instrucción completa y se la seteo al disassembler para que la muestre por consola
                 if((codOp >> 4) == 0){
                     //dos operandos
-                    cargaOp(&dis, 1, op1.tipo, codOp, op1.valor, op1.parteReg);
-                    cargaOp(&dis, 2, op2.tipo, codOp, op2.valor, op2.parteReg);
-                    instr = (instr<<2) + op1.tipo;
-                    instr = (instr<<2) + op2.tipo;
-                    instr = (instr<<(~op1.tipo)&0x03) + op1.valor;
-                    instr = (instr<<(~op2.tipo)&0x03) + op2.valor;
+                    cargaOp(&dis, 1, op1);
+                    cargaOp(&dis, 2, op2);
+                    //instr = (instr<<2) + op1.tipo;
+                    //instr = (instr<<2) + op2.tipo;
+                    //instr = (instr<<(~op1.tipo)&0x03) + op1.valor;
+                    //instr = (instr<<(~op2.tipo)&0x03) + op2.valor;
+                    //printf("Instruccion en MV: %x",instr);
                 }else if(instr>>6 != 0b11){
                     //un operando
-                    cargaOp(&dis, 1, op1.tipo, codOp, op1.valor, op1.parteReg);
-                    instr = (instr<<2) + op1.tipo;
-                    instr = (instr<<(~op1.tipo)&0x03) + op1.valor;
+                    cargaOp(&dis, 1, op1);
+                    //instr = (instr<<2) + op1.tipo;
+                    //instr = (instr<<(~op1.tipo)&0x03) + op1.valor;
                 }else{
                     //sin operandos, Los operandos del disassembler ya estan inicializados, no se setean
                 }

@@ -10,6 +10,7 @@
 void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv, char *inst){
 
     *inst = get_instruccion(mv);
+    //printf("Instruccion en deco: %x\n",*inst);
     *cod_op = 0;
     /* primer linea: bbaooooo
         a = tipo a -> 00000bba & 00000001 (0x01)
@@ -25,7 +26,7 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv, c
     //set cod operacion
     *cod_op = (*inst) & 0x1F;
 
-    printf("cod operacion: %d\n", cod_op);
+    //printf("cod operacion: %d\n", *cod_op);
 
     if((*cod_op >> 4) == 0){
         // dos operandos
@@ -37,9 +38,12 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv, c
     else if((*inst)>>6 != 0b11){
         // un operando
         op1->tipo = (*inst)>>6; //opA
+        op2->tipo = 0b11;
         lee_operando(op1, mv);  //lectura op en base a tipo (opA)
     }
     else {
+        op1->tipo = 0b11;
+        op2->tipo = 0b11;
         // sin operando
     }
 }
@@ -117,7 +121,12 @@ char get_instruccion(MV *mv){
 void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almacenado en la posicion de memoria o de registro a la cual apunta op
     if(op->tipo == 0b00){   //Memoria
         int i = 0;
-        unsigned int posRAM = mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i;
+        // posRAM = mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i; si cod_reg = 1
+        // posRAM = mv->tabla_de_registros[op->posicion] + mv->tabla_de_segmentos[1].segmento + op->offset + i; si cod_reg != 1
+        unsigned int posRAM = mv->tabla_de_segmentos[1].segmento + op->offset + i;
+        if(op->posicion > 1){
+            posRAM += mv->tabla_de_registros[op->posicion];
+        }
         //printf("%d", op->posicion);
         //printf("%d", op->offset);
         //printf("%d", posRAM);
@@ -159,7 +168,10 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
 void reset_valor_op(TOperando *op,MV *mv){ //Guarda en la posicion a la cual apunta op en memoria o en registro el valor almacenado en op->valor
     if(op->tipo == 0b00){   //Memoria
         for(int i=0; i<4; i++)
-            mv->RAM[mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i] = (op->valor>>(24-i*8)) & 0x000000FF;
+            if(op->posicion == 1)
+                mv->RAM[mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i] = (op->valor>>(24-i*8)) & 0x000000FF;
+            else
+                mv->RAM[mv->tabla_de_registros[op->posicion] + mv->tabla_de_segmentos[1].segmento + op->offset + i] = (op->valor>>(24-i*8)) & 0x000000FF;
     }
     else if(op->tipo == 0b10){  //Registro
         switch(op->parteReg) {
