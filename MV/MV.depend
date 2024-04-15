@@ -21,7 +21,11 @@
 	"MV.h"
 	"funciones.h"
 
+<<<<<<< Updated upstream
 1713139165 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\funciones.c
+=======
+1713155079 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\funciones.c
+>>>>>>> Stashed changes
 	"funciones.h"
 	<stdlib.h>
 	<time.h>
@@ -35,7 +39,11 @@
 	"MV.h"
 	"Disassembler.h"
 
+<<<<<<< Updated upstream
 1713139467 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\mv.c
+=======
+1713156247 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\mv.c
+>>>>>>> Stashed changes
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -45,7 +53,11 @@
 	"Disassembler.h"
 	"Operando.h"
 
+<<<<<<< Updated upstream
 1713139122 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\operando.c
+=======
+1713155079 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\operando.c
+>>>>>>> Stashed changes
 	"Operando.h"
 	<stdlib.h>
 	<stdio.h>
@@ -71,11 +83,18 @@
 	"MV.h"
 	"Operando.h"
 
+<<<<<<< Updated upstream
 1713139581 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.c
+=======
+1713156679 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.c
+>>>>>>> Stashed changes
 	"Disassembler.h"
-	<string.h>
 
+<<<<<<< Updated upstream
 1713139494 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.h
+=======
+1713156870 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.h
+>>>>>>> Stashed changes
 	<stdio.h>
 	<stdlib.h>
 	<string.h>

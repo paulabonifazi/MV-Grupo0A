@@ -25,7 +25,11 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,short int cod_op,MV *mv){
     //set cod operacion
     cod_op = inst & 0x1F;
 
+<<<<<<< Updated upstream
     if((cod_op >> 4) == 0){
+=======
+    if((*cod_op >> 4) == 0){
+>>>>>>> Stashed changes
         // dos operandos
         op2->tipo = inst>>6; //opB
         op1->tipo = (inst>>5) & 0x01; //opA

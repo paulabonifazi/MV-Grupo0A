@@ -45,8 +45,48 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
 }
 
 /* metodo que se encarga de mostrar por pantalla el disassembler
+<<<<<<< Updated upstream
     setea los operandos y decifra instrucción ´para mostrarlos por pantalla*/
 void printeaDisassembler(MV mv){
+=======
+    setea los operandos y decifra instrucción para mostrarlos por pantalla*/
+void printeaDisassembler(MV *mv){
+    TDisassembler dis;
+    VectorFunciones vecF;
+    char instr;
+    short int codOp;
+    short int posInstr;
+    TOperando op1,op2;
+
+    printf("Ejecucion Maquina Virtual: \n");
+    inicializaDisassembler(&dis);
+    iniciaVectorFunciones(vecF);
+
+    //la ejecucion se da cuando el IP no sobrepasa el code segment
+            while(mv->tabla_de_registros[IP] < mv->tabla_de_segmentos[CS].tam){
+                reiniciaOperandos(&dis);
+                posInstr = mv->tabla_de_registros[IP];
+                reiniciaOperandos(&dis);
+                decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
+
+                //debería de setear los operandos del dis con los calculados en decodifica op!!
+                dis.op1.codOp = *mnemonicos[codOp];
+
+                if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
+                    vecF[codOp](&op1, &op1, mv);
+                    cargaIns(&dis,posInstr, instr, codOp);
+                    muestra(dis);
+                }
+                else{
+                    printf("Código de operación inválido.");
+                    exit(1);
+                }
+            }
+            if(mv->tabla_de_registros[IP] == 0xFFFFFFFF){
+                printf("Fin de la ejecución");
+                exit(1);
+            }
+>>>>>>> Stashed changes
 
 }
 
@@ -81,6 +121,10 @@ void ejecutaMV(char arch[], char disassembler[]){
 
                 if((0x00 <= codOp) && (codOp <= 0x0C) || (0x10 <= codOp) && (codOp <= 0x1A) || (codOp == 0x1F))
                     vecF[codOp](&op1, &op1, &mv);
+<<<<<<< Updated upstream
+=======
+                }
+>>>>>>> Stashed changes
                 else{
                     printf("Código de operación inválido.");
                     exit(1);
