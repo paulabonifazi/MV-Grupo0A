@@ -15,28 +15,28 @@ void inicializaDisassembler(TDisassembler *dis){
     dis->reg[EFX] = "EFX";
 }
 
-void reiniciaOperandos(TDisassembler *ins){
-    strcpy((*ins).codoperacion,"");
-    (*ins).op1.codOp = 0;
-    (*ins).op1.nro = 0;
-    (*ins).op1.registro = 0;
-    (*ins).op1.tipo = 3;
-    (*ins).op1.tamaniocelda = 0;
+void reiniciaOperandos(TDisassembler *dis){
+    (*dis).codoperacion = 0;
+    (*dis).op1.codOp = 0;
+    (*dis).op1.nro = 0;
+    (*dis).op1.registro = 0;
+    (*dis).op1.tipo = 3;
+    (*dis).op1.tamaniocelda = 0;
 
-    (*ins).op2.codOp = 0;
-    (*ins).op2.nro = 0;
-    (*ins).op2.registro = 0;
-    (*ins).op2.tipo = 3;
-    (*ins).op2.tamaniocelda = 0;
-    (*ins).instr = 0;
-    (*ins).posinstr = 0;
+    (*dis).op2.codOp = 0;
+    (*dis).op2.nro = 0;
+    (*dis).op2.registro = 0;
+    (*dis).op2.tipo = 3;
+    (*dis).op2.tamaniocelda = 0;
+    (*dis).instr = 0;
+    (*dis).posinstr = 0;
 }
 
 
-void cargaIns(TDisassembler *dis, unsigned int posinstr, char instr, char codoperacion[]){
+void cargaIns(TDisassembler *dis, short int posinstr, char instr, short int *codoperacion){
     (*dis).posinstr = posinstr;
     (*dis).instr = instr;
-    strcpy((*dis).codoperacion, codoperacion);
+    (*dis).codoperacion = codoperacion;
 }
 
 

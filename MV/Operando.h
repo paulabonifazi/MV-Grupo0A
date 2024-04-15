@@ -20,7 +20,7 @@ typedef struct{
 /* Para poder asignar los tipos y el codigo de operacion a las variables
     habria que pasar la MV como parametro para poder ir leyendo de la RAM */
 
-void decodifica_cod_op(TOperando *op1,TOperando *op2,short int cod_op, MV *mv);
+void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op, MV *mv);
 
 void set_valor_inmediato(TOperando *op, long int valor);
 

@@ -7,10 +7,10 @@
     Despues desarrolle un poco las otras funciones aca adentro, habria que pasarlas cada una a su funcion
     y cambiar las cabeceras para poder pasar la instruccion como parametro
  */
-void decodifica_cod_op(TOperando *op1,TOperando *op2,short int cod_op,MV *mv){
+void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv){
 
     char inst = get_instruccion(mv);
-    cod_op = 0;
+    *cod_op = 0;
     /* primer linea: bbaooooo
         a = tipo a -> 00000bba & 00000001 (0x01)
         b = tipo b -> 000000bb
@@ -23,9 +23,9 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,short int cod_op,MV *mv){
     */
 
     //set cod operacion
-    cod_op = inst & 0x1F;
+    *cod_op = inst & 0x1F;
 
-    if((cod_op >> 4) == 0){
+    if((*cod_op >> 4) == 0){
         // dos operandos
         op2->tipo = inst>>6; //opB
         op1->tipo = (inst>>5) & 0x01; //opA
@@ -116,6 +116,9 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
     if(op->tipo == 0b00){   //Memoria
         int i = 0;
         unsigned int posRAM = mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i;
+        //printf("%d", op->posicion);
+        //printf("%d", op->offset);
+        //printf("%d", posRAM);
         while(i<4 && posRAM<16384){
             op->valor = op->valor + (mv->RAM[posRAM] << (24 - (i*8)));
             i += 1;
