@@ -106,6 +106,7 @@ void lee_operando(TOperando *op, MV *mv){
             //unsigned int pos = cod_reg;
             char sec_reg = (reg & 0b00110000) >> 4;
             char pos = (reg & 0b00001111);
+            set_parteReg(op,sec_reg);
             set_posicion(op,pos);
             set_valor_op(op,mv); // En base al sector y el codigo de reg se obtiene el valor de ese registro y se almacena en op.valor
             break;

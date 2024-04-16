@@ -129,8 +129,19 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
         "JZ", "JP", "JN", "JNZ", "JNP", "JNN", "LDL", "LDH",
         "NOT", NULL, NULL, NULL, NULL, "STOP"
     };
+
+    char *registros[70] = {
+        "CS", "DS", NULL, NULL, NULL, "IP", NULL, NULL, "CC", "AC",
+        "EAX", "EBX", "ECX", "EDX", "EEX", "EFX", NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, "AL", "BL", "CL", "DL",
+        "EL", "FL", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, "AH", "BH", "CH", "DH", "EH", "FH", NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "AX", "BX",
+        "CX", "DX", "EX", "FX", NULL, NULL, NULL, NULL, NULL, NULL
+    };
+
     int tamanio, i, espacio = 0;
-    char muestra[20];
+    char muestra[40];
     strcpy(muestra,"");
 
     //printf("\n\ninstr: %02X\n\n", dis.instr);
@@ -219,14 +230,16 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
 
         if(dis.op1.tipo == 2){ //registro
             int aux = 0;
-            //aux = dis.op1.parteReg << 4;
+            //printf("--parte reg op1: %d--",dis.op1.parteReg);
+            aux = dis.op1.parteReg << 4;
             aux = aux + dis.op1.posicion;
-            strcat(muestra,dis.reg[aux]);
+            //printf("--aux op1: %d--",aux);
+            strcat(muestra,registros[aux]);
         }
         else{
             strcat(muestra,"[");
             char aux[6];
-            strcat(muestra,dis.reg[dis.op1.posicion]);
+            strcat(muestra,registros[dis.op1.posicion]);
             strcat(muestra," + ");
             sprintf(aux, "%d", dis.op1.offset);
             strcat(muestra,aux);
@@ -239,15 +252,16 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
         if(dis.op2.tipo == 2){ //registro
             //strcat(muestra,"[");
             int aux = 0;
-            //aux = dis.op2.parteReg << 4;
+            aux = dis.op2.parteReg << 4;
             aux = aux + dis.op2.posicion;
-            strcat(muestra,dis.reg[aux]);
+            //printf("--aux op2: %d--",aux);
+            strcat(muestra,registros[aux]);
             //strcat(muestra,"]");
         }
         else if(dis.op2.tipo == 0){ //memoria
             strcat(muestra,"[");
             char aux[6];
-            strcat(muestra,dis.reg[dis.op2.posicion]);
+            strcat(muestra,registros[dis.op2.posicion]);
             strcat(muestra," + ");
             sprintf(aux, "%d", dis.op2.offset);
             strcat(muestra,aux);
@@ -266,13 +280,13 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
         strcat(muestra,"[");
         if(dis.op1.tipo == 2){ //registro
             int aux = 0;
-            //aux = dis.op1.parteReg << 4;
+            aux = dis.op1.parteReg << 4;
             aux = aux + dis.op1.posicion;
-            strcat(muestra,dis.reg[aux]);
+            strcat(muestra,registros[aux]);
         }
         else{
             char aux[6];
-            strcat(muestra,dis.reg[dis.op1.posicion]);
+            strcat(muestra,registros[dis.op1.posicion]);
             strcat(muestra," + ");
             sprintf(aux, "%d", dis.op1.offset);
             strcat(muestra,aux);
