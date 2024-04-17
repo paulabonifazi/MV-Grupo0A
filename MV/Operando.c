@@ -29,7 +29,8 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv, c
 
     //printf("cod operacion: %d\n", *cod_op);
 
-    if((*cod_op >> 4) == 0){
+    //printf("bit cantidad operandos: %d\n",(*cod_op >> 4)&0x01);
+    if(((*cod_op >> 4)&0x01) == 0){
         // dos operandos
         //printf("a: %d\n",(*inst)>>6);
         op2->tipo = (*inst & 0b11000000)>>6; //opB
@@ -156,19 +157,19 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
     }
     else if(op->tipo == 0b10){  //Registro
         switch(op->parteReg) {
-            case 0x00: {
+            case 0b00: {
                 //registro de 4 bytes
                 op->valor = mv->tabla_de_registros[op->posicion];
                 break;}
-            case 0x01: {
+            case 0b01: {
                 //4to byte del registro
                 op->valor = mv->tabla_de_registros[op->posicion] & 0x000000FF;
                 break;}
-            case 0x10: {
+            case 0b10: {
                 //3er byte del registro
                 op->valor = (mv->tabla_de_registros[op->posicion] & 0x0000FF00) >> 8;
                 break;}
-            case 0x11: {
+            case 0b11: {
                 //registro de 2 bytes
                 op->valor = mv->tabla_de_registros[op->posicion] & 0x0000FFFF;
                 break;}
@@ -186,20 +187,22 @@ void reset_valor_op(TOperando *op,MV *mv){ //Guarda en la posicion a la cual apu
                 mv->RAM[mv->tabla_de_registros[op->posicion] + mv->tabla_de_segmentos[1].segmento + op->offset + i] = (op->valor>>(24-i*8)) & 0x000000FF;
     }
     else if(op->tipo == 0b10){  //Registro
+        //printf("op->parteReg: %d\n",op->parteReg);
         switch(op->parteReg) {
-            case 0x00: {
+            case 0b00: {
                 //registro de 4 bytes
                 mv->tabla_de_registros[op->posicion] = op->valor;
                 break;}
-            case 0x01: {
+            case 0b01: {
                 //4to byte del registro
                 mv->tabla_de_registros[op->posicion] = op->valor & 0x000000FF;
                 break;}
-            case 0x10: {
+            case 0b10: {
                 //3er byte del registro
-                mv->tabla_de_registros[op->posicion] = (op->valor & 0x0000FF00) >> 8;
+                //printf("op->valor H: %d\n",op->valor);
+                mv->tabla_de_registros[op->posicion] = (mv->tabla_de_registros[op->posicion] & 0xFFFF00FF) | ((op->valor & 0x000000FF) << 8);
                 break;}
-            case 0x11: {
+            case 0b11: {
                 //registro de 2 bytes
                 mv->tabla_de_registros[op->posicion] = op->valor & 0x0000FFFF;
                 break;}

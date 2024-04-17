@@ -125,8 +125,8 @@ void muestraop( int nroOp, TOp operando,char *registros[]){
 void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
     char *mnemonicos[NUM_MNEMONICOS] = {
         "MOV", "ADD", "SUB", "SWAP", "MUL", "DIV", "CMP", "SHL",
-        "SHR", "AND", "OR", "XOR", "RND", NULL, NULL, NULL, "SYS", "JMP",
-        "JZ", "JP", "JN", "JNZ", "JNP", "JNN", "LDL", "LDH",
+        "SHR", "AND", "OR ", "XOR", "RND", NULL, NULL, NULL, "SYS", "JMP",
+        "JZ ", "JP ", "JN ", "JNZ", "JNP", "JNN", "LDL", "LDH",
         "NOT", NULL, NULL, NULL, NULL, "STOP"
     };
 
@@ -225,7 +225,7 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
     for(i=0; i<=espacio; i++)
         printf("   ");
     printf(" | %s ", mnemonicos[dis.codOp]);
-    if(dis.op2.tipo != 3){
+    if(dis.codOp<=12){
         //Dos op
 
         if(dis.op1.tipo == 2){ //registro
@@ -275,23 +275,30 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
 
 
     }
-    else if(dis.op1.tipo !=3){
+    else if(dis.codOp>=16 && dis.codOp<=26){
         // 1 operando
-        strcat(muestra,"[");
+
         if(dis.op1.tipo == 2){ //registro
             int aux = 0;
             aux = dis.op1.parteReg << 4;
             aux = aux + dis.op1.posicion;
             strcat(muestra,registros[aux]);
         }
-        else{
+        else if(dis.op1.tipo == 0){ //memoria
             char aux[6];
+            strcat(muestra,"[");
             strcat(muestra,registros[dis.op1.posicion]);
             strcat(muestra," + ");
             sprintf(aux, "%d", dis.op1.offset);
             strcat(muestra,aux);
+            strcat(muestra,"]");
         }
-        strcat(muestra,"], ");
+        else{ //inmediato
+            char aux[6];
+            sprintf(aux, "%x", dis.op1.valor);
+            strcat(muestra,aux);
+        }
+
     }
     printf(" %s",muestra);
     //else{
