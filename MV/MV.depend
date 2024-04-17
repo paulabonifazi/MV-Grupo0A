@@ -23,13 +23,13 @@
 	"Disassembler.h"
 	"Operando.h"
 
-1713158043 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\funciones.c
+1713318982 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\funciones.c
 	"funciones.h"
 	<stdlib.h>
 	<time.h>
 	<stdio.h>
 
-1713158100 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\main.c
+1713319268 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\main.c
 	<stdio.h>
 	<stdlib.h>
 	"Operando.h"
@@ -37,7 +37,7 @@
 	"MV.h"
 	"Disassembler.h"
 
-1713157784 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\mv.c
+1713319283 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\mv.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -47,7 +47,7 @@
 	"Disassembler.h"
 	"Operando.h"
 
-1713157784 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\operando.c
+1713318982 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\operando.c
 	"Operando.h"
 	<stdlib.h>
 	<stdio.h>
@@ -69,20 +69,21 @@
 	<stdlib.h>
 	<stdio.h>
 
-1713134659 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\mv.h
+1713319305 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\mv.h
 
 1713046473 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\funciones.h
 	"MV.h"
 	"Operando.h"
 
-1713157784 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.c
+1713318982 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.c
 	"Disassembler.h"
 	<string.h>
 
-1713158483 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.h
+1713318982 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv1\mv-grupo0a\mv\disassembler.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
+	"Operando.h"
 
 1713315787 source:c:\users\gc\documents\ezequiel\afacultad\arquitectura de computadoras\mv\mv-grupo0a\mv\disassembler.c
 	"Disassembler.h"
