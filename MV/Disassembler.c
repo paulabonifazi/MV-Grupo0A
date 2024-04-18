@@ -165,16 +165,16 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
             break;
         }
         case 2:{ //inmediato
-            char auxh = 0,auxl = 0;
-            auxh = (dis.op2.valor && 0xFF00) >> 8;
-            auxl = dis.op2.valor && 0x00FF;
+            int auxh = 0,auxl = 0;
+            auxh = ((dis.op1.valor & 0xFF00) >> 8) & 0x000000FF;
+            auxl = dis.op1.valor & 0x000000FF;
             printf("%02X %02X ",auxh,auxl);
             break;
         }
         case 3:{ // memoria
             char auxh = 0,auxl = 0;
-            auxh = (dis.op2.offset && 0xFF00) >> 8;
-            auxl = dis.op2.offset && 0x00FF;
+            auxh = (dis.op2.offset & 0xFF00) >> 8;
+            auxl = dis.op2.offset & 0x00FF;
             printf("0%01X %02X %02X ",dis.op2.posicion,auxh,auxl);
             break;
         }
@@ -194,16 +194,17 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
             break;
         }
         case 2:{ //inmediato
-            char auxh = 0,auxl = 0;
-            auxh = (dis.op1.valor && 0xFF00) >> 8;
-            auxl = dis.op1.valor && 0x00FF;
+            int auxh = 0,auxl = 0;
+            auxh = ((dis.op1.valor & 0xFF00) >> 8) & 0x000000FF;
+            auxl = dis.op1.valor & 0x000000FF;
             printf("%02X %02X ",auxh,auxl);
             break;
         }
         case 3:{ // memoria
             char auxh = 0,auxl = 0;
-            auxh = (dis.op1.offset && 0xFF00) >> 8;
-            auxl = dis.op1.offset && 0x00FF;
+            //printf("offset: %x \n",dis.op1.offset);
+            auxh = (dis.op1.offset & 0xFF00) >> 8;
+            auxl = dis.op1.offset & 0x00FF;
             printf("0%01X %02X %02X ",dis.op1.posicion,auxh,auxl);
             break;
         }
@@ -272,12 +273,14 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
         }
         else{ //inmediato
             char aux[6];
-            //printf("VALOR dis.op2.valor: %x\n",dis.op1.valor);
+            //printf("VALOR dis.op2.valor: %x\n",dis.op2.valor);
             long int num;
-            if((dis.op1.valor & 0x80000000) == 0x80000000)
-                num = dis.op1.valor | 0xFFFF0000;
+            if((dis.op2.valor & 0x80000000) == 0x80000000){
+                num = dis.op2.valor | 0xFFFF0000;
+                //printf("Entro aca \n");
+            }
             else
-                num = dis.op1.valor;
+                num = dis.op2.valor;
             //printf("VALOR dissa: %d\n",num);
             sprintf(aux, "%d", num);
             strcat(muestra,aux);

@@ -96,10 +96,11 @@ void printeaDisassembler(MV *mv){
 
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
                     //printf("MV op1->valor: %x\n",op1.valor);
-                    vecF[codOp](&op1, &op2, mv);
+
                     //printf("MV mv->tabla_de_registros[12]: %d\n",mv->tabla_de_registros[12]);
                     cargaIns(&dis, posInstr, instr, codOp);
                     muestra(dis);
+                    vecF[codOp](&op1, &op2, mv);
                 }
                 else{
                     printf("Codigo de operacion invalido.");
