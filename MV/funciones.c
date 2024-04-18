@@ -141,7 +141,6 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
     char tamCeldas = (mv->tabla_de_registros[12] & 0x0000FF00) >> 8; // CH
     char cantCeldas = mv->tabla_de_registros[12] & 0x000000FF; // CL
     char formato = mv->tabla_de_registros[10] & 0x000000FF; //AL
-    //printf("mv->tabla_de_registros[12]: %d\n",mv->tabla_de_registros[12]);
     if(op->valor == 1){ //  READ
         switch(formato){
             case 0b0001:{ // Decimal
@@ -154,7 +153,6 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
                     for(int j=0; j<tamCeldas; j++)
                         mv->RAM[mv->tabla_de_registros[13]++] = entrada & (0x000000FF << (8*(tamCeldas-(j+1))));
                 }
-                //printf("Sale \n");
                 break;
             }
             case 0b0010:{ // Caracter
@@ -195,8 +193,13 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
                 //printf("Entro a decimal\n");
                 for(int i = 0; i<cantCeldas; i++){
                     printf("[%d]: ",mv->tabla_de_registros[13]);
-                    for(int j=0; j<tamCeldas; j++)
-                        salida = salida | (mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1))));
+                    //printf("mv->RAM[mv->tabla_de_registros[15]]: %d ",mv->RAM[mv->tabla_de_registros[15]]);
+                    for(int j=0; j<tamCeldas; j++){
+                        salida = salida | ((mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)))) & (0x000000FF << (8*(tamCeldas-(j+1)))));
+                      // printf("salida parcial: %d ",salida);
+                    }
+                        //salida = salida | (mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1))));
+                        //printf("En pos [%d]: %d",mv->tabla_de_registros[13],mv->RAM[mv->tabla_de_registros[13]]);
                     printf("%d \n",salida);
                 }
                 break;
@@ -206,7 +209,7 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
                 for(int i = 0; i<cantCeldas; i++){
                     printf("[%d]: ",mv->tabla_de_registros[13]);
                     for(int j=0; j<tamCeldas; j++)
-                        salida = mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)));
+                        salida = salida | ((mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)))) & (0x000000FF << (8*(tamCeldas-(j+1)))));
                     if(salida >= 32 && salida <= 126)
                         printf("%c \n",salida);
                     else
@@ -218,7 +221,7 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
                 for(int i = 0; i<cantCeldas; i++){
                     printf("[%d]: ",mv->tabla_de_registros[13]);
                     for(int j=0; j<tamCeldas; j++)
-                        salida = mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)));
+                        salida = salida | ((mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)))) & (0x000000FF << (8*(tamCeldas-(j+1)))));
                     printf("%o \n",salida);
                 }
                 break;
@@ -227,7 +230,7 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
                 for(int i = 0; i<cantCeldas; i++){
                     printf("[%d]: ",mv->tabla_de_registros[13]);
                     for(int j=0; j<tamCeldas; j++)
-                        salida = mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)));
+                        salida = salida | ((mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)))) & (0x000000FF << (8*(tamCeldas-(j+1)))));
                     printf("%x \n",salida);
                 }
                 break;

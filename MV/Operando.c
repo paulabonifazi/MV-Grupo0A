@@ -131,21 +131,17 @@ char get_instruccion(MV *mv){
 void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almacenado en la posicion de memoria o de registro a la cual apunta op
     if(op->tipo == 0b00){   //Memoria
         int i = 0;
+        op->valor = 0;
         // posRAM = mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i; si cod_reg = 1
         // posRAM = mv->tabla_de_registros[op->posicion] + mv->tabla_de_segmentos[1].segmento + op->offset + i; si cod_reg != 1
         unsigned int posRAM = mv->tabla_de_segmentos[1].segmento + op->offset + i;
         if(op->posicion > 1){
             posRAM += mv->tabla_de_registros[op->posicion];
         }
-        //printf("pos RAM: %d\n",posRAM);
-        //printf("%d", op->posicion);
-        //printf("%d", op->offset);
-        //printf("%d", posRAM);
         while(i<4 && posRAM<16384){
-            op->valor = op->valor + (mv->RAM[posRAM] << (24 - (i*8)));
+            op->valor = op->valor | ((mv->RAM[posRAM] << (24 - (i*8))) & (0x000000FF << (24 - (i*8))));
             i += 1;
             posRAM += 1;
-            //printf("pos RAM: %d\n",posRAM);
         }
         if(posRAM>=16384){
             //printf("pos RAM en fallo: %d\n",posRAM);
@@ -167,6 +163,7 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
                 break;}
             case 0b10: {
                 //3er byte del registro
+                //printf("mv->tabla_de_registros[op->posicion]: %d\n",mv->tabla_de_registros[op->posicion]);
                 op->valor = (mv->tabla_de_registros[op->posicion] & 0x0000FF00) >> 8;
                 break;}
             case 0b11: {
@@ -180,11 +177,29 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
 
 void reset_valor_op(TOperando *op,MV *mv){ //Guarda en la posicion a la cual apunta op en memoria o en registro el valor almacenado en op->valor
     if(op->tipo == 0b00){   //Memoria
-        for(int i=0; i<4; i++)
-            if(op->posicion == 1)
+        /*for(int i=0; i<4; i++){
+            if(op->posicion == 1){
                 mv->RAM[mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i] = (op->valor>>(24-i*8)) & 0x000000FF;
+                printf("op->valor>>(24-i*8)& 0x000000FF %d\n",op->valor>>(24-i*8)& 0x000000FF);
+            }
+
             else
                 mv->RAM[mv->tabla_de_registros[op->posicion] + mv->tabla_de_segmentos[1].segmento + op->offset + i] = (op->valor>>(24-i*8)) & 0x000000FF;
+        }*/
+        int i = 0;
+        unsigned int posRAM = mv->tabla_de_segmentos[1].segmento + op->offset + i;
+        if(op->posicion > 1){
+            posRAM += mv->tabla_de_registros[op->posicion];
+        }
+        while(i<4 && posRAM<16384){
+            mv->RAM[posRAM] = (op->valor >> (24 - (i*8))) & 0x000000FF;
+            i += 1;
+            posRAM += 1;
+        }
+        if(posRAM>=16384){
+            printf("Fallo de segmento");
+            exit(1);
+        }
     }
     else if(op->tipo == 0b10){  //Registro
         //printf("op->parteReg: %d\n",op->parteReg);
@@ -195,16 +210,15 @@ void reset_valor_op(TOperando *op,MV *mv){ //Guarda en la posicion a la cual apu
                 break;}
             case 0b01: {
                 //4to byte del registro
-                mv->tabla_de_registros[op->posicion] = op->valor & 0x000000FF;
+                mv->tabla_de_registros[op->posicion] = (mv->tabla_de_registros[op->posicion] & 0xFFFFFF00) | (op->valor & 0x000000FF);
                 break;}
             case 0b10: {
                 //3er byte del registro
-                //printf("op->valor H: %d\n",op->valor);
                 mv->tabla_de_registros[op->posicion] = (mv->tabla_de_registros[op->posicion] & 0xFFFF00FF) | ((op->valor & 0x000000FF) << 8);
                 break;}
             case 0b11: {
                 //registro de 2 bytes
-                mv->tabla_de_registros[op->posicion] = op->valor & 0x0000FFFF;
+                mv->tabla_de_registros[op->posicion] = (mv->tabla_de_registros[op->posicion] & 0xFFFF0000) | (op->valor & 0x0000FFFF);
                 break;}
         }
     }
