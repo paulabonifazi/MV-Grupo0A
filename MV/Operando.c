@@ -42,19 +42,23 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv, c
     }
     else if((*inst)>>6 != 0b11){
         // un operando
+        //printf("Un solo op \n");
         op1->tipo = (*inst)>>6; //opA
-        op2->tipo = 0b11;
+        op2->tipo = 3;
+        //printf("tipo 1: %d\n",op1->tipo);
+        //printf("tipo 2: %d\n",op2->tipo);
         lee_operando(op1, mv);  //lectura op en base a tipo (opA)
     }
     else {
-        op1->tipo = 0b11;
-        op2->tipo = 0b11;
+        op1->tipo = 3;
+        op2->tipo = 3;
         // sin operando
     }
 }
 
 void set_valor_inmediato(TOperando *op, long int valor){
     op->valor = valor;
+    //printf("VALOR op: %x\n",op->valor);
 }
 
 char tam_operando(TOperando op, char tipo){
@@ -91,11 +95,17 @@ void lee_operando(TOperando *op, MV *mv){
         }
         case 1:{    //inmediato
             char valor_h = get_instruccion(mv);
-            long int valor = valor_h;
-            valor = valor<<8;
+            int valor = valor_h;
+            //printf("Valor h: %x\n",valor_h);
+            valor = valor<<8 & 0x0000FF00;
             char valor_l = get_instruccion(mv);
-            valor += valor_l;
+            //printf("Valor l: %x\n",valor_l);
+            valor = (valor | (valor_l & 0x000000FF)) & 0x0000FFFF;
+            if ((valor_h & 0x80) == 0x80)
+                valor = valor | 0x80000000;
+            //printf("VALOR: %d\n",valor);
             set_valor_inmediato(op, valor);
+            //printf("VALOR despues set: %x\n",valor);
             break;
         }
         case 2:{    //registro

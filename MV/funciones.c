@@ -284,6 +284,7 @@ void LDL(TOperando *op, TOperando *op2, MV *mv){
 void LDH(TOperando *op, TOperando *op2, MV *mv){
     long int ms;
     ms = (op->valor & 0x0000FFFF) << 16;
+    //printf("ms %x\n",ms);
     mv->tabla_de_registros[9] = ms;
 }
 

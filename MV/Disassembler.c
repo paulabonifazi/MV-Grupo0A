@@ -152,6 +152,7 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
     //OP2
     tamanio = (~dis.op2.tipo)&0x03; //el complemento del tipo de operando es su tama�o
 
+    //printf("Tipo op2: %d\n",dis.op2.tipo);
     //printf("tamanio op2: %d\n",tamanio);
 
     switch (tamanio){
@@ -181,6 +182,8 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
     espacio += 3-tamanio;
     //OP1
     tamanio = (~dis.op1.tipo)&0x03; //el complemento del tipo de operando es su tama�o
+    //printf("Tipo op1: %d\n",dis.op1.tipo);
+    //printf("tamanio op1: %d\n",tamanio);
 
     switch (tamanio){
         case 1:{ // registro
@@ -269,7 +272,14 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
         }
         else{ //inmediato
             char aux[6];
-            sprintf(aux, "%d", dis.op2.valor);
+            //printf("VALOR dis.op2.valor: %x\n",dis.op1.valor);
+            long int num;
+            if((dis.op1.valor & 0x80000000) == 0x80000000)
+                num = dis.op1.valor | 0xFFFF0000;
+            else
+                num = dis.op1.valor;
+            //printf("VALOR dissa: %d\n",num);
+            sprintf(aux, "%d", num);
             strcat(muestra,aux);
         }
 
@@ -295,7 +305,14 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
         }
         else{ //inmediato
             char aux[6];
-            sprintf(aux, "%x", dis.op1.valor);
+            //printf("VALOR dis.op2.valor: %x\n",dis.op1.valor);
+            long int num;
+            if((dis.op1.valor & 0x80000000) == 0x80000000)
+                num = dis.op1.valor | 0xFFFF0000;
+            else
+                num = dis.op1.valor;
+            //printf("VALOR dissa: %d\n",num);
+            sprintf(aux, "%d", num);
             strcat(muestra,aux);
         }
 

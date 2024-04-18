@@ -87,6 +87,7 @@ void printeaDisassembler(MV *mv){
                 }else if(instr>>6 != 0b11){
                     //un operando
                     cargaOp(&dis, 1, op1);
+                    cargaOp(&dis, 2, op2);
                     //instr = (instr<<2) + op1.tipo;
                     //instr = (instr<<(~op1.tipo)&0x03) + op1.valor;
                 }else{
@@ -94,6 +95,7 @@ void printeaDisassembler(MV *mv){
                 }
 
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
+                    //printf("MV op1->valor: %x\n",op1.valor);
                     vecF[codOp](&op1, &op2, mv);
                     //printf("MV mv->tabla_de_registros[12]: %d\n",mv->tabla_de_registros[12]);
                     cargaIns(&dis, posInstr, instr, codOp);
