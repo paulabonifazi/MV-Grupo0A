@@ -141,14 +141,37 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
     char tamCeldas = (mv->tabla_de_registros[12] & 0x0000FF00) >> 8; // CH
     char cantCeldas = mv->tabla_de_registros[12] & 0x000000FF; // CL
     char formato = mv->tabla_de_registros[10] & 0x000000FF; //AL
+    int posEDX = mv->tabla_de_registros[13];
+    //printf("\n op->valor %d\n",op->valor);
+    //printf("\n CL %d\n",cantCeldas);
+    //printf("\n CH %d\n",tamCeldas);
+    //printf("\n AL %d\n",formato);
     if(op->valor == 1){ //  READ
-        switch(formato){
+        for(int i = 0; i<cantCeldas; i++){
+            printf("[%04X]: ",posEDX);
+            if(formato & 0b1000) // Hexa
+                scanf("%x",&entrada);
+            else if(formato & 0b0100) //Octal
+                scanf("%o",&entrada);
+            else if(formato & 0b0010) //Caracter
+                scanf("%c",&entrada);
+            else if(formato & 0b0001) // Decimal
+                scanf("%d",&entrada);
+            else{
+                printf("Formato de instruccion invalida \n");
+                exit(1);
+            }
+            for(int j=0; j<tamCeldas; j++)
+                mv->RAM[posEDX++] = entrada & (0x000000FF << (8*(tamCeldas-(j+1))));
+            //printf("\n mv->RAM[posEDX-1]: %d \n",mv->RAM[posEDX-1]);
+        }
+        /*switch(formato){
             case 0b0001:{ // Decimal
                 for(int i = 0; i<cantCeldas; i++){
                     //printf("op: %d\n",op->valor);
                     //printf("CL: %d\n",cantCeldas);
                     //printf("CH: %d\n",tamCeldas);
-                    printf("[%d]: ",mv->tabla_de_registros[13]);
+                    printf("[%04X]: ",mv->tabla_de_registros[13]);
                     scanf("%d",&entrada);
                     for(int j=0; j<tamCeldas; j++)
                         mv->RAM[mv->tabla_de_registros[13]++] = entrada & (0x000000FF << (8*(tamCeldas-(j+1))));
@@ -157,7 +180,7 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
             }
             case 0b0010:{ // Caracter
                 for(int i = 0; i<cantCeldas; i++){
-                    printf("[%d]: ",mv->tabla_de_registros[13]);
+                    printf("[%04X]: ",mv->tabla_de_registros[13]);
                     scanf("%c",&entrada);
                     for(int j=0; j<tamCeldas; j++)
                         mv->RAM[mv->tabla_de_registros[13]++] = entrada;
@@ -166,7 +189,7 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
             }
             case 0b0100:{ // Octal
                 for(int i = 0; i<cantCeldas; i++){
-                    printf("[%d]: ",mv->tabla_de_registros[13]);
+                    printf("[%04X]: ",mv->tabla_de_registros[13]);
                     scanf("%o",&entrada);
                     for(int j=0; j<tamCeldas; j++)
                         mv->RAM[mv->tabla_de_registros[13]++] = entrada & (0x000000FF << (8*(tamCeldas-(j+1))));
@@ -175,66 +198,40 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
             }
             case 0b1000:{ // Hexa
                 for(int i = 0; i<cantCeldas; i++){
-                    printf("[%d]: ",mv->tabla_de_registros[13]);
+                    printf("[%04X]: ",mv->tabla_de_registros[13]);
                     scanf("%x",&entrada);
                     for(int j=0; j<tamCeldas; j++)
                         mv->RAM[mv->tabla_de_registros[13]++] = entrada & (0x000000FF << (8*(tamCeldas-(j+1))));
                 }
                 break;
             }
-        }
+        }*/
     }
-    else if(op->valor == 2){
-        //printf("mv->tabla_de_registros[EAX]: %d\n",mv->tabla_de_registros[10]);
-        //printf("mv->tabla_de_registros[13]: %d")
-        switch(formato){
+    else if(op->valor == 2){ //WRITE
+        for(int i = 0; i<cantCeldas; i++){
+            printf("[%04X]: ",posEDX);
+            for(int j=0; j<tamCeldas; j++){
+                salida = salida | ((mv->RAM[posEDX++] << (8*(tamCeldas-(j+1)))) & (0x000000FF << (8*(tamCeldas-(j+1)))));
+            }
+            if((salida & 0x8000) == 0x8000){
+                salida = salida | 0xFFFF0000;
+            }
+            if(formato & 0b1000) // Hexa
+                printf("%% %08X ",salida);
+            if(formato & 0b0100) //Octal
+                printf("@ %o ",salida);
+            if(formato & 0b0010){ //Caracter
+                if(salida >= 32 && salida <= 126)
+                    printf("%c ",salida);
+                else
+                    printf(". ");
+            }
+            if(formato & 0b0001){ // Decimal
+                printf("%d ",salida);
+            }
 
-            case 0b0001:{ // Decimal
-                //printf("Entro a decimal\n");
-                for(int i = 0; i<cantCeldas; i++){
-                    printf("[%d]: ",mv->tabla_de_registros[13]);
-                    //printf("mv->RAM[mv->tabla_de_registros[15]]: %d ",mv->RAM[mv->tabla_de_registros[15]]);
-                    for(int j=0; j<tamCeldas; j++){
-                        salida = salida | ((mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)))) & (0x000000FF << (8*(tamCeldas-(j+1)))));
-                      // printf("salida parcial: %d ",salida);
-                    }
-                        //salida = salida | (mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1))));
-                        //printf("En pos [%d]: %d",mv->tabla_de_registros[13],mv->RAM[mv->tabla_de_registros[13]]);
-                    printf("%d \n",salida);
-                }
-                break;
-            }
-            case 0b0010:{ // Caracter
-                //printf("Entro a caracter\n");
-                for(int i = 0; i<cantCeldas; i++){
-                    printf("[%d]: ",mv->tabla_de_registros[13]);
-                    for(int j=0; j<tamCeldas; j++)
-                        salida = salida | ((mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)))) & (0x000000FF << (8*(tamCeldas-(j+1)))));
-                    if(salida >= 32 && salida <= 126)
-                        printf("%c \n",salida);
-                    else
-                        printf(". \n");
-                }
-                break;
-            }
-            case 0b0100:{ // Octal
-                for(int i = 0; i<cantCeldas; i++){
-                    printf("[%d]: ",mv->tabla_de_registros[13]);
-                    for(int j=0; j<tamCeldas; j++)
-                        salida = salida | ((mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)))) & (0x000000FF << (8*(tamCeldas-(j+1)))));
-                    printf("%o \n",salida);
-                }
-                break;
-            }
-            case 0b1000:{ // Hexa
-                for(int i = 0; i<cantCeldas; i++){
-                    printf("[%d]: ",mv->tabla_de_registros[13]);
-                    for(int j=0; j<tamCeldas; j++)
-                        salida = salida | ((mv->RAM[mv->tabla_de_registros[13]++] << (8*(tamCeldas-(j+1)))) & (0x000000FF << (8*(tamCeldas-(j+1)))));
-                    printf("%x \n",salida);
-                }
-                break;
-            }
+
+            printf("\n");
         }
     }
 }

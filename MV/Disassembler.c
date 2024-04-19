@@ -136,7 +136,7 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
         NULL, NULL, NULL, NULL, NULL, NULL, "AL", "BL", "CL", "DL",
         "EL", "FL", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
         NULL, NULL, "AH", "BH", "CH", "DH", "EH", "FH", NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "AX", "BX",
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "AX", "BX",
         "CX", "DX", "EX", "FX", NULL, NULL, NULL, NULL, NULL, NULL
     };
 
@@ -152,22 +152,20 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
     //OP2
     tamanio = (~dis.op2.tipo)&0x03; //el complemento del tipo de operando es su tama�o
 
-    //printf("Tipo op2: %d\n",dis.op2.tipo);
-    //printf("tamanio op2: %d\n",tamanio);
-
     switch (tamanio){
         case 1:{ // registro
             char aux = 0;
-            aux = (dis.op2.parteReg << 2) & 0b00110000;
-            aux = aux + (dis.op2.posicion & 0b00001111);
-            //printf("aux reg: %d \n",aux);
+            aux = (dis.op2.parteReg << 4) & 0xF0;
+            aux = aux | (dis.op2.posicion & 0x0F);
+            //printf("aux reg2: %d \n",aux);
             printf("%02X ", aux);
             break;
         }
         case 2:{ //inmediato
             int auxh = 0,auxl = 0;
-            auxh = ((dis.op1.valor & 0xFF00) >> 8) & 0x000000FF;
-            auxl = dis.op1.valor & 0x000000FF;
+            //printf("\n dis.op2.valor: %x\n",dis.op2.valor );
+            auxh = ((dis.op2.valor & 0xFF00) >> 8) & 0x000000FF;
+            auxl = dis.op2.valor & 0x000000FF;
             printf("%02X %02X ",auxh,auxl);
             break;
         }
@@ -182,19 +180,19 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
     espacio += 3-tamanio;
     //OP1
     tamanio = (~dis.op1.tipo)&0x03; //el complemento del tipo de operando es su tama�o
-    //printf("Tipo op1: %d\n",dis.op1.tipo);
-    //printf("tamanio op1: %d\n",tamanio);
 
     switch (tamanio){
         case 1:{ // registro
             char aux = 0;
-            aux = dis.op1.parteReg << 4;
-            aux = aux + dis.op1.posicion;
+            aux = (dis.op1.parteReg << 4) & 0xF0;
+            aux = aux | (dis.op1.posicion & 0x0F);
+            //printf("aux reg1: %d \n",aux);
             printf("%02X ", aux);
             break;
         }
         case 2:{ //inmediato
             int auxh = 0,auxl = 0;
+            //printf("\n dis.op1.valor: %x\n",dis.op1.valor );
             auxh = ((dis.op1.valor & 0xFF00) >> 8) & 0x000000FF;
             auxl = dis.op1.valor & 0x000000FF;
             printf("%02X %02X ",auxh,auxl);
@@ -210,33 +208,21 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
         }
     }
 
-    /*for(i=0; i<tamanio; i++){
-        if(i == 0)
-            printf("0%01X ", dis.op1.registro);
-        if(i == 1)
-            printf("%02X", dis.op1.)
-    }*/
 
-
-    /*tamanio = (~dis.op2.tipo)&0x03;
-
-    for(i=0; i<tamanio; i++){
-        printf("%02X ",dis.op2.codOp&0xFF);
-        dis.op2.codOp = dis.op2.codOp>>8;
-    }*/
     espacio += 3-tamanio;
 
     for(i=0; i<=espacio; i++)
         printf("   ");
+
+    //MNEMONICOS
     printf(" | %s ", mnemonicos[dis.codOp]);
     if(dis.codOp<=12){
         //Dos op
 
         if(dis.op1.tipo == 2){ //registro
             int aux = 0;
-            //printf("--parte reg op1: %d--",dis.op1.parteReg);
-            aux = dis.op1.parteReg << 4;
-            aux = aux + dis.op1.posicion;
+            aux = (dis.op1.parteReg << 4) & 0xF0;
+            aux = aux | (dis.op1.posicion & 0x0F);;
             //printf("--aux op1: %d--",aux);
             strcat(muestra,registros[aux]);
         }
@@ -256,10 +242,14 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
         if(dis.op2.tipo == 2){ //registro
             //strcat(muestra,"[");
             int aux = 0;
-            aux = dis.op2.parteReg << 4;
-            aux = aux + dis.op2.posicion;
+            aux = (dis.op2.parteReg << 4) & 0xF0;
+            aux = aux | (dis.op2.posicion & 0x0F);
             //printf("--aux op2: %d--",aux);
-            strcat(muestra,registros[aux]);
+            if(registros[aux != NULL])
+                strcat(muestra,registros[aux]);
+            else
+                printf("NULL! \n");
+
             //strcat(muestra,"]");
         }
         else if(dis.op2.tipo == 0){ //memoria
@@ -293,8 +283,8 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
 
         if(dis.op1.tipo == 2){ //registro
             int aux = 0;
-            aux = dis.op1.parteReg << 4;
-            aux = aux + dis.op1.posicion;
+            aux = (dis.op2.parteReg << 4) & 0b00110000;
+            aux = aux | (dis.op2.posicion & 0b00001111);
             strcat(muestra,registros[aux]);
         }
         else if(dis.op1.tipo == 0){ //memoria
