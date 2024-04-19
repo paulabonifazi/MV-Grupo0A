@@ -141,6 +141,7 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
     char tamCeldas = (mv->tabla_de_registros[12] & 0x0000FF00) >> 8; // CH
     char cantCeldas = mv->tabla_de_registros[12] & 0x000000FF; // CL
     char formato = mv->tabla_de_registros[10] & 0x000000FF; //AL
+<<<<<<< Updated upstream
     //printf("mv->tabla_de_registros[12]: %d\n",mv->tabla_de_registros[12]);
     if(op->valor == 1){ //  READ
         switch(formato){
@@ -232,6 +233,52 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
                 }
                 break;
             }
+=======
+    int posEDX = mv->tabla_de_registros[13];
+
+    if(op->valor == 1){ //  READ
+        for(int i = 0; i<cantCeldas; i++){
+            printf("[%04X]: ",posEDX);
+            if(formato & 0b1000) // Hexa
+                scanf("%x",&entrada);
+            else if(formato & 0b0100) //Octal
+                scanf("%o",&entrada);
+            else if(formato & 0b0010) //Caracter
+                scanf("%c",&entrada);
+            else if(formato & 0b0001) // Decimal
+                scanf("%d",&entrada);
+            else{
+                printf("Formato de instruccion invalida \n");
+                exit(1);
+            }
+            for(int j=0; j<tamCeldas; j++)
+                mv->RAM[posEDX++] = entrada & (0x000000FF << (8*(tamCeldas-(j+1))));
+        }
+    }
+    else if(op->valor == 2){ //WRITE
+        for(int i = 0; i<cantCeldas; i++){
+            printf("[%04X]: ",posEDX);
+            for(int j=0; j<tamCeldas; j++){
+                salida = salida | ((mv->RAM[posEDX++] << (8*(tamCeldas-(j+1)))) & (0x000000FF << (8*(tamCeldas-(j+1)))));
+            }
+            if((salida & 0x8000) == 0x8000){
+                salida = salida | 0xFFFF0000;
+            }
+            if(formato & 0b1000) // Hexa
+                printf("%% %08X ",salida);
+            if(formato & 0b0100) //Octal
+                printf("@ %o ",salida);
+            if(formato & 0b0010){ //Caracter
+                if(salida >= 32 && salida <= 126)
+                    printf("%c ",salida);
+                else
+                    printf(". ");
+            }
+            if(formato & 0b0001){ // Decimal
+                printf("%d ",salida);
+            }
+            printf("\n");
+>>>>>>> Stashed changes
         }
     }
 }

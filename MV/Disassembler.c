@@ -15,45 +15,6 @@ void inicializaDisassembler(TDisassembler *dis){
     dis->reg[EEX] = "EEX";
     dis->reg[EFX] = "EFX";
 
-    /*dis->reg[AL] = "AL";
-    dis->reg[BL] = "BL";
-    dis->reg[CL] = "CL";
-    dis->reg[DL] = "DL";
-    dis->reg[EL] = "EL";
-    dis->reg[FL] = "FL";
-
-    dis->reg[AH] = "AH";
-    dis->reg[BH] = "BH";
-    dis->reg[CH] = "CH";
-    dis->reg[DH] = "DH";
-    dis->reg[EH] = "EH";
-    dis->reg[FH] = "FH";
-
-    dis->reg[AX] = "AX";
-    dis->reg[BX] = "BX";
-    dis->reg[CX] = "CX";
-    dis->reg[DX] = "DX";
-    dis->reg[EX] = "EX";
-    dis->reg[FX] = "FX";*/
-}
-
-/*void reiniciaOperandos(TDisassembler *dis){
-
-    (*dis).op1.codOp = 0;
-    (*dis).op1.nro = 0;
-    (*dis).op1.registro = 0;
-    (*dis).op1.tipo = 3;
-
-    (*dis).op2.codOp = 0;
-    (*dis).op2.nro = 0;
-    (*dis).op2.registro = 0;
-    (*dis).op2.tipo = 3;
-    (*dis).instr = 0;
-    (*dis).posinstr = 0;
-    printf("Inicio dissa \n");
-}*/
-
-
 void cargaIns(TDisassembler *dis, short int posinstr, char instr, short int codOp){
     (*dis).posinstr = posinstr;
     (*dis).instr = instr;
@@ -122,7 +83,7 @@ void muestraop( int nroOp, TOp operando,char *registros[]){
         printf("%s",muestra);
 }
 
-void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
+void muestra(TDisassembler dis){ //se llama desde la MV
     char *mnemonicos[NUM_MNEMONICOS] = {
         "MOV", "ADD", "SUB", "SWAP", "MUL", "DIV", "CMP", "SHL",
         "SHR", "AND", "OR ", "XOR", "RND", NULL, NULL, NULL, "SYS", "JMP",
@@ -144,7 +105,6 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
     char muestra[40];
     strcpy(muestra,"");
 
-    //printf("\n\ninstr: %02X\n\n", dis.instr);
 
     printf("[%04X] %02X ", dis.posinstr, ((unsigned int)dis.instr)&0xFF); // 0 en byte mas significativo para que se muestre bien,sino pone todo FFFFFF
 
@@ -157,16 +117,27 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
     switch (tamanio){
         case 1:{ // registro
             char aux = 0;
+<<<<<<< Updated upstream
             aux = (dis.op2.parteReg << 2) & 0b00110000;
             aux = aux + (dis.op2.posicion & 0b00001111);
             //printf("aux reg: %d \n",aux);
+=======
+            aux = (dis.op2.parteReg << 4) & 0xF0;
+            aux = aux | (dis.op2.posicion & 0x0F);
+>>>>>>> Stashed changes
             printf("%02X ", aux);
             break;
         }
         case 2:{ //inmediato
+<<<<<<< Updated upstream
             char auxh = 0,auxl = 0;
             auxh = (dis.op2.valor && 0xFF00) >> 8;
             auxl = dis.op2.valor && 0x00FF;
+=======
+            int auxh = 0,auxl = 0;
+            auxh = ((dis.op2.valor & 0xFF00) >> 8) & 0x000000FF;
+            auxl = dis.op2.valor & 0x000000FF;
+>>>>>>> Stashed changes
             printf("%02X %02X ",auxh,auxl);
             break;
         }
@@ -185,22 +156,38 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
     switch (tamanio){
         case 1:{ // registro
             char aux = 0;
+<<<<<<< Updated upstream
             aux = dis.op1.parteReg << 4;
             aux = aux + dis.op1.posicion;
+=======
+            aux = (dis.op1.parteReg << 4) & 0xF0;
+            aux = aux | (dis.op1.posicion & 0x0F);
+>>>>>>> Stashed changes
             printf("%02X ", aux);
             break;
         }
         case 2:{ //inmediato
+<<<<<<< Updated upstream
             char auxh = 0,auxl = 0;
             auxh = (dis.op1.valor && 0xFF00) >> 8;
             auxl = dis.op1.valor && 0x00FF;
+=======
+            int auxh = 0,auxl = 0;
+            auxh = ((dis.op1.valor & 0xFF00) >> 8) & 0x000000FF;
+            auxl = dis.op1.valor & 0x000000FF;
+>>>>>>> Stashed changes
             printf("%02X %02X ",auxh,auxl);
             break;
         }
         case 3:{ // memoria
             char auxh = 0,auxl = 0;
+<<<<<<< Updated upstream
             auxh = (dis.op1.offset && 0xFF00) >> 8;
             auxl = dis.op1.offset && 0x00FF;
+=======
+            auxh = (dis.op1.offset & 0xFF00) >> 8;
+            auxl = dis.op1.offset & 0x00FF;
+>>>>>>> Stashed changes
             printf("0%01X %02X %02X ",dis.op1.posicion,auxh,auxl);
             break;
         }
@@ -230,10 +217,15 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
 
         if(dis.op1.tipo == 2){ //registro
             int aux = 0;
+<<<<<<< Updated upstream
             //printf("--parte reg op1: %d--",dis.op1.parteReg);
             aux = dis.op1.parteReg << 4;
             aux = aux + dis.op1.posicion;
             //printf("--aux op1: %d--",aux);
+=======
+            aux = (dis.op1.parteReg << 4) & 0xF0;
+            aux = aux | (dis.op1.posicion & 0x0F);;
+>>>>>>> Stashed changes
             strcat(muestra,registros[aux]);
         }
         else{
@@ -250,13 +242,22 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
         //op2
 
         if(dis.op2.tipo == 2){ //registro
-            //strcat(muestra,"[");
             int aux = 0;
+<<<<<<< Updated upstream
             aux = dis.op2.parteReg << 4;
             aux = aux + dis.op2.posicion;
             //printf("--aux op2: %d--",aux);
             strcat(muestra,registros[aux]);
             //strcat(muestra,"]");
+=======
+            aux = (dis.op2.parteReg << 4) & 0xF0;
+            aux = aux | (dis.op2.posicion & 0x0F);
+            if(registros[aux != NULL])
+                strcat(muestra,registros[aux]);
+            else
+                printf("NULL! \n");
+
+>>>>>>> Stashed changes
         }
         else if(dis.op2.tipo == 0){ //memoria
             strcat(muestra,"[");
@@ -269,7 +270,17 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
         }
         else{ //inmediato
             char aux[6];
+<<<<<<< Updated upstream
             sprintf(aux, "%d", dis.op2.valor);
+=======
+            long int num;
+            if((dis.op2.valor & 0x80000000) == 0x80000000){
+                num = dis.op2.valor | 0xFFFF0000;
+            }
+            else
+                num = dis.op2.valor;
+            sprintf(aux, "%d", num);
+>>>>>>> Stashed changes
             strcat(muestra,aux);
         }
 
@@ -295,24 +306,23 @@ void muestra(TDisassembler dis){ //se llama desde la MV (ver que metodo)
         }
         else{ //inmediato
             char aux[6];
+<<<<<<< Updated upstream
             sprintf(aux, "%x", dis.op1.valor);
+=======
+
+            long int num;
+            if((dis.op1.valor & 0x80000000) == 0x80000000)
+                num = dis.op1.valor | 0xFFFF0000;
+            else
+                num = dis.op1.valor;
+            sprintf(aux, "%d", num);
+>>>>>>> Stashed changes
             strcat(muestra,aux);
         }
 
     }
     printf(" %s",muestra);
-    //else{
-        // sin operando
-    //}
-    /*if(dis.op1.tipo != 0x01){
-        if(dis.op2.tipo != 0x01){ //2 operandos
-            muestraop(1, dis.op1, dis.reg);
-            muestraop(2, dis.op2, dis.reg);
-        }
-        else{ //1 operando
-            muestraop(2, dis.op1,dis.reg);
-        }
-    }*/
     printf("\n");
+}
 }
 
