@@ -151,7 +151,7 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
     if(op->tipo == 0b00){   //Memoria
         int i = 0;
         op->valor = 0;
-        // posRAM = mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i; si cod_reg = 1
+        // posRAM = mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i; si cod_reg = 1.
         // posRAM = mv->tabla_de_registros[op->posicion] + mv->tabla_de_segmentos[1].segmento + op->offset + i; si cod_reg != 1
         unsigned int posRAM;
         //printf("\n pos RAM inicio: %d\n",posRAM);
