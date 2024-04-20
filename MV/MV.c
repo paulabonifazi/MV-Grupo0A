@@ -22,13 +22,8 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
             fread(&aux, sizeof(aux), 1, programa);
             tam = aux << 8;
             fread(&aux, sizeof(aux), 1, programa);  //leo tam del codigo
-<<<<<<< Updated upstream
-            tam = tam + aux;
-            //printf("Tamanio: %d\n",tam);
-=======
             tam = tam | (aux & 0x000000FF);
             tam = tam & 0x0000FFFF; //sI SE ROMPE ES ACA
->>>>>>> Stashed changes
             mv->tabla_de_segmentos[CS].tam = tam;    //seteo tama�o del cs
             mv->tabla_de_segmentos[DS].tam = 16384 - tam;    //al ds le asigno toda la memoria menos el cs
             mv->tabla_de_segmentos[CS].segmento = 0;
@@ -70,20 +65,8 @@ void printeaDisassembler(MV *mv){
 
     //la ejecucion se da cuando el IP no sobrepasa el code segment
             while(mv->tabla_de_registros[IP] < mv->tabla_de_segmentos[CS].tam){
-<<<<<<< Updated upstream
-                //reiniciaOperandos(&dis);
-               // printf("mv->tabla_de_registros[IP]: %d \n",mv->tabla_de_registros[IP]);
-                //printf("mv->tabla_de_segmentos[CS].tam: %d \n",mv->tabla_de_segmentos[CS].tam);
-=======
->>>>>>> Stashed changes
                 posInstr = mv->tabla_de_registros[IP];
                 decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
-<<<<<<< Updated upstream
-
-                //printf("%d",codOp);
-                //seteo los operandos del disassembler
-=======
->>>>>>> Stashed changes
                 //rearmo toda la instrucción completa y se la seteo al disassembler para que la muestre por consola
                 if((codOp >> 4) == 0){
                     //dos operandos
@@ -92,27 +75,15 @@ void printeaDisassembler(MV *mv){
                 }else if(instr>>6 != 0b11){
                     //un operando
                     cargaOp(&dis, 1, op1);
-<<<<<<< Updated upstream
-                    //instr = (instr<<2) + op1.tipo;
-                    //instr = (instr<<(~op1.tipo)&0x03) + op1.valor;
-=======
                     cargaOp(&dis, 2, op2);
->>>>>>> Stashed changes
                 }else{
                     //sin operandos, Los operandos del disassembler ya estan inicializados, no se setean
                 }
 
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
-<<<<<<< Updated upstream
-                    vecF[codOp](&op1, &op2, mv);
-                    //printf("MV mv->tabla_de_registros[12]: %d\n",mv->tabla_de_registros[12]);
-                    cargaIns(&dis, posInstr, instr, codOp);
-                    muestra(dis);
-=======
                     cargaIns(&dis, posInstr, instr, codOp);
                     muestra(dis);
                     vecF[codOp](&op1, &op2, mv);
->>>>>>> Stashed changes
                 }
                 else{
                     printf("Codigo de operacion invalido.");
