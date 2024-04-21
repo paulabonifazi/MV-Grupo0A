@@ -11,7 +11,6 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
       long int tam;           //tamanio del codigo
       char version, identificador[5];   //version 1, indentificador = "VMX24"
       char aux;
-
       *ejecuta = 0;
       fread(identificador, sizeof(identificador),1, programa);
       fread(&version, sizeof(version),1,programa);
@@ -23,6 +22,7 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
             tam = aux << 8;
             fread(&aux, sizeof(aux), 1, programa);  //leo tam del codigo
             tam = tam | (aux & 0x000000FF);
+
             tam = tam & 0x0000FFFF; //sI SE ROMPE ES ACA
             mv->tabla_de_segmentos[CS].tam = tam;    //seteo tama�o del cs
             mv->tabla_de_segmentos[DS].tam = 16384 - tam;    //al ds le asigno toda la memoria menos el cs
@@ -67,8 +67,6 @@ void printeaDisassembler(MV *mv){
             while(mv->tabla_de_registros[IP] < mv->tabla_de_segmentos[CS].tam){
                 posInstr = mv->tabla_de_registros[IP];
                 decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
-                //seteo los operandos del disassembler
-                //rearmo toda la instrucción completa y se la seteo al disassembler para que la muestre por consola
                 if((codOp >> 4) == 0){
                     //dos operandos
                     cargaOp(&dis, 1, op1);

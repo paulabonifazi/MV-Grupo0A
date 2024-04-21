@@ -142,7 +142,6 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
     char cantCeldas = mv->tabla_de_registros[12] & 0x000000FF; // CL
     char formato = mv->tabla_de_registros[10] & 0x000000FF; //AL
     int posEDX = mv->tabla_de_registros[13];
-
     if(op->valor == 1){ //  READ
         for(int i = 0; i<cantCeldas; i++){
             printf("[%04X]: ",posEDX);
@@ -160,18 +159,18 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
             }
             for(int j=0; j<tamCeldas; j++)
                 mv->RAM[posEDX++] = entrada & (0x000000FF << (8*(tamCeldas-(j+1))));
-            //printf("\n mv->RAM[posEDX-1]: %d \n",mv->RAM[posEDX-1]);
         }
     }
     else if(op->valor == 2){ //WRITE
         for(int i = 0; i<cantCeldas; i++){
             printf("[%04X]: ",posEDX);
+            salida = 0;
             for(int j=0; j<tamCeldas; j++){
                 salida = salida | ((mv->RAM[posEDX++] << (8*(tamCeldas-(j+1)))) & (0x000000FF << (8*(tamCeldas-(j+1)))));
             }
-            if((salida & 0x8000) == 0x8000){
+            /*if((salida & 0x80000000) == 0x8000){
                 salida = salida | 0xFFFF0000;
-            }
+            }*/
             if(formato & 0b1000) // Hexa
                 printf("%% %08X ",salida);
             if(formato & 0b0100) //Octal
@@ -234,16 +233,16 @@ void JNN(TOperando *op, TOperando *op2, MV *mv){
 
 
 void LDL(TOperando *op, TOperando *op2, MV *mv){
-    int ms;
+    long int ms;
     ms = op->valor & 0x0000FFFF;
-    mv->tabla_de_registros[9] = ms;
+    mv->tabla_de_registros[9] = (mv->tabla_de_registros[9] & 0xFFFF0000) | ms;
 }
 
 
 void LDH(TOperando *op, TOperando *op2, MV *mv){
     long int ms;
     ms = (op->valor & 0x0000FFFF) << 16;
-    mv->tabla_de_registros[9] = ms;
+    mv->tabla_de_registros[9] = (mv->tabla_de_registros[9] & 0x0000FFFF) | ms;
 }
 
 

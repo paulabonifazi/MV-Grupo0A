@@ -2,12 +2,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+
 void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv, char *inst){
 
     *inst = get_instruccion(mv);
     *cod_op = 0;
+    /* primer linea: bbaooooo
+        a = tipo a -> 00000bba & 00000001 (0x01)
+        b = tipo b -> 000000bb
+        o = cod op -> bbaooooo & 00011111 (0x1F) -> es vector asi que es bit a bit
+    */
+    //set cod operacion
     *cod_op = (*inst) & 0x1F;
-
     if(((*cod_op >> 4)&0x01) == 0){
         // dos operandos
         op2->tipo = (*inst & 0b11000000)>>6; //opB
@@ -89,7 +95,6 @@ void lee_operando(TOperando *op, MV *mv){
 }
 
 char get_instruccion(MV *mv){
-    // REVISAR
     int ip = mv->tabla_de_registros[5];
     char posSeg = mv->tabla_de_segmentos[ip & 0xFFFF0000].segmento; //Busca indice de IP y devuelve el codigo en tabla segmentos
     long int posRAM = posSeg + (ip & 0x0000FFFF);//((mv->tabla_de_segmentos[posSeg].tam & 0xF0)>>4) + (ip & 0x0F); //Posicion DS en tabla segmento + offset IP
@@ -130,14 +135,17 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
             case 0b01: {
                 //4to byte del registro
                 op->valor = mv->tabla_de_registros[op->posicion] & 0x000000FF;
+                op->valor = op->valor & 0x000000FF;
                 break;}
             case 0b10: {
                 //3er byte del registro
                 op->valor = (mv->tabla_de_registros[op->posicion] & 0x0000FF00) >> 8;
+                op->valor = op->valor & 0x000000FF;
                 break;}
             case 0b11: {
                 //registro de 2 bytes
                 op->valor = mv->tabla_de_registros[op->posicion] & 0x0000FFFF;
+                op->valor = op->valor & 0x0000FFFF;
                 break;}
         }
     }
@@ -147,12 +155,19 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
 void reset_valor_op(TOperando *op,MV *mv){ //Guarda en la posicion a la cual apunta op en memoria o en registro el valor almacenado en op->valor
     if(op->tipo == 0b00){   //Memoria
         int i = 0;
-        unsigned int posRAM = mv->tabla_de_segmentos[1].segmento + op->offset + i;
+        unsigned int aux_valor = 0;
+        //op->valor = 0;
+        unsigned int posRAM;
         if(op->posicion > 1){
-            posRAM += mv->tabla_de_registros[op->posicion];
+            posRAM = mv->tabla_de_registros[op->posicion] + op->offset;;
+        }
+        else{
+            posRAM = mv->tabla_de_segmentos[1].segmento + op->offset;
         }
         while(i<4 && posRAM<16384){
-            mv->RAM[posRAM] = (op->valor >> (24 - (i*8))) & 0x000000FF;
+            aux_valor = (op->valor >> (24 - (i*8))) & 0x000000FF;
+            aux_valor = aux_valor & 0x000000FF;
+            mv->RAM[posRAM] = aux_valor;
             i += 1;
             posRAM += 1;
         }
