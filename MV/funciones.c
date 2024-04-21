@@ -26,7 +26,6 @@ void MOV(TOperando *op1, TOperando *op2, MV *mv){
 void ADD(TOperando *op1, TOperando *op2, MV *mv){
     long int suma;
     suma = op1->valor + op2->valor;
-    printf("  suma= %d ,%% %x  \n",suma,suma);
     op1->valor = suma;
     setea_cc(suma, mv);
     reset_valor_op(op1,mv);
@@ -183,12 +182,12 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
                     printf(". ");
             }
             if(formato & 0b0001){ // Decimal
-                if((salida & 0x00008000) == 0x00008000){
+                /*if((salida & 0x00008000) == 0x00008000){
                     salida = salida | 0xFFFF0000;
                 }
                 else{
                     salida = salida & 0x0000FFFF;
-                }
+                }*/
                 printf("%d ",salida);
             }
 

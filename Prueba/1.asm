@@ -1,0 +1,26 @@
+	XOR EFX, EFX
+	MOV [0], 0
+
+	MOV AL, %1
+OTRO:	MOV EDX, DS
+	MOV CL, 1
+	MOV CH, 4
+	SYS %1	
+
+	CMP [0], 0
+	JN CALC
+	ADD EFX, 1	
+	ADD [4], [0]
+	JMP OTRO
+
+CALC:	CMP EEX, 0
+	JZ FIN
+	DIV [4], EFX
+FIN:	MOV EDX, DS
+	ADD EDX, 4
+	MOV AL, %1
+	MOV CL, 1	
+	MOV CH, 4
+
+	SYS %2
+	STOP

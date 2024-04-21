@@ -77,7 +77,7 @@ void lee_operando(TOperando *op, MV *mv){
             char valor_l = get_instruccion(mv);
             valor = (valor | (valor_l & 0x000000FF)) & 0x0000FFFF;
             if ((valor_h & 0x80) == 0x80)
-                valor = valor | 0x80000000;
+                valor = valor | 0xFFFF0000;
             set_valor_inmediato(op, valor);
             break;
         }
