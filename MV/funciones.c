@@ -7,9 +7,9 @@
 
 void setea_cc(long int resultadoFunc, MV *mv){
     if (resultadoFunc < 0)
-        mv->tabla_de_registros[8] = 0x10000000; //  indicador signo
+        mv->tabla_de_registros[8] = 0x80000000; //  indicador signo
     else if (resultadoFunc == 0)
-         mv->tabla_de_registros[8] = 0x01000000; // indicador 0
+         mv->tabla_de_registros[8] = 0x40000000; // indicador 0
     else
         mv->tabla_de_registros[8] = 0;
 }

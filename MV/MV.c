@@ -60,7 +60,7 @@ void printeaDisassembler(MV *mv){
     TOperando op1,op2;
 
     printf("Ejecucion Maquina Virtual: \n");
-    inicializaDisassembler(&dis);
+    //inicializaDisassembler(&dis);
     iniciaVectorFunciones(vecF);
 
     //la ejecucion se da cuando el IP no sobrepasa el code segment

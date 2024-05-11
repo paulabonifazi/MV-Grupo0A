@@ -62,6 +62,8 @@ void inicializaDisassembler(TDisassembler *dis);
 void reiniciaOperandos(TDisassembler *dis);
 void cargaIns(TDisassembler *dis, short int posinstr, char instr, short int  codOp);
 void cargaOp(TDisassembler *dis, int nrodeop, TOperando operando);
+void escribeInstruccion(TOperando op, int tamanio);
+void mnemonicoOp(TOperando op);
 void muestra(TDisassembler dis);
 
 
