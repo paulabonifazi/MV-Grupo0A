@@ -40,16 +40,6 @@
 #define EX 62
 #define FX 63
 
-
-typedef struct {
-    char tipo;
-    long int nro;
-    long int registro;
-    short int offset;
-}TOp;
-
-//defino otro tipo de operando ya que el TOperando tiene info que no nos sirve para printear el debbuger
-
 typedef struct {
     char* reg[16];
     short int posinstr; //pos para printear desde el principio
@@ -58,8 +48,6 @@ typedef struct {
     short int codOp;
 }TDisassembler;
 
-void inicializaDisassembler(TDisassembler *dis);
-void reiniciaOperandos(TDisassembler *dis);
 void cargaIns(TDisassembler *dis, short int posinstr, char instr, short int  codOp);
 void cargaOp(TDisassembler *dis, int nrodeop, TOperando operando);
 void escribeInstruccion(TOperando op, int tamanio);
