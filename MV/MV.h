@@ -12,9 +12,9 @@ typedef struct {
 
 
 typedef struct {
-    char RAM[16384];
+    unsigned char RAM[16384];
     tabla_segmentos  tabla_de_segmentos[cantSeg];
-    int tabla_de_registros[cantReg];
+    long int tabla_de_registros[cantReg];
 } MV;
 
 void ejecutaMV(char arch[], char disassembler[]);

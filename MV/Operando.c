@@ -2,54 +2,34 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+
 void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv, char *inst){
 
     *inst = get_instruccion(mv);
     *cod_op = 0;
-<<<<<<< Updated upstream
     /* primer linea: bbaooooo
         a = tipo a -> 00000bba & 00000001 (0x01)
         b = tipo b -> 000000bb
         o = cod op -> bbaooooo & 00011111 (0x1F) -> es vector asi que es bit a bit
     */
-    /*
-    //set operando
-    (*op2).tipo = inst>>6;
-    (*op1).tipo = (inst>>5) & 0x01;
-    */
-
     //set cod operacion
     *cod_op = (*inst) & 0x1F;
-
-=======
-    *cod_op = (*inst) & 0x1F;
->>>>>>> Stashed changes
-
     if(((*cod_op >> 4)&0x01) == 0){
         // dos operandos
         op2->tipo = (*inst & 0b11000000)>>6; //opB
         op1->tipo = ((*inst & 0b00100000)>>4); //opA
-<<<<<<< Updated upstream
-        //printf("tipo op1: %d\n",op1->tipo);
-        //printf("tipo op2: %d\n",op2->tipo);
-=======
->>>>>>> Stashed changes
         lee_operando(op2, mv); //lectura op en base a tipo (opA)
         lee_operando(op1, mv); //lectura op en base a tipo (opB)
     }
     else if((*inst)>>6 != 0b11){
         // un operando
         op1->tipo = (*inst)>>6; //opA
-<<<<<<< Updated upstream
-        op2->tipo = 0b11;
-=======
         op2->tipo = 3;
->>>>>>> Stashed changes
         lee_operando(op1, mv);  //lectura op en base a tipo (opA)
     }
     else {
-        op1->tipo = 0b11;
-        op2->tipo = 0b11;
+        op1->tipo = 3;
+        op2->tipo = 3;
         // sin operando
     }
 }
@@ -92,19 +72,12 @@ void lee_operando(TOperando *op, MV *mv){
         }
         case 1:{    //inmediato
             char valor_h = get_instruccion(mv);
-<<<<<<< Updated upstream
-            long int valor = valor_h;
-            valor = valor<<8;
-            char valor_l = get_instruccion(mv);
-            valor += valor_l;
-=======
             int valor = valor_h;
             valor = valor<<8 & 0x0000FF00;
             char valor_l = get_instruccion(mv);
             valor = (valor | (valor_l & 0x000000FF)) & 0x0000FFFF;
             if ((valor_h & 0x80) == 0x80)
-                valor = valor | 0x80000000;
->>>>>>> Stashed changes
+                valor = valor | 0xFFFF0000;
             set_valor_inmediato(op, valor);
             break;
         }
@@ -122,17 +95,9 @@ void lee_operando(TOperando *op, MV *mv){
 }
 
 char get_instruccion(MV *mv){
-<<<<<<< Updated upstream
-    // REVISAR
-    char ip = mv->tabla_de_registros[5];
-    char posSeg = mv->tabla_de_segmentos[ip & 0xFFFF0000].segmento; //Busca indice de IP y devuelve el codigo en tabla segmentos
-    char posRAM = posSeg + (ip & 0x0000FFFF);//((mv->tabla_de_segmentos[posSeg].tam & 0xF0)>>4) + (ip & 0x0F); //Posicion DS en tabla segmento + offset IP
-    //printf("posRAM en get instruccion: %d\n",posRAM);
-=======
     int ip = mv->tabla_de_registros[5];
     char posSeg = mv->tabla_de_segmentos[ip & 0xFFFF0000].segmento; //Busca indice de IP y devuelve el codigo en tabla segmentos
     long int posRAM = posSeg + (ip & 0x0000FFFF);//((mv->tabla_de_segmentos[posSeg].tam & 0xF0)>>4) + (ip & 0x0F); //Posicion DS en tabla segmento + offset IP
->>>>>>> Stashed changes
     char inst = mv->RAM[posRAM];
 
     mv->tabla_de_registros[5] += 0x01; //Suma 1 al offset de ip
@@ -143,26 +108,18 @@ char get_instruccion(MV *mv){
 void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almacenado en la posicion de memoria o de registro a la cual apunta op
     if(op->tipo == 0b00){   //Memoria
         int i = 0;
-<<<<<<< Updated upstream
-        // posRAM = mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i; si cod_reg = 1
-        // posRAM = mv->tabla_de_registros[op->posicion] + mv->tabla_de_segmentos[1].segmento + op->offset + i; si cod_reg != 1
-        unsigned int posRAM = mv->tabla_de_segmentos[1].segmento + op->offset + i;
-=======
         op->valor = 0;
         unsigned int posRAM;
->>>>>>> Stashed changes
         if(op->posicion > 1){
-            posRAM += mv->tabla_de_registros[op->posicion];
+            posRAM = mv->tabla_de_registros[op->posicion] + op->offset;;
         }
-        //printf("pos RAM: %d\n",posRAM);
-        //printf("%d", op->posicion);
-        //printf("%d", op->offset);
-        //printf("%d", posRAM);
+        else{
+            posRAM = mv->tabla_de_segmentos[1].segmento + op->offset;
+        }
         while(i<4 && posRAM<16384){
-            op->valor = op->valor + (mv->RAM[posRAM] << (24 - (i*8)));
+            op->valor = op->valor | ((mv->RAM[posRAM] << (24 - (i*8))) & (0x000000FF << (24 - (i*8))));
             i += 1;
             posRAM += 1;
-            //printf("pos RAM: %d\n",posRAM);
         }
         if(posRAM>=16384){
             printf("Fallo de segmento");
@@ -178,14 +135,17 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
             case 0b01: {
                 //4to byte del registro
                 op->valor = mv->tabla_de_registros[op->posicion] & 0x000000FF;
+                op->valor = op->valor & 0x000000FF;
                 break;}
             case 0b10: {
                 //3er byte del registro
                 op->valor = (mv->tabla_de_registros[op->posicion] & 0x0000FF00) >> 8;
+                op->valor = op->valor & 0x000000FF;
                 break;}
             case 0b11: {
                 //registro de 2 bytes
                 op->valor = mv->tabla_de_registros[op->posicion] & 0x0000FFFF;
+                op->valor = op->valor & 0x0000FFFF;
                 break;}
         }
     }
@@ -194,20 +154,20 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
 
 void reset_valor_op(TOperando *op,MV *mv){ //Guarda en la posicion a la cual apunta op en memoria o en registro el valor almacenado en op->valor
     if(op->tipo == 0b00){   //Memoria
-<<<<<<< Updated upstream
-        for(int i=0; i<4; i++)
-            if(op->posicion == 1)
-                mv->RAM[mv->tabla_de_segmentos[op->posicion].segmento + op->offset + i] = (op->valor>>(24-i*8)) & 0x000000FF;
-            else
-                mv->RAM[mv->tabla_de_registros[op->posicion] + mv->tabla_de_segmentos[1].segmento + op->offset + i] = (op->valor>>(24-i*8)) & 0x000000FF;
-=======
         int i = 0;
-        unsigned int posRAM = mv->tabla_de_segmentos[1].segmento + op->offset + i;
+        unsigned int aux_valor = 0;
+        //op->valor = 0;
+        unsigned int posRAM;
         if(op->posicion > 1){
-            posRAM += mv->tabla_de_registros[op->posicion];
+            posRAM = mv->tabla_de_registros[op->posicion] + op->offset;;
+        }
+        else{
+            posRAM = mv->tabla_de_segmentos[1].segmento + op->offset;
         }
         while(i<4 && posRAM<16384){
-            mv->RAM[posRAM] = (op->valor >> (24 - (i*8))) & 0x000000FF;
+            aux_valor = (op->valor >> (24 - (i*8))) & 0x000000FF;
+            aux_valor = aux_valor & 0x000000FF;
+            mv->RAM[posRAM] = aux_valor;
             i += 1;
             posRAM += 1;
         }
@@ -215,7 +175,6 @@ void reset_valor_op(TOperando *op,MV *mv){ //Guarda en la posicion a la cual apu
             printf("Fallo de segmento");
             exit(1);
         }
->>>>>>> Stashed changes
     }
     else if(op->tipo == 0b10){  //Registro
         switch(op->parteReg) {
@@ -225,20 +184,15 @@ void reset_valor_op(TOperando *op,MV *mv){ //Guarda en la posicion a la cual apu
                 break;}
             case 0b01: {
                 //4to byte del registro
-<<<<<<< Updated upstream
-                mv->tabla_de_registros[op->posicion] = op->valor & 0x000000FF;
-=======
                 mv->tabla_de_registros[op->posicion] = (mv->tabla_de_registros[op->posicion] & 0xFFFFFF00) | (op->valor & 0x000000FF);
->>>>>>> Stashed changes
                 break;}
             case 0b10: {
                 //3er byte del registro
-                //printf("op->valor H: %d\n",op->valor);
                 mv->tabla_de_registros[op->posicion] = (mv->tabla_de_registros[op->posicion] & 0xFFFF00FF) | ((op->valor & 0x000000FF) << 8);
                 break;}
             case 0b11: {
                 //registro de 2 bytes
-                mv->tabla_de_registros[op->posicion] = op->valor & 0x0000FFFF;
+                mv->tabla_de_registros[op->posicion] = (mv->tabla_de_registros[op->posicion] & 0xFFFF0000) | (op->valor & 0x0000FFFF);
                 break;}
         }
     }
