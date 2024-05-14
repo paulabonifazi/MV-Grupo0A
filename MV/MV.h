@@ -3,7 +3,7 @@
 
 #define cantSeg 2
 #define cantReg 16
-
+#define TAM_MEMO 16384
 
 typedef struct {
     short int segmento;
@@ -12,7 +12,7 @@ typedef struct {
 
 
 typedef struct {
-    unsigned char RAM[16384];
+    unsigned char RAM[TAM_MEMO];
     tabla_segmentos  tabla_de_segmentos[cantSeg];
     long int tabla_de_registros[cantReg];
 } MV;

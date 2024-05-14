@@ -7,13 +7,17 @@
 #include "Disassembler.h"
 #include "Operando.h"
 
+//---------------------------------------- creo que deberiamos tener una funcion que chequee la memoria ya que se pasa por cmd el tam de la memoria-----------//
+
 void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
       long int tam;           //tamanio del codigo
-      char version, identificador[5];   //version 1, indentificador = "VMX24"
+      char version, identificador[5];   //version 1 y 2, indentificador = "VMX24"
       char aux;
       *ejecuta = 0;
       fread(identificador, sizeof(identificador),1, programa);
       fread(&version, sizeof(version),1,programa);
+
+      //------------- aca tenemos que asignar el tamanio de la memoria----------------------//
 
       if (strcmp(identificador, "VMX24")){
         if (version == 1){
@@ -22,9 +26,8 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
             tam = aux << 8;
             fread(&aux, sizeof(aux), 1, programa);  //leo tam del codigo
             tam = tam | (aux & 0x000000FF);
-
-            tam = tam & 0x0000FFFF; //sI SE ROMPE ES ACA
-            mv->tabla_de_segmentos[CS].tam = tam;    //seteo tama�o del cs
+            tam = tam & 0x0000FFFF;
+            mv->tabla_de_segmentos[CS].tam = tam;    //seteo tamanio del cs
             mv->tabla_de_segmentos[DS].tam = 16384 - tam;    //al ds le asigno toda la memoria menos el cs
             mv->tabla_de_segmentos[CS].segmento = 0;
             mv->tabla_de_segmentos[DS].segmento =  tam;
@@ -36,6 +39,17 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
             for (int i=0; i<tam; i++ ){
                 fread(&mv->RAM[i], sizeof(char), 1, programa);
             }
+        }
+        else if (version == 2){
+            //----------------------------------------------- ACA TENEMOS QUE CAMBIAR EL SETEO DE LOS SEGMENTOS-----------------------------------------------------------------//
+            /* en le header viene  tam CS, DS, ES, SS, KS y el oofset del entry point*/
+
+
+            /* CAMBIA EL ORDEN EN LA TABLA DE SEGMENTOS!!
+                KS - CS - DS - ES - SS
+                los indices de segmentos no se condicen con los indices de registros! en los define de CS, Ks, etc corresponden a la tabla de registros*/
+                //hacer for para leer todo el header y luego switch para ver que segmento y registro cargar
+
         }
         else{
             printf("Version incorrecta");
@@ -90,7 +104,7 @@ void printeaDisassembler(MV *mv){
                 }
             }
             if(mv->tabla_de_registros[IP] == 0xFFFFFFFF){
-                printf("Fin de la ejecuci�n");
+                printf("Fin de la ejecucion");
                 exit(1);
             }
 
@@ -129,13 +143,13 @@ void ejecutaMV(char arch[], char disassembler[]){
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
                     vecF[codOp](&op1, &op2, &mv);}
                 else{
-                    printf("C�digo de operaci�n inv�lido.");
+                    printf("Codigo de operacion invalido.");
                     exit(1);
                 }
             }
 
             if(mv.tabla_de_registros[IP] == 0xFFFFFFFF){
-                printf("Fin de la ejecuci�n");
+                printf("Fin de la ejecucion");
                 exit(1);
             }
         }

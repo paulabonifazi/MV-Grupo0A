@@ -135,6 +135,9 @@ void RND(TOperando *op1, TOperando *op2, MV *mv){
 
 //1 operando
 
+//---------------------------------------------------------- PODRIAMOS DIVIDIR EL SYS EN SYS 1, 2, 3, 4, 7 Y F-----------------------------------//
+/*hacemos un switch entre cada opción y que cada uno llame al sys que corresponde  */
+
 void SYS(TOperando *op, TOperando *op2, MV *mv){
     unsigned int entrada;
     long int salida = 0;
@@ -255,10 +258,33 @@ void NOT(TOperando *op, TOperando *op2, MV *mv){
 }
 
 
+
+/*almacena un dato de 4 bytes en el tope de la pila. Requiere un solo operando que puede ser de
+cualquier tipo. Primero decrementa en 4 el valor del registro SP y luego guarda el valor del operando en la
+posición de memoria apuntada por SP. */
+void PUSH(TOperando *op, TOperando *op2, MV *mv){}
+
+
+/* extrae el dato del tope de pila y lo almacena en el único operando (puede ser de registro o
+memoria). Luego incrementa en 4 el valor del registro SP.*/
+void POP(TOperando *op, TOperando *op2, MV *mv){}
+
+
+/* efectúa un llamado a una subrutina. Requiere un solo operando que puede ser de cualquier
+tipo. Primero almacena en el tope de la pila el valor del IP, que indica la dirección de memoria a la que se
+retornará luego de que la subrutina finalice. Luego, realiza un salto a la posición de memoria indicada por
+el operando.*/
+void CALL(TOperando *op, TOperando *op2, MV *mv){}
+
 //0 operandos
 void STOP(TOperando *op, TOperando *op2, MV *mv){
     mv->tabla_de_registros[5] = 0xFFFFFFFF;
 }
+
+
+/* efectúa una retorno desde una subrutina. No requiere parámetros. Extrae el valor del tope de la
+pila y realiza un salto a esa dirección de memoria.*/
+void RET(TOperando *op, TOperando *op2, MV *mv){}
 
 
 void iniciaVectorFunciones(VectorFunciones vecF)
@@ -289,5 +315,10 @@ void iniciaVectorFunciones(VectorFunciones vecF)
     vecF[0x19]=&LDH;
     vecF[0x1A]=&NOT;
 
+    vecF[0x1B]=&PUSH;
+    vecF[0x1C]=&POP;
+    vecF[0x1D]=&CALL;
+
+    vecF[0x1D]=&RET;
     vecF[0x1F]=&STOP;
 }

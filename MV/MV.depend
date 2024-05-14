@@ -99,7 +99,7 @@
 	"Disassembler.h"
 	<string.h>
 
-1715706099 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\disassembler.h
+1715706829 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\disassembler.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -108,9 +108,9 @@
 1713570486 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.h
 	"MV.h"
 
-1715705362 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.h
+1715721719 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.h
 
-1715705403 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.c
+1715725311 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.c
 	"funciones.h"
 	<stdlib.h>
 	<time.h>
@@ -120,7 +120,7 @@
 	"MV.h"
 	"Operando.h"
 
-1713572770 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\main.c
+1715723163 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\main.c
 	<stdio.h>
 	<stdlib.h>
 	"Operando.h"
@@ -128,7 +128,7 @@
 	"MV.h"
 	"Disassembler.h"
 
-1715706146 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.c
+1715721719 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
