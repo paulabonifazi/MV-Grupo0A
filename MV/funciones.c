@@ -265,12 +265,12 @@ posición de memoria apuntada por SP. */
 void PUSH(TOperando *op, TOperando *op2, MV *mv){
     mv->tabla_de_registros[6] -=4;
     if(mv->tabla_de_registros[6]<mv->tabla_de_registros[3]){
-        printf("Stack Overflow")
+        printf("Stack Overflow");
         exit(1);
     }
     //similar a lo que hace reset operando, pero en vez de tomar la posicion del operando, la toma de SP
     unsigned int aux_valor = 0;
-    unsigned int posRam = mv->tabla_de_registros[6];
+    unsigned int posRAM = mv->tabla_de_registros[6];
     for(int i=0; i<4; i++){
         aux_valor = (op->valor >> (24 - (i*8))) & 0x000000FF;
         aux_valor = aux_valor & 0x000000FF;
@@ -287,7 +287,7 @@ void POP(TOperando *op, TOperando *op2, MV *mv){
         exit(1);
     }*/
     //Depende de tipo Operando?
-    unsigned int posRam = mv->tabla_de_registros[6];
+    unsigned int posRAM = mv->tabla_de_registros[6];
     for(int i=0; i<4; i++){
         op->valor = op->valor | ((mv->RAM[posRAM++] << (24 - (i*8))) & (0x000000FF << (24 - (i*8))));
     }

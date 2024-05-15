@@ -112,7 +112,7 @@ void printeaDisassembler(MV *mv){
 
 /* se pasa el archivo asm para cargarlo a memoria y el flag del disassembler para printear el pograma ejecutandose
     el metodo tiene que llamar a una funcion para iniciar la mv*/
-void ejecutaMV(char arch[], char disassembler[]){
+void ejecutaMV(char arch[], char disassembler[], int tam){
     MV mv;
     int ejecuta;
     char inst;
@@ -129,6 +129,7 @@ void ejecutaMV(char arch[], char disassembler[]){
         exit(1);
     }
     else{
+        //------------------------------------------------ creo que aca deberia de chequear el tam de la memoria-----------------//
         iniciaMV(programa, &mv, &ejecuta);
         fclose(programa);
 
