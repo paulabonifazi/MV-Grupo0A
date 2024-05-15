@@ -110,11 +110,11 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
         int i = 0;
         op->valor = 0;
         unsigned int posRAM;
-        if(op->posicion > 1){
+        if(op->posicion > 4){
             posRAM = mv->tabla_de_registros[op->posicion] + op->offset;;
         }
         else{
-            posRAM = mv->tabla_de_segmentos[1].segmento + op->offset;
+            posRAM = mv->tabla_de_segmentos[op->posicion].segmento + op->offset;
         }
         while(i<4 && posRAM<16384){
             op->valor = op->valor | ((mv->RAM[posRAM] << (24 - (i*8))) & (0x000000FF << (24 - (i*8))));
@@ -158,11 +158,11 @@ void reset_valor_op(TOperando *op,MV *mv){ //Guarda en la posicion a la cual apu
         unsigned int aux_valor = 0;
         //op->valor = 0;
         unsigned int posRAM;
-        if(op->posicion > 1){
+        if(op->posicion > 4){ //Cambie 1 por 4 por los nuevos segmentos
             posRAM = mv->tabla_de_registros[op->posicion] + op->offset;;
         }
         else{
-            posRAM = mv->tabla_de_segmentos[1].segmento + op->offset;
+            posRAM = mv->tabla_de_segmentos[op->posicion].segmento + op->offset;
         }
         while(i<4 && posRAM<16384){
             aux_valor = (op->valor >> (24 - (i*8))) & 0x000000FF;
