@@ -14,14 +14,8 @@ int main(int argc, char *argv[])
     argumento[1]=NULL;  //-d
     argumento[2]=NULL;  //archivo imagen
 
-    /*
-    argumento[0] = argv[1];
-    argumento[1] = argv[2];
-    */
-
-
-    //antes era                   vmx.exe filename.vmx [-d]
-    // ahora ejecutamos   vmx.exe [filename.vmx] [filename.vmi] [m=M] [-d]
+    //version 1                 vmx.exe filename.vmx [-d]
+    // version 2                vmx.exe [filename.vmx] [filename.vmi] [m=M] [-d]
 
     for(int i =1; i < argc; i++){
         if (strcmp(argv[i],"-d")==0)
@@ -33,12 +27,6 @@ int main(int argc, char *argv[])
        if (strstr(argv[i], ".vmi") != NULL)
             argumento[2] = argv[i];
 
-        //convendria tener en argumento[0] el programa traducido y en argumento[3] el archivo imagen?
-        //para conocer más rápido la forma de ejecucion de la mv
-    }
-
-    if (tam == 0){  //memo ram por default
-        tam = TAM_MEMO;
     }
 
     if (argumento[0] != NULL){

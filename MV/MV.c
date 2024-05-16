@@ -7,24 +7,19 @@
 #include "Disassembler.h"
 #include "Operando.h"
 
-//---------------------------------------- creo que deberiamos tener una funcion que chequee la memoria ya que se pasa por cmd el tam de la memoria-----------//
 
-void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
+void iniciaMV(FILE *programa, MV *mv){
       long int tam;           //tamanio del codigo
       long int tamTotal = 0;
       long int base = 0;
       int i = 0;
       char version, identificador[5];   //version 1 y 2, indentificador = "VMX24"
       char aux;
-      *ejecuta = 0;
       fread(identificador, sizeof(identificador),1, programa);
       fread(&version, sizeof(version),1,programa);
 
-      //------------- aca tenemos que asignar el tamanio de la memoria----------------------//
-
       if (strcmp(identificador, "VMX24")){
         if (version == 1){
-            *ejecuta = 1;
             fread(&aux, sizeof(aux), 1, programa);
             tam = aux << 8;
             fread(&aux, sizeof(aux), 1, programa);  //leo tam del codigo
@@ -44,14 +39,6 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
             }
         }
         else if (version == 2){
-            //----------------------------------------------- ACA TENEMOS QUE CAMBIAR EL SETEO DE LOS SEGMENTOS-----------------------------------------------------------------//
-            /* en le header viene  tam CS, DS, ES, SS, KS y el oofset del entry point*/
-
-
-            /* CAMBIA EL ORDEN EN LA TABLA DE SEGMENTOS!!
-                KS - CS - DS - ES - SS
-                los indices de segmentos no se condicen con los indices de registros! en los define de CS, Ks, etc corresponden a la tabla de registros*/
-                //hacer for para leer todo el header y luego switch para ver que segmento y registro cargar
             while(tamTotal<16384 && i<5){
                 fread(&aux, sizeof(aux), 1, programa);
                 tam = aux << 8;
@@ -84,7 +71,8 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
                 }
                 i +=1;
             }
-            if(tamTotal<16384){
+            //if(tamTotal<16384){
+            if(tamTotal<mv->tamanioM){
                 mv->tabla_de_segmentos[KS].segmento = base;
                 base += mv->tabla_de_segmentos[KS].tam;
                 mv->tabla_de_segmentos[CS].segmento = base;
@@ -102,6 +90,14 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
                 tam = tam | (aux & 0x000000FF);
                 tam = tam & 0x0000FFFF;
                 mv->tabla_de_registros[IP] = tam; //ENTRY POINT
+
+                //cargo registros
+                mv->tabla_de_registros[CS] = mv->tabla_de_segmentos[CS].segmento;
+                mv->tabla_de_registros[DS] = mv->tabla_de_segmentos[DS].segmento;
+                mv->tabla_de_registros[ES] = mv->tabla_de_segmentos[ES].segmento;
+                mv->tabla_de_registros[SS] = mv->tabla_de_segmentos[SS].segmento;
+                mv->tabla_de_registros[KS] = mv->tabla_de_segmentos[KS].segmento;
+
             }
             else{
                 printf("Memoria insuficiente");
@@ -171,7 +167,6 @@ void printeaDisassembler(MV *mv){
     el metodo tiene que llamar a una funcion para iniciar la mv*/
 void ejecutaMV(char arch[], char disassembler[], int tam){
     MV mv;
-    int ejecuta;
     char inst;
     VectorFunciones vecF;
     FILE* programa;
@@ -187,7 +182,13 @@ void ejecutaMV(char arch[], char disassembler[], int tam){
     }
     else{
         //------------------------------------------------ creo que aca deberia de chequear el tam de la memoria-----------------//
-        iniciaMV(programa, &mv, &ejecuta);
+        if (tam == 0){  //memo ram por default
+            mv.tamanioM = TAM_MEMO;
+        }
+        else{
+            mv.tamanioM = tam*1024; //tam viene en KiB
+        }
+        iniciaMV(programa, &mv);
         fclose(programa);
 
         if (disassembler != NULL){
