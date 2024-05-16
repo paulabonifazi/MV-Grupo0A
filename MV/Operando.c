@@ -63,9 +63,9 @@ void lee_operando(TOperando *op, MV *mv){
         case 0: {   //memoria
             op->valor = 0;
             char tam_y_cod_reg = get_instruccion(mv);
-            unsigned int pos = tam_y_cod_reg & 0x000000FF;
+            unsigned int pos = tam_y_cod_reg & 0x0000000F;
             set_posicion(op,pos);
-            char tam_celda = ((tam_y_cod_reg>>8) & 0x0000FF00);
+            char tam_celda = ((tam_y_cod_reg>>6) & 0x00000003);
             set_tam_celda(op,tam_celda);
             char offset_h = get_instruccion(mv);
             long int offset = offset_h;

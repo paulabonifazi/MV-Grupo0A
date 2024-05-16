@@ -233,6 +233,33 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
         system("cls");
     }
     else if(op->valor == 'F'){  //BREAKPOINT
+        generaImagen(mv);
+        char op = getchar();
+        if(op == 'g'){
+            //Continua ejecucion
+        }
+        else if(op == 'q'){
+            //Aborta ejecucion
+            STOP(op,op2,mv);
+        }
+        else if(op == 13){  //13 = ENTER en ASCII
+            //Ejecuta paso a paso
+            //Como diferenciar cuando y cuando no mostrar disassembler??
+            /*if(mv->tabla_de_registros[IP] < mv->tabla_de_segmentos[CS].tam){
+                decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
+                if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
+                    vecF[codOp](&op1, &op2, &mv);
+                }
+                else{
+                    printf("Codigo de operacion invalido.");
+                    exit(1);
+                }
+            }
+            op->valor = 'F';
+            SYS(op,op2,mv);*/
+
+            // Si se ejecuta la siguiente instruccion aca, no hay manera de saber si tiene que mostrar o no el disassembler
+        }
 
     }
 }

@@ -97,11 +97,11 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
                 base += mv->tabla_de_segmentos[SS].tam;
 
                 fread(&aux, sizeof(aux), 1, programa);
-                tam = aux << 8;
+                mv->tabla_de_registros[IP] = aux << 8;
                 fread(&aux, sizeof(aux), 1, programa);
-                tam = tam | (aux & 0x000000FF);
-                tam = tam & 0x0000FFFF;
-                mv->tabla_de_registros[IP] = tam; //ENTRY POINT
+                mv->tabla_de_registros[IP] = mv->tabla_de_registros[IP] | (aux & 0x000000FF);
+                mv->tabla_de_registros[IP] = mv->tabla_de_registros[IP] & 0x0000FFFF;   //ENTRY POINT
+                //mv->tabla_de_registros[IP] = tam;
             }
             else{
                 printf("Memoria insuficiente");
@@ -176,7 +176,7 @@ void ejecutaMV(char arch[], char disassembler[], int tam){
     VectorFunciones vecF;
     FILE* programa;
     short int codOp;
-    TOperando op1,op2;
+    TOperando op1, op2;
 
     iniciaVectorFunciones(vecF);
     programa = fopen(arch, "rb");
@@ -199,7 +199,8 @@ void ejecutaMV(char arch[], char disassembler[], int tam){
                 decodifica_cod_op(&op1, &op2, &codOp, &mv, &inst);
 
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
-                    vecF[codOp](&op1, &op2, &mv);}
+                    vecF[codOp](&op1, &op2, &mv);
+                }
                 else{
                     printf("Codigo de operacion invalido.");
                     exit(1);
@@ -211,6 +212,46 @@ void ejecutaMV(char arch[], char disassembler[], int tam){
                 exit(1);
             }
         }
+    }
+}
+
+/*void ejecutaInstr(TOperando *op1, TOperando *op2, MV *mv){
+    if(mv->tabla_de_registros[IP] < mv->tabla_de_segmentos[CS].tam){
+        decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
+        if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
+            vecF[codOp](&op1, &op2, &mv);
+        }
+        else{
+            printf("Codigo de operacion invalido.");
+            exit(1);
+        }
+    }
+}*/
+
+void generaImagen(MV *mv){
+    FILE *imagen = fopen("nombre.vmi","wb"); //Como pasar el nombre de la consola a aca?
+    if(imagen != NULL){
+        char id[] = "VMI24";
+        char version = 1;
+        int tamMem = 16384; //Como pasar tamaño memoria si no es 16384?
+        fwrite(id, sizeof(id), 1, imagen);
+        fwrite(&version, sizeof(version), 1, imagen);
+        fwrite(&tamMem, sizeof(tamMem), 1, imagen);
+
+        for(int i = 0; i<16; i++){
+            fwrite(&(mv->tabla_de_registros[i]), sizeof(mv->tabla_de_registros[i]), 1, imagen);
+        }
+        for(int j = 0; j<5; j++){
+            fwrite(&(mv->tabla_de_segmentos[j].segmento), sizeof(mv->tabla_de_segmentos[j].segmento), 1, imagen);
+            fwrite(&(mv->tabla_de_segmentos[j].tam), sizeof(mv->tabla_de_segmentos[j].segmento), 1, imagen);
+        }
+        for(int k = 0; k<tamMem; k++){
+            fwrite(&(mv->RAM[k]), sizeof(mv->RAM[k]), 1, imagen);
+        }
+        fclose(imagen);
+    }
+    else{
+        printf("Error al abrir el archivo");
     }
 }
 
