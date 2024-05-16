@@ -14,6 +14,7 @@ typedef struct {
 typedef struct {
     unsigned char RAM[TAM_MEMO];
     unsigned short int tamanioM;
+    unsigned short int EP; //entry point
     tabla_segmentos  tabla_de_segmentos[cantSeg];
     long int tabla_de_registros[cantReg];
 } MV;
