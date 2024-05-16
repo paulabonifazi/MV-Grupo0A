@@ -10,6 +10,7 @@ typedef struct{
     char parteReg; //la posicion se usa solo para registros y memoria y partereg solo para registros
     long int valor;
     long int offset;
+    char tamCelda; //solo para memoria
 } TOperando;
 
 void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op, MV *mv, char *inst);

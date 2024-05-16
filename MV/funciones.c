@@ -140,12 +140,14 @@ void RND(TOperando *op1, TOperando *op2, MV *mv){
 
 void SYS(TOperando *op, TOperando *op2, MV *mv){
     unsigned int entrada;
+    char entradaChar, salidaChar;
     long int salida = 0;
     char tamCeldas = (mv->tabla_de_registros[12] & 0x0000FF00) >> 8; // CH
     char cantCeldas = mv->tabla_de_registros[12] & 0x000000FF; // CL
+    unsigned int cantChar = mv->tabla_de_registros[12] & 0x0000FFFF; // CX
     char formato = mv->tabla_de_registros[10] & 0x000000FF; //AL
     int posEDX = mv->tabla_de_registros[13];
-    if(op->valor == 1){ //  READ
+    if(op->valor == 1){         //READ
         for(int i = 0; i<cantCeldas; i++){
             printf("[%04X]: ",posEDX);
             if(formato & 0b1000) // Hexa
@@ -164,39 +166,74 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
                 mv->RAM[posEDX++] = entrada & (0x000000FF << (8*(tamCeldas-(j+1))));
         }
     }
-    else if(op->valor == 2){ //WRITE
+    else if(op->valor == 2){    //WRITE
         for(int i = 0; i<cantCeldas; i++){
             printf("[%04X]: ",posEDX);
             salida = 0;
-            for(int j=0; j<tamCeldas; j++){
-                salida = salida | ((mv->RAM[posEDX++] << (8*(tamCeldas-(j+1)))) & (0x000000FF << (8*(tamCeldas-(j+1)))));
-            }
-            /*if((salida & 0x80000000) == 0x8000){
-                salida = salida | 0xFFFF0000;
-            }*/
-            if(formato & 0b1000) // Hexa
-                printf("%% %08X ",salida);
-            if(formato & 0b0100) //Octal
-                printf("@ %o ",salida);
             if(formato & 0b0010){ //Caracter
-                if(salida >= 32 && salida <= 126)
-                    printf("%c ",salida);
-                else
-                    printf(". ");
-            }
-            if(formato & 0b0001){ // Decimal
-                /*if((salida & 0x00008000) == 0x00008000){
-                    salida = salida | 0xFFFF0000;
+                for(int j=0; j<tamCeldas; j++){
+                    salida = mv->RAM[posEDX++];
+                    if(salida >= 32 && salida <= 126)
+                        printf("%c ",salida);
+                    else
+                        printf(". ");
                 }
-                else{
-                    salida = salida & 0x0000FFFF;
-                }*/
-                printf("%d ",salida);
             }
-
-
+            else{
+                for(int j=0; j<tamCeldas; j++){
+                    salida = salida | ((mv->RAM[posEDX++] << (8*(tamCeldas-(j+1)))) & (0x000000FF << (8*(tamCeldas-(j+1)))));
+                }
+                /*if((salida & 0x80000000) == 0x8000){
+                    salida = salida | 0xFFFF0000;
+                }*/
+                if(formato & 0b1000) // Hexa
+                    printf("%% %08X ",salida);
+                if(formato & 0b0100) //Octal
+                    printf("@ %o ",salida);
+                if(formato & 0b0001){ // Decimal
+                    /*if((salida & 0x00008000) == 0x00008000){
+                        salida = salida | 0xFFFF0000;
+                    }
+                    else{
+                        salida = salida & 0x0000FFFF;
+                    }*/
+                    printf("%d ",salida);
+                }
+            }
             printf("\n");
         }
+    }
+    else if(op->valor == 3){ //STRING READ
+        if(cantChar != -1){
+            for(int j=0; j<cantChar; j++){
+                //scanf("%c",&entradaChar);
+                entradaChar = getchar();
+                mv->RAM[posEDX++] = entradaChar;
+            }
+            mv->RAM[posEDX] = '\0';
+        }
+        else{
+            entradaChar = getchar();
+            while(entradaChar != '\0'){
+                mv->RAM[posEDX++] = entradaChar;
+                entradaChar = getchar();
+            }
+            mv->RAM[posEDX] = entradaChar;
+        }
+    }
+    else if(op->valor == 4){    //STRING WRITE
+        do{
+            salidaChar = mv->RAM[posEDX++];
+            printf("%c",salidaChar);
+        }
+        while(salidaChar != '\0');
+        printf("\n");
+    }
+    else if(op->valor == 7){    //CLEAR SCREEN
+        system("cls");
+    }
+    else if(op->valor == 'F'){  //BREAKPOINT
+
     }
 }
 
@@ -287,10 +324,33 @@ void POP(TOperando *op, TOperando *op2, MV *mv){
         exit(1);
     }*/
     //Depende de tipo Operando?
-    unsigned int posRAM = mv->tabla_de_registros[6];
-    for(int i=0; i<4; i++){
-        op->valor = op->valor | ((mv->RAM[posRAM++] << (24 - (i*8))) & (0x000000FF << (24 - (i*8))));
+    if(op->tipo == 0b00){
+        unsigned int posRAM = mv->tabla_de_registros[6];
+        for(int i=0; i<4; i++){
+            op->valor = op->valor | ((mv->RAM[posRAM++] << (24 - (i*8))) & (0x000000FF << (24 - (i*8))));
+        }
     }
+    else if(op->tipo == 0b10){  //Registro
+        switch(op->parteReg) {
+            case 0b00: {
+                //registro de 4 bytes
+                mv->tabla_de_registros[mv->tabla_de_registros[6]] = op->valor;
+                break;}
+            case 0b01: {
+                //4to byte del registro
+                mv->tabla_de_registros[mv->tabla_de_registros[6]] = (mv->tabla_de_registros[mv->tabla_de_registros[6]] & 0xFFFFFF00) | (op->valor & 0x000000FF);
+                break;}
+            case 0b10: {
+                //3er byte del registro
+                mv->tabla_de_registros[mv->tabla_de_registros[6]] = (mv->tabla_de_registros[mv->tabla_de_registros[6]] & 0xFFFF00FF) | ((op->valor & 0x000000FF) << 8);
+                break;}
+            case 0b11: {
+                //registro de 2 bytes
+                mv->tabla_de_registros[mv->tabla_de_registros[6]] = (mv->tabla_de_registros[mv->tabla_de_registros[6]] & 0xFFFF0000) | (op->valor & 0x0000FFFF);
+                break;}
+        }
+    }
+
     mv->tabla_de_registros[6] +=4;
 
 }
@@ -300,7 +360,22 @@ void POP(TOperando *op, TOperando *op2, MV *mv){
 tipo. Primero almacena en el tope de la pila el valor del IP, que indica la dirección de memoria a la que se
 retornará luego de que la subrutina finalice. Luego, realiza un salto a la posición de memoria indicada por
 el operando.*/
-void CALL(TOperando *op, TOperando *op2, MV *mv){}
+void CALL(TOperando *op, TOperando *op2, MV *mv){
+    mv->tabla_de_registros[6] -=4;
+    if(mv->tabla_de_registros[6]<mv->tabla_de_registros[3]){
+        printf("Stack Overflow");
+        exit(1);
+    }
+    //similar a lo que hace reset operando, pero en vez de tomar la posicion del operando, la toma de SP
+    unsigned int aux_valor = 0;
+    unsigned int posRAM = mv->tabla_de_registros[6];
+    for(int i=0; i<4; i++){
+        aux_valor = (mv->tabla_de_registros[5] >> (24 - (i*8))) & 0x000000FF;
+        aux_valor = aux_valor & 0x000000FF;
+        mv->RAM[posRAM++] = aux_valor;
+    }
+    mv->tabla_de_registros[5] = op->valor;
+}
 
 //0 operandos
 void STOP(TOperando *op, TOperando *op2, MV *mv){
@@ -310,7 +385,14 @@ void STOP(TOperando *op, TOperando *op2, MV *mv){
 
 /* efectúa una retorno desde una subrutina. No requiere parámetros. Extrae el valor del tope de la
 pila y realiza un salto a esa dirección de memoria.*/
-void RET(TOperando *op, TOperando *op2, MV *mv){}
+void RET(TOperando *op, TOperando *op2, MV *mv){
+    unsigned int posRAM = mv->tabla_de_registros[6];
+    long int valor = 0;
+    for(int i=0; i<4; i++){
+        valor = valor | ((mv->RAM[posRAM++] << (24 - (i*8))) & (0x000000FF << (24 - (i*8))));
+    }
+    mv->tabla_de_registros[5] = valor;
+}
 
 
 void iniciaVectorFunciones(VectorFunciones vecF)

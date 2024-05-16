@@ -54,13 +54,19 @@ void set_offset(TOperando *op, long int offset){
     op->offset = offset;
 }
 
+void set_tam_celda(TOperando *op, char tam_celda){
+    op->tamCelda = tam_celda;
+}
+
 void lee_operando(TOperando *op, MV *mv){
     switch(op->tipo){
         case 0: {   //memoria
             op->valor = 0;
-            char cod_reg = get_instruccion(mv);
-            unsigned int pos = cod_reg;
+            char tam_y_cod_reg = get_instruccion(mv);
+            unsigned int pos = tam_y_cod_reg & 0x000000FF;
             set_posicion(op,pos);
+            char tam_celda = ((tam_y_cod_reg>>8) & 0x0000FF00);
+            set_tam_celda(op,tam_celda);
             char offset_h = get_instruccion(mv);
             long int offset = offset_h;
             offset = offset<<8;
@@ -116,7 +122,7 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
         else{
             posRAM = mv->tabla_de_segmentos[op->posicion].segmento + op->offset;
         }
-        while(i<4 && posRAM<16384){
+        while(i<(~(op->tamCelda)+1) && posRAM<16384){
             op->valor = op->valor | ((mv->RAM[posRAM] << (24 - (i*8))) & (0x000000FF << (24 - (i*8))));
             i += 1;
             posRAM += 1;
@@ -164,7 +170,7 @@ void reset_valor_op(TOperando *op,MV *mv){ //Guarda en la posicion a la cual apu
         else{
             posRAM = mv->tabla_de_segmentos[op->posicion].segmento + op->offset;
         }
-        while(i<4 && posRAM<16384){
+        while(i<(~(op->tamCelda))+1 && posRAM<16384){
             aux_valor = (op->valor >> (24 - (i*8))) & 0x000000FF;
             aux_valor = aux_valor & 0x000000FF;
             mv->RAM[posRAM] = aux_valor;

@@ -60,7 +60,15 @@ void LDL(TOperando *op, TOperando *op2, MV *mv);
 
 void LDH(TOperando *op, TOperando *op2, MV *mv);
 
+void PUSH(TOperando *op, TOperando *op2, MV *mv);
+
+void POP(TOperando *op, TOperando *op2, MV *mv);
+
+void CALL(TOperando *op, TOperando *op2, MV *mv);
+
 void NOT(TOperando *op, TOperando *op2, MV *mv);
+
+void RET(TOperando *op, TOperando *op2, MV *mv);
 
 //0 operandos
 void STOP(TOperando *op, TOperando *op2, MV *mv);

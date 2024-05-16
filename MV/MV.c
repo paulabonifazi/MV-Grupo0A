@@ -11,6 +11,9 @@
 
 void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
       long int tam;           //tamanio del codigo
+      long int tamTotal = 0;
+      long int base = 0;
+      int i = 0;
       char version, identificador[5];   //version 1 y 2, indentificador = "VMX24"
       char aux;
       *ejecuta = 0;
@@ -49,7 +52,61 @@ void iniciaMV(FILE *programa, MV *mv, int *ejecuta){
                 KS - CS - DS - ES - SS
                 los indices de segmentos no se condicen con los indices de registros! en los define de CS, Ks, etc corresponden a la tabla de registros*/
                 //hacer for para leer todo el header y luego switch para ver que segmento y registro cargar
+            while(tamTotal<16384 && i<5){
+                fread(&aux, sizeof(aux), 1, programa);
+                tam = aux << 8;
+                fread(&aux, sizeof(aux), 1, programa);  //leo tam del codigo
+                tam = tam | (aux & 0x000000FF);
+                tam = tam & 0x0000FFFF;
 
+                tamTotal += tam;
+                switch(i){
+                    case 0: {
+                        //mv->tabla_de_segmentos[CS].segmento = base;
+                        mv->tabla_de_segmentos[CS].tam = tam;
+                    break;}
+                    case 1: {
+                        //mv->tabla_de_segmentos[DS].segmento = base;
+                        mv->tabla_de_segmentos[DS].tam = tam;
+                    break;}
+                    case 2: {
+                        //mv->tabla_de_segmentos[ES].segmento = base;
+                        mv->tabla_de_segmentos[ES].tam = tam;
+                    break;}
+                    case 3: {
+                        //mv->tabla_de_segmentos[SS].segmento = base;
+                        mv->tabla_de_segmentos[SS].tam = tam;
+                    break;}
+                    case 4: {
+                        //mv->tabla_de_segmentos[KS].segmento = base;
+                        mv->tabla_de_segmentos[KS].tam = tam;
+                    break;}
+                }
+                i +=1;
+            }
+            if(tamTotal<16384){
+                mv->tabla_de_segmentos[KS].segmento = base;
+                base += mv->tabla_de_segmentos[KS].tam;
+                mv->tabla_de_segmentos[CS].segmento = base;
+                base += mv->tabla_de_segmentos[CS].tam;
+                mv->tabla_de_segmentos[DS].segmento = base;
+                base += mv->tabla_de_segmentos[DS].tam;
+                mv->tabla_de_segmentos[ES].segmento = base;
+                base += mv->tabla_de_segmentos[ES].tam;
+                mv->tabla_de_segmentos[SS].segmento = base;
+                base += mv->tabla_de_segmentos[SS].tam;
+
+                fread(&aux, sizeof(aux), 1, programa);
+                tam = aux << 8;
+                fread(&aux, sizeof(aux), 1, programa);
+                tam = tam | (aux & 0x000000FF);
+                tam = tam & 0x0000FFFF;
+                mv->tabla_de_registros[IP] = tam; //ENTRY POINT
+            }
+            else{
+                printf("Memoria insuficiente");
+                exit(1);
+            }
         }
         else{
             printf("Version incorrecta");
