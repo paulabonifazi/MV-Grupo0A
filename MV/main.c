@@ -29,12 +29,8 @@ int main(int argc, char *argv[])
 
     }
 
-    if (argumento[0] != NULL){
-        ejecutaMV(argumento[0], argumento[1], tam);
-    }
-    else{
-        ejecutaMV(argumento[2], argumento[1], tam);
-    }
+    ejecutaMV(argumento[0], argumento[1], tam, argumento[2]);
+
 
     //ejecutaMV(argumento[0], argumento[1]);
 

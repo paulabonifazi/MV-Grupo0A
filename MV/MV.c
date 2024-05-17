@@ -39,7 +39,10 @@ void iniciaMV(FILE *programa, MV *mv){
             }
         }
         else if (version == 2){
-            while(tamTotal<16384 && i<5){
+
+            //----------------------------------------- dederiamos preguntar si solo hay vmx, si hay vmx y vmi o solo vmi??
+            //while(tamTotal<16384 && i<5){
+            while(tamTotal<(mv->tamanioM) && i<5){
                 fread(&aux, sizeof(aux), 1, programa);
                 tam = aux << 8;
                 fread(&aux, sizeof(aux), 1, programa);  //leo tam del codigo
@@ -97,7 +100,7 @@ void iniciaMV(FILE *programa, MV *mv){
                 mv->tabla_de_registros[ES] = mv->tabla_de_segmentos[ES].segmento;
                 mv->tabla_de_registros[SS] = mv->tabla_de_segmentos[SS].segmento;
                 mv->tabla_de_registros[KS] = mv->tabla_de_segmentos[KS].segmento;
-
+                mv->tabla_de_registros[SP] = mv->tabla_de_segmentos[SS].segmento;
             }
             else{
                 printf("Memoria insuficiente");
@@ -165,13 +168,15 @@ void printeaDisassembler(MV *mv){
 
 /* se pasa el archivo asm para cargarlo a memoria y el flag del disassembler para printear el pograma ejecutandose
     el metodo tiene que llamar a una funcion para iniciar la mv*/
-void ejecutaMV(char arch[], char disassembler[], int tam){
+void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
     MV mv;
     char inst;
     VectorFunciones vecF;
     FILE* programa;
     short int codOp;
     TOperando op1,op2;
+
+    //------------------ver como abrir el archivo, dependiendo que se va a ejecutar
 
     iniciaVectorFunciones(vecF);
     programa = fopen(arch, "rb");
