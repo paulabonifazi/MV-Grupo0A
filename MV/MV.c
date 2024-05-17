@@ -172,11 +172,27 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
     MV mv;
     char inst;
     VectorFunciones vecF;
-    FILE* programa;
+    FILE* programa, imagen;
     short int codOp;
     TOperando op1,op2;
 
     //------------------ver como abrir el archivo, dependiendo que se va a ejecutar
+    /* podría ver
+        iniciaVectorFunciones(vecF);
+        programa = fopen(arch, "rb");
+        imagen = fopen(img, "rb");
+
+        if (programa == null){
+            if (imagen == null)
+                printf("Error. No se encuentra el archivo");
+            else
+                llamar a iniciaMV? y que ahí dentro vuelva a preg si imagen es != de null para cargar los registros y segmentos?
+        }
+        else{
+            iniciaMV como siempre
+            ver que hacer con el arch imagen
+        }
+    */
 
     iniciaVectorFunciones(vecF);
     programa = fopen(arch, "rb");

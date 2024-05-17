@@ -233,7 +233,7 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
         system("cls");
     }
     else if(op->valor == 'F'){  //BREAKPOINT
-        generaImagen(mv);
+  //      generaImagen(mv);
         char op = getchar();
         if(op == 'g'){
             //Continua ejecucion

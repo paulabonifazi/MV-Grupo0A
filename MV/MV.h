@@ -19,6 +19,6 @@ typedef struct {
     long int tabla_de_registros[cantReg];
 } MV;
 
-void ejecutaMV(char arch[], char disassembler[], int tam);
+void ejecutaMV(char arch[], char disassembler[], int tam, char img[]);
 
 #endif
