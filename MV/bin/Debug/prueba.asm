@@ -1,0 +1,4 @@
+TEXTO EQU "Hola\n"
+MOV EDX, KS
+ADD EDX, TEXTO
+SYS %4

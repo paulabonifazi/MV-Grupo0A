@@ -19,6 +19,8 @@ void setea_cc(long int resultadoFunc, MV *mv){
 //2 operandos
 
 void MOV(TOperando *op1, TOperando *op2, MV *mv){
+    //printf("op1->valor: %x \n",op1->valor);
+    //printf("op2->valor: %x \n",op2->valor);
     op1->valor = op2->valor;
     reset_valor_op(op1,mv);
 }
@@ -147,6 +149,8 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
     unsigned int cantChar = mv->tabla_de_registros[12] & 0x0000FFFF; // CX
     char formato = mv->tabla_de_registros[10] & 0x000000FF; //AL
     int posEDX = mv->tabla_de_registros[13];
+    //printf("%d \n",mv->tabla_de_registros[13]);
+    //printf("%d \n",mv->RAM[posEDX]);
     if(op->valor == 1){         //READ
         for(int i = 0; i<cantCeldas; i++){
             printf("[%04X]: ",posEDX);
@@ -168,7 +172,7 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
     }
     else if(op->valor == 2){    //WRITE
         for(int i = 0; i<cantCeldas; i++){
-            printf("[%04X]: ",posEDX);
+            printf(" [%04X]: ",posEDX);
             salida = 0;
             if(formato & 0b0010){ //Caracter
                 for(int j=0; j<tamCeldas; j++){
@@ -222,27 +226,40 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
         }
     }
     else if(op->valor == 4){    //STRING WRITE
-        do{
+        //printf("ACA 4 \n");
+        salidaChar = mv->RAM[posEDX++];
+       // printf("%d \n",posEDX);
+       // printf("%d",salidaChar);
+        while(salidaChar != '\0'){
+            printf("%c",salidaChar);
             salidaChar = mv->RAM[posEDX++];
+        }
+        /*do{
+
+            printf("AAAAAAAAAA");
+            printf("%d",salidaChar);
             printf("%c",salidaChar);
         }
-        while(salidaChar != '\0');
+        while(salidaChar != '\0');*/
         printf("\n");
     }
     else if(op->valor == 7){    //CLEAR SCREEN
         system("cls");
     }
     else if(op->valor == 'F'){  //BREAKPOINT
-  //      generaImagen(mv);
+        generaImagen(mv);
         char op = getchar();
         if(op == 'g'){
+            mv->breakpoint = 0;
             //Continua ejecucion
         }
         else if(op == 'q'){
             //Aborta ejecucion
+            mv->breakpoint = 0;
             STOP(op,op2,mv);
         }
         else if(op == 13){  //13 = ENTER en ASCII
+            mv->breakpoint = 1;
             //Ejecuta paso a paso
             //Como diferenciar cuando y cuando no mostrar disassembler??
             /*if(mv->tabla_de_registros[IP] < mv->tabla_de_segmentos[CS].tam){

@@ -1,7 +1,7 @@
 #ifndef MV_H
 #define MV_H
 
-#define cantSeg 2
+#define cantSeg 8
 #define cantReg 16
 #define TAM_MEMO 16384
 

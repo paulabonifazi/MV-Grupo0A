@@ -74,6 +74,7 @@ void iniciaMV(FILE *programa, MV *mv){
                 }
                 i +=1;
             }
+            printf("\n");
             //if(tamTotal<16384){
             if(tamTotal<mv->tamanioM){
                 mv->tabla_de_segmentos[KS].segmento = base;
@@ -95,13 +96,29 @@ void iniciaMV(FILE *programa, MV *mv){
                 mv->tabla_de_registros[IP] = tam; //ENTRY POINT
 
                 //cargo registros
-                mv->tabla_de_registros[CS] = mv->tabla_de_segmentos[CS].segmento;
-                mv->tabla_de_registros[DS] = mv->tabla_de_segmentos[DS].segmento;
-                mv->tabla_de_registros[ES] = mv->tabla_de_segmentos[ES].segmento;
-                mv->tabla_de_registros[SS] = mv->tabla_de_segmentos[SS].segmento;
-                mv->tabla_de_registros[KS] = mv->tabla_de_segmentos[KS].segmento;
-                mv->tabla_de_registros[SP] = mv->tabla_de_segmentos[SS].segmento;
+                for(int k = 0; k<5; k++){
+                    mv->tabla_de_registros[k] = k<<16;
+                    //printf("seg: %d \n",mv->tabla_de_segmentos[k].segmento);
+                }
+
+                mv->tabla_de_registros[IP] = mv->tabla_de_registros[IP] | (mv->tabla_de_registros[CS]<<16);
+
+
+
+                //cargo el codigo al code segment
+                //printf("mv->tabla_de_segmentos[CS].segmento: %d\n",mv->tabla_de_segmentos[CS].segmento);
+                for (int i=0; i<mv->tabla_de_segmentos[CS].tam; i++ ){
+                    fread(&mv->RAM[mv->tabla_de_segmentos[CS].segmento + i], sizeof(char), 1, programa);
+                   // printf("mv->RAM[%d]: %d \n",mv->tabla_de_segmentos[CS].segmento + i,mv->RAM[mv->tabla_de_segmentos[CS].segmento + i]);
+                }
+                //Cargo constantes al KS
+                if(mv->tabla_de_segmentos[KS].tam > 0){
+                    for (int i=0; i<mv->tabla_de_segmentos[KS].tam; i++ ){
+                        fread(&mv->RAM[mv->tabla_de_segmentos[KS].segmento + i], sizeof(char), 1, programa);
+                    }
+                }
             }
+
             else{
                 printf("Memoria insuficiente");
                 exit(1);
@@ -118,13 +135,14 @@ void iniciaMV(FILE *programa, MV *mv){
       }
 }
 
+
 /* metodo que inicia la maquina virtual desde un archivo imagen */
 void iniciaMVimagen(FILE *img, MV *mv){
     unsigned short int tamMemo; //tamanio memo ram, KiB
     char version, identificador[5];   //version 1, indentificador = "VMI24"
     char aux;
     long int base = 0;
-    int i;
+    int i,j;
     fread(identificador, sizeof(identificador),1, img);
     fread(&version, sizeof(version),1,img);
     fread(&tamMemo, sizeof(tamMemo), 1, img);
@@ -153,6 +171,11 @@ void iniciaMVimagen(FILE *img, MV *mv){
             base += mv->tabla_de_segmentos[SS].tam;
 
             // que habria en la memoria??? tenemos instr?
+            j = 0;
+            while(!feof(img)){
+                fread(&aux, sizeof(aux), 1, img);
+                mv->RAM[j++] = aux;
+            }
         }
         else{
             printf("Version incorrecta");
@@ -196,12 +219,23 @@ void printeaDisassembler(MV *mv){
                 }else{
                     //sin operandos, Los operandos del disassembler ya estan inicializados, no se setean
                 }
+               // printf("%X \n",codOp);
                 //------------------------------------------------------------creo que por aca deberiamos de hacer el while mv->breakpoint == 1 y analizar el enter
                 //para esperar a que la instruccion se imprima una vez de presionado enter
-                if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
+                if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1D)) || (codOp == 0x1F) || (codOp == 0x1E)){
                     cargaIns(&dis, posInstr, instr, codOp);
+                    if(mv->EP == posInstr){ //Para poder marcar el entry point en el disassembler
+                        printf(">");
+                    }
+                    else{
+                        printf(" ");
+                    }
                     muestra(dis);
                     vecF[codOp](&op1, &op2, mv);
+                    if(mv->breakpoint == 1 && (codOp != 0x10 && op1.valor != 'F')){
+                        op1.valor = 'F';
+                        vecF[0x10](&op1, &op2, mv);
+                    }
                 }
                 else{
                     printf("Codigo de operacion invalido.");
@@ -272,7 +306,7 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
 
         //-----------------como le asigno el archivo imagen a la mv?? es ok?
         if (imagen != NULL){
-            mv.imagen = imagen;
+            mv.imagen = imagen; //Podemos pasar directamente el archivo o sino pasar el nombre y abrirlo solo en caso de que se genere una imagen
         }
 
 
@@ -287,8 +321,13 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
                 //------------------------------------------------------------creo que por aca deberiamos de hacer el while mv->breakpoint == 1 y analizar el enter
                 //para esperar a que la instruccion se imprima una vez de presionado enter
 
-                if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
-                    vecF[codOp](&op1, &op2, &mv);}
+                if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1D)) || (codOp == 0x1F) || (codOp == 0x1E)){
+                    vecF[codOp](&op1, &op2, &mv);
+                    if(mv.breakpoint == 1 && (codOp != 0x10 && op1.valor != 'F')){
+                        op1.valor = 'F';
+                        vecF[16](&op1, &op2, &mv);
+                    }
+                }
                 else{
                     printf("Codigo de operacion invalido.");
                     exit(1);
@@ -300,6 +339,32 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
                 exit(1);
             }
         }
+    }
+}
+
+void generaImagen(MV *mv){
+    //FILE *imagen = fopen("nombre.vmi","wb"); //Como pasar el nombre de la consola a aca?
+    if(mv->imagen != NULL){
+        char id[] = "VMI24";
+        char version = 1;
+        fwrite(id, sizeof(id), 1, mv->imagen);
+        fwrite(&version, sizeof(version), 1, mv->imagen);
+        fwrite(&(mv->tamanioM), sizeof(mv->tamanioM), 1, mv->imagen);
+
+        for(int i = 0; i<16; i++){
+            fwrite(&(mv->tabla_de_registros[i]), sizeof(mv->tabla_de_registros[i]), 1, mv->imagen);
+        }
+        for(int j = 0; j<5; j++){   //Aca en la consigna dice 8 pero los segmentos son 5, habria que preguntarlo
+            fwrite(&(mv->tabla_de_segmentos[j].segmento), sizeof(mv->tabla_de_segmentos[j].segmento), 1, mv->imagen);
+            fwrite(&(mv->tabla_de_segmentos[j].tam), sizeof(mv->tabla_de_segmentos[j].segmento), 1, mv->imagen);
+        }
+        for(int k = 0; k<mv->tamanioM; k++){
+            fwrite(&(mv->RAM[k]), sizeof(mv->RAM[k]), 1, mv->imagen);
+        }
+        fclose(mv->imagen);
+    }
+    else{
+        printf("Error al abrir el archivo");
     }
 }
 

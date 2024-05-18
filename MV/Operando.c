@@ -13,6 +13,7 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv, c
         o = cod op -> bbaooooo & 00011111 (0x1F) -> es vector asi que es bit a bit
     */
     //set cod operacion
+    //printf("Instruccion: %d \n",*inst);
     *cod_op = (*inst) & 0x1F;
     if(((*cod_op >> 4)&0x01) == 0){
         // dos operandos
@@ -102,9 +103,14 @@ void lee_operando(TOperando *op, MV *mv){
 
 char get_instruccion(MV *mv){
     int ip = mv->tabla_de_registros[5];
-    char posSeg = mv->tabla_de_segmentos[ip & 0xFFFF0000].segmento; //Busca indice de IP y devuelve el codigo en tabla segmentos
+    //printf("ip: %x \n",ip);
+    //printf("AAAA: %x \n",(ip & 0xFFFF0000)>>16);
+    char posSeg = mv->tabla_de_segmentos[(ip & 0xFFFF0000)>>16].segmento; //Busca indice de IP y devuelve el codigo en tabla segmentos
+    //printf("Base Segmento: %x \n",posSeg);
     long int posRAM = posSeg + (ip & 0x0000FFFF);//((mv->tabla_de_segmentos[posSeg].tam & 0xF0)>>4) + (ip & 0x0F); //Posicion DS en tabla segmento + offset IP
+    //printf("Pos ram: %x \n",posRAM);
     char inst = mv->RAM[posRAM];
+    //printf("instr: %x \n",inst);
 
     mv->tabla_de_registros[5] += 0x01; //Suma 1 al offset de ip
 
@@ -133,7 +139,13 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
         }
     }
     else if(op->tipo == 0b10){  //Registro
-        switch(op->parteReg) {
+        if(op->posicion < 5){
+            //printf("op pos: %d \n", op->posicion);
+            //printf("REG: %d \n",mv->tabla_de_segmentos[op->posicion].segmento);
+            op->valor = mv->tabla_de_segmentos[op->posicion].segmento;
+        }
+        else{
+            switch(op->parteReg) {
             case 0b00: {
                 //registro de 4 bytes
                 op->valor = mv->tabla_de_registros[op->posicion];
@@ -153,7 +165,9 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
                 op->valor = mv->tabla_de_registros[op->posicion] & 0x0000FFFF;
                 op->valor = op->valor & 0x0000FFFF;
                 break;}
+            }
         }
+
     }
     //Si es inmediato ya tiene el valor seteado de cuando se ley� el codigo de operacion
 }
@@ -183,6 +197,9 @@ void reset_valor_op(TOperando *op,MV *mv){ //Guarda en la posicion a la cual apu
         }
     }
     else if(op->tipo == 0b10){  //Registro
+        if(op->posicion < 5){
+            op->valor = mv->tabla_de_segmentos[op->posicion].segmento;
+        }
         switch(op->parteReg) {
             case 0b00: {
                 //registro de 4 bytes
