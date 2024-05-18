@@ -118,6 +118,54 @@ void iniciaMV(FILE *programa, MV *mv){
       }
 }
 
+/* metodo que inicia la maquina virtual desde un archivo imagen */
+void iniciaMVimagen(FILE *img, MV *mv){
+    unsigned short int tamMemo; //tamanio memo ram, KiB
+    char version, identificador[5];   //version 1, indentificador = "VMI24"
+    char aux;
+    long int base = 0;
+    int i;
+    fread(identificador, sizeof(identificador),1, img);
+    fread(&version, sizeof(version),1,img);
+    fread(&tamMemo, sizeof(tamMemo), 1, img);
+
+    if (strcmp(identificador, "VMI24")){
+        if (version == 1){
+            mv->tamanioM = tamMemo*1024;
+            for(i=0; i<16; i++){        //cargo registros
+                fread(&aux, sizeof(aux), 1, img);
+                mv->tabla_de_registros[i] = aux;
+            }
+            for(i=0; i<8; i++){         //cargo segmentos
+                fread(&aux, sizeof(aux), 1, img);
+                mv->tabla_de_segmentos[i].tam = aux;
+            }
+
+            mv->tabla_de_segmentos[KS].segmento = base;
+            base += mv->tabla_de_segmentos[KS].tam;
+            mv->tabla_de_segmentos[CS].segmento = base;
+            base += mv->tabla_de_segmentos[CS].tam;
+            mv->tabla_de_segmentos[DS].segmento = base;
+            base += mv->tabla_de_segmentos[DS].tam;
+            mv->tabla_de_segmentos[ES].segmento = base;
+            base += mv->tabla_de_segmentos[ES].tam;
+            mv->tabla_de_segmentos[SS].segmento = base;
+            base += mv->tabla_de_segmentos[SS].tam;
+
+            // que habria en la memoria??? tenemos instr?
+        }
+        else{
+            printf("Version incorrecta");
+            exit(1);
+        }
+    }
+    else{
+        printf("Identificador incorrecto");
+        exit(1);
+    }
+}
+
+
 /* metodo que se encarga de mostrar por pantalla el disassembler
     setea los operandos y decifra instrucci�n �para mostrarlos por pantalla*/
 void printeaDisassembler(MV *mv){
@@ -148,7 +196,8 @@ void printeaDisassembler(MV *mv){
                 }else{
                     //sin operandos, Los operandos del disassembler ya estan inicializados, no se setean
                 }
-
+                //------------------------------------------------------------creo que por aca deberiamos de hacer el while mv->breakpoint == 1 y analizar el enter
+                //para esperar a que la instruccion se imprima una vez de presionado enter
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
                     cargaIns(&dis, posInstr, instr, codOp);
                     muestra(dis);
@@ -172,7 +221,8 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
     MV mv;
     char inst;
     VectorFunciones vecF;
-    FILE* programa, imagen;
+    FILE* programa;
+    FILE* imagen;
     short int codOp;
     TOperando op1,op2;
 
@@ -186,7 +236,7 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
             if (imagen == null)
                 printf("Error. No se encuentra el archivo");
             else
-                llamar a iniciaMV? y que ahí dentro vuelva a preg si imagen es != de null para cargar los registros y segmentos?
+                iniciaMVimagen
         }
         else{
             iniciaMV como siempre
@@ -196,13 +246,21 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
 
     iniciaVectorFunciones(vecF);
     programa = fopen(arch, "rb");
+    imagen = fopen(img, "rb");
 
     if(programa == NULL) {
-        printf("Error. No se encuentra el archivo.");
-        exit(1);
+        if (imagen == NULL){
+            printf("Error. No se encuentra el archivo.");
+            exit(1);
+        }
+        else{
+            //iniciar mv desde archivo imagen!
+            iniciaMVimagen(imagen, &mv);
+        }
     }
     else{
         //------------------------------------------------ creo que aca deberia de chequear el tam de la memoria-----------------//
+        //hay que ahcer lo mismo cuando se carga la mv desde un arch imagen?? -> el tamanio viene en el header!!
         if (tam == 0){  //memo ram por default
             mv.tamanioM = TAM_MEMO;
         }
@@ -212,6 +270,12 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
         iniciaMV(programa, &mv);
         fclose(programa);
 
+        //-----------------como le asigno el archivo imagen a la mv?? es ok?
+        if (imagen != NULL){
+            mv.imagen = imagen;
+        }
+
+
         if (disassembler != NULL){
             printeaDisassembler(&mv);
         }
@@ -219,6 +283,9 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
             //la ejecucion se da cuando el IP no sobrepasa el code segment
             while(mv.tabla_de_registros[IP] < mv.tabla_de_segmentos[CS].tam){
                 decodifica_cod_op(&op1, &op2, &codOp, &mv, &inst);
+
+                //------------------------------------------------------------creo que por aca deberiamos de hacer el while mv->breakpoint == 1 y analizar el enter
+                //para esperar a que la instruccion se imprima una vez de presionado enter
 
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
                     vecF[codOp](&op1, &op2, &mv);}

@@ -108,9 +108,13 @@
 1715878731 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.h
 	"MV.h"
 
-1715905009 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.h
+1715991247 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
 
-1715902013 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.c
+1715905032 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.c
 	"funciones.h"
 	<stdlib.h>
 	<time.h>

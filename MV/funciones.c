@@ -259,6 +259,8 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
             SYS(op,op2,mv);*/
 
             // Si se ejecuta la siguiente instruccion aca, no hay manera de saber si tiene que mostrar o no el disassembler
+
+            /* todo lo de arriba vuela y solo se chequea op, si sigue la ejecucion hasta el prox brakpoint, se escribe en el archivo imagen la instr*/
         }
 
     }
