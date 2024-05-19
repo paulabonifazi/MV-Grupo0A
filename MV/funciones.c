@@ -246,9 +246,12 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
     else if(op->valor == 7){    //CLEAR SCREEN
         system("cls");
     }
-    else if(op->valor == 'F'){  //BREAKPOINT
+    else if(op->valor == 15){  //BREAKPOINT
+        printf("Entro");
         generaImagen(mv);
+        char aux = getchar();
         char op = getchar();
+        printf("%c",op);
         if(op == 'g'){
             mv->breakpoint = 0;
             //Continua ejecucion
@@ -440,6 +443,39 @@ void RET(TOperando *op, TOperando *op2, MV *mv){
     mv->tabla_de_registros[5] = valor;
 }
 
+void generaImagen(MV *mv){
+    //FILE *imagen = fopen(mv->imagen,"wb"); //Como pasar el nombre de la consola a aca?
+    printf("Funcion generaImagen");
+    if(mv->imagen != NULL){
+        char id[5] = {'V','M','I','2','4'};
+        char version = 1;
+        printf("\n Dentro if");
+        fwrite(id, sizeof(id), 1, mv->imagen);
+        printf("\ntam: %d",sizeof(mv->tamanioM));
+        fwrite(&version, sizeof(version), 1, mv->imagen);
+        fwrite(&(mv->tamanioM), sizeof(mv->tamanioM), 1, mv->imagen);
+
+        printf("\ntam: %d",sizeof(mv->tabla_de_registros[1]));
+        for(int i = 0; i<16; i++){
+            fwrite(&(mv->tabla_de_registros[i]), sizeof(long int), 1, mv->imagen);
+            printf("\n reg: %08X",mv->tabla_de_registros[i]);
+        }
+        printf("\n primer for");
+        for(int j = 0; j<8; j++){   //Aca en la consigna dice 8 pero los segmentos son 5, habria que preguntarlo
+            fwrite(&(mv->tabla_de_segmentos[j].segmento), sizeof(mv->tabla_de_segmentos[j].segmento), 1, mv->imagen);
+            fwrite(&(mv->tabla_de_segmentos[j].tam), sizeof(mv->tabla_de_segmentos[j].segmento), 1, mv->imagen);
+        }
+        printf("\n segundo for");
+        for(int k = 0; k<mv->tamanioM; k++){
+            fwrite(&(mv->RAM[k]), sizeof(mv->RAM[k]), 1, mv->imagen);
+        }
+        printf("\n ultimo for");
+        fclose(mv->imagen);
+    }
+    else{
+        printf("Error al abrir el archivo");
+    }
+}
 
 void iniciaVectorFunciones(VectorFunciones vecF)
 {

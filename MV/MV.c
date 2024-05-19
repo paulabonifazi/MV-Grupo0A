@@ -280,7 +280,7 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
 
     iniciaVectorFunciones(vecF);
     programa = fopen(arch, "rb");
-    imagen = fopen(img, "rb");
+    imagen = fopen(img, "wb");
 
     if(programa == NULL) {
         if (imagen == NULL){
@@ -342,29 +342,5 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
     }
 }
 
-void generaImagen(MV *mv){
-    //FILE *imagen = fopen("nombre.vmi","wb"); //Como pasar el nombre de la consola a aca?
-    if(mv->imagen != NULL){
-        char id[] = "VMI24";
-        char version = 1;
-        fwrite(id, sizeof(id), 1, mv->imagen);
-        fwrite(&version, sizeof(version), 1, mv->imagen);
-        fwrite(&(mv->tamanioM), sizeof(mv->tamanioM), 1, mv->imagen);
 
-        for(int i = 0; i<16; i++){
-            fwrite(&(mv->tabla_de_registros[i]), sizeof(mv->tabla_de_registros[i]), 1, mv->imagen);
-        }
-        for(int j = 0; j<5; j++){   //Aca en la consigna dice 8 pero los segmentos son 5, habria que preguntarlo
-            fwrite(&(mv->tabla_de_segmentos[j].segmento), sizeof(mv->tabla_de_segmentos[j].segmento), 1, mv->imagen);
-            fwrite(&(mv->tabla_de_segmentos[j].tam), sizeof(mv->tabla_de_segmentos[j].segmento), 1, mv->imagen);
-        }
-        for(int k = 0; k<mv->tamanioM; k++){
-            fwrite(&(mv->RAM[k]), sizeof(mv->RAM[k]), 1, mv->imagen);
-        }
-        fclose(mv->imagen);
-    }
-    else{
-        printf("Error al abrir el archivo");
-    }
-}
 

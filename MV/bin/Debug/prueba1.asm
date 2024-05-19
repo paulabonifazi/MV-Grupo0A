@@ -1,0 +1,6 @@
+MOV EDX, DS
+MOV CX, 5
+SYS %3
+MOV EDX, DS
+SYS %4
+SYS %F
