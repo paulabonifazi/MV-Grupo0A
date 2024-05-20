@@ -99,7 +99,7 @@
 	<string.h>
 	"Operando.h"
 
-1715705403 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\disassembler.c
+1716241169 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\disassembler.c
 	"Disassembler.h"
 	<string.h>
 
@@ -112,23 +112,23 @@
 1715878731 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.h
 	"MV.h"
 
-1715991247 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.h
+1716246656 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	<unistd.h>
 
-1715905032 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.c
+1716246063 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.c
 	"funciones.h"
 	<stdlib.h>
 	<time.h>
 	<stdio.h>
 
-1715878731 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.h
+1716241107 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.h
 	"MV.h"
 	"Operando.h"
 
-1715903995 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\main.c
+1716220612 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\main.c
 	<stdio.h>
 	<stdlib.h>
 	"Operando.h"
@@ -136,7 +136,7 @@
 	"MV.h"
 	"Disassembler.h"
 
-1715904981 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.c
+1716248902 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -146,7 +146,7 @@
 	"Disassembler.h"
 	"Operando.h"
 
-1715900903 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.c
+1716241151 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.c
 	"Operando.h"
 	<stdlib.h>
 	<stdio.h>

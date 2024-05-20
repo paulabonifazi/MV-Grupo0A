@@ -415,35 +415,44 @@ void RET(TOperando *op, TOperando *op2, MV *mv){
 }
 
 void generaImagen(MV *mv){
-    if(mv->imagen != NULL){
+    FILE *imagen;
+
+    imagen = fopen(mv->imagen, "wb");
+
+    printf("%s",mv->imagen);
+    printf("%s", imagen);
+
+    if(imagen != NULL){
         char id[5] = {'V','M','I','2','4'};
         char version = 1;
         unsigned char aux;
-        fwrite(id, sizeof(id), 1, mv->imagen);
-        fwrite(&version, sizeof(version), 1, mv->imagen);
-        fwrite(&(mv->tamanioM), sizeof(mv->tamanioM), 1, mv->imagen);
+
+        printf("entro genera imagen. id: %s", id);
+        fwrite(id, sizeof(id), 1, imagen);
+        fwrite(&version, sizeof(version), 1, imagen);
+        fwrite(&(mv->tamanioM), sizeof(mv->tamanioM), 1, imagen);
         for(int i = 0; i<16; i++){
             for(int j = 0; j<4; j++){
                 aux = (mv->tabla_de_registros[i] >> (8*(3-j))) & 0x000000FF;
-                fwrite(&aux, sizeof(char), 1, mv->imagen);
+                fwrite(&aux, sizeof(char), 1, imagen);
             }
         }
         for(int i = 0; i<8; i++){   //Aca en la consigna dice 8 pero los segmentos son 5, habria que preguntarlo
             for(int j = 0; j<2; j++){
                 aux = (mv->tabla_de_segmentos[i].segmento >> (8*(1-j))) & 0x00FF;
-                fwrite(&aux, sizeof(char), 1, mv->imagen);
+                fwrite(&aux, sizeof(char), 1, imagen);
             }
             for(int j = 0; j<2; j++){
                 aux = (mv->tabla_de_segmentos[i].tam >> (8*(1-j))) & 0x00FF;
-                fwrite(&aux, sizeof(char), 1, mv->imagen);
+                fwrite(&aux, sizeof(char), 1, imagen);
             }
         }
         for(int k = 0; k<mv->tamanioM; k++){
 
             aux = mv->RAM[k];
-            fwrite(&aux, sizeof(unsigned char), 1, mv->imagen);
+            fwrite(&aux, sizeof(unsigned char), 1, imagen);
         }
-        fclose(mv->imagen);
+        fclose(imagen);
     }
     else{
         printf("Error al abrir el archivo");

@@ -18,6 +18,8 @@ void iniciaMV(FILE *programa, MV *mv){
       fread(identificador, sizeof(identificador),1, programa);
       fread(&version, sizeof(version),1,programa);
 
+      printf("identificador: %s\n", identificador);
+
       if (strcmp(identificador, "VMX24")){
         if (version == 1){
             fread(&aux, sizeof(aux), 1, programa);
@@ -137,12 +139,18 @@ void iniciaMV(FILE *programa, MV *mv){
 
 
 /* metodo que inicia la maquina virtual desde un archivo imagen */
-void iniciaMVimagen(FILE *img, MV *mv){
+void iniciaMVimagen(MV *mv){
     unsigned short int tamMemo; //tamanio memo ram, KiB
     char version, identificador[5];   //version 1, indentificador = "VMI24"
     char aux;
+    FILE *img;
     long int base = 0;
     int i,j;
+
+    img = fopen(mv->imagen, "rb+");
+
+    strcpy(identificador, "");
+
     fread(identificador, sizeof(identificador),1, img);
     fread(&version, sizeof(version),1,img);
     fread(&tamMemo, sizeof(tamMemo), 1, img);
@@ -170,7 +178,6 @@ void iniciaMVimagen(FILE *img, MV *mv){
             mv->tabla_de_segmentos[SS].segmento = base;
             base += mv->tabla_de_segmentos[SS].tam;
 
-            // que habria en la memoria??? tenemos instr?
             j = 0;
             while(!feof(img)){
                 fread(&aux, sizeof(aux), 1, img);
@@ -256,45 +263,24 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
     char inst;
     VectorFunciones vecF;
     FILE* programa;
-    FILE* imagen;
     short int codOp;
     TOperando op1,op2;
 
-    //------------------ver como abrir el archivo, dependiendo que se va a ejecutar
-    /* podría ver
-        iniciaVectorFunciones(vecF);
-        programa = fopen(arch, "rb");
-        imagen = fopen(img, "rb");
-
-        if (programa == null){
-            if (imagen == null)
-                printf("Error. No se encuentra el archivo");
-            else
-                iniciaMVimagen
-        }
-        else{
-            iniciaMV como siempre
-            ver que hacer con el arch imagen
-        }
-    */
-
     iniciaVectorFunciones(vecF);
     programa = fopen(arch, "rb");
-    imagen = fopen(img, "wb");
 
     if(programa == NULL) {
-        if (imagen == NULL){
+        if (img == NULL){
             printf("Error. No se encuentra el archivo.");
             exit(1);
         }
         else{
             //iniciar mv desde archivo imagen!
-            iniciaMVimagen(imagen, &mv);
+            strcpy(mv.imagen, img);
+            iniciaMVimagen(&mv);
         }
     }
     else{
-        //------------------------------------------------ creo que aca deberia de chequear el tam de la memoria-----------------//
-        //hay que ahcer lo mismo cuando se carga la mv desde un arch imagen?? -> el tamanio viene en el header!!
         if (tam == 0){  //memo ram por default
             mv.tamanioM = TAM_MEMO;
         }
@@ -304,9 +290,19 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
         iniciaMV(programa, &mv);
         fclose(programa);
 
-        //-----------------como le asigno el archivo imagen a la mv?? es ok?
-        if (imagen != NULL){
-            mv.imagen = imagen; //Podemos pasar directamente el archivo o sino pasar el nombre y abrirlo solo en caso de que se genere una imagen
+        if (img != NULL){
+            //mv.imagen = img; //Podemos pasar directamente el archivo o sino pasar el nombre y abrirlo solo en caso de que se genere una imagen
+            strcpy(mv.imagen, img);
+            /*
+            int j;
+            for(j=0; j<strlen(img); j++){
+                printf("%c", img[j]);
+                mv.imagen[j] = img[j];
+                printf("%c", mv.imagen[j]);
+            }
+            */
+            printf("\n%s\n", mv.imagen);
+
         }
 
 

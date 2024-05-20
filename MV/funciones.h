@@ -68,10 +68,10 @@ void CALL(TOperando *op, TOperando *op2, MV *mv);
 
 void NOT(TOperando *op, TOperando *op2, MV *mv);
 
-void RET(TOperando *op, TOperando *op2, MV *mv);
-
 //0 operandos
 void STOP(TOperando *op, TOperando *op2, MV *mv);
+
+void RET(TOperando *op, TOperando *op2, MV *mv);
 
 #endif
 

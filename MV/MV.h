@@ -21,7 +21,8 @@ typedef struct {
     unsigned short int tamanioM;      //tamanio logico de la ram
     unsigned short int EP;                  //entry point
     unsigned char breakpoint;           //flag que indica si hay o no breakpoint
-    FILE *imagen;                                  //archivo imagen??
+    //FILE *imagen;                                  //archivo imagen??
+    char imagen[12];
     tabla_segmentos  tabla_de_segmentos[cantSeg];
     long int tabla_de_registros[cantReg];
 } MV;
