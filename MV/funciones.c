@@ -226,32 +226,20 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
         }
     }
     else if(op->valor == 4){    //STRING WRITE
-        //printf("ACA 4 \n");
         salidaChar = mv->RAM[posEDX++];
-       // printf("%d \n",posEDX);
-       // printf("%d",salidaChar);
         while(salidaChar != '\0'){
             printf("%c",salidaChar);
             salidaChar = mv->RAM[posEDX++];
         }
-        /*do{
-
-            printf("AAAAAAAAAA");
-            printf("%d",salidaChar);
-            printf("%c",salidaChar);
-        }
-        while(salidaChar != '\0');*/
         printf("\n");
     }
     else if(op->valor == 7){    //CLEAR SCREEN
         system("cls");
     }
     else if(op->valor == 15){  //BREAKPOINT
-        printf("Entro");
         generaImagen(mv);
         char aux = getchar();
         char op = getchar();
-        printf("%c",op);
         if(op == 'g'){
             mv->breakpoint = 0;
             //Continua ejecucion
@@ -263,24 +251,6 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
         }
         else if(op == 13){  //13 = ENTER en ASCII
             mv->breakpoint = 1;
-            //Ejecuta paso a paso
-            //Como diferenciar cuando y cuando no mostrar disassembler??
-            /*if(mv->tabla_de_registros[IP] < mv->tabla_de_segmentos[CS].tam){
-                decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
-                if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1A)) || (codOp == 0x1F)){
-                    vecF[codOp](&op1, &op2, &mv);
-                }
-                else{
-                    printf("Codigo de operacion invalido.");
-                    exit(1);
-                }
-            }
-            op->valor = 'F';
-            SYS(op,op2,mv);*/
-
-            // Si se ejecuta la siguiente instruccion aca, no hay manera de saber si tiene que mostrar o no el disassembler
-
-            /* todo lo de arriba vuela y solo se chequea op, si sigue la ejecucion hasta el prox brakpoint, se escribe en el archivo imagen la instr*/
         }
 
     }
@@ -444,32 +414,34 @@ void RET(TOperando *op, TOperando *op2, MV *mv){
 }
 
 void generaImagen(MV *mv){
-    //FILE *imagen = fopen(mv->imagen,"wb"); //Como pasar el nombre de la consola a aca?
-    printf("Funcion generaImagen");
     if(mv->imagen != NULL){
         char id[5] = {'V','M','I','2','4'};
         char version = 1;
-        printf("\n Dentro if");
+        unsigned char aux;
         fwrite(id, sizeof(id), 1, mv->imagen);
-        printf("\ntam: %d",sizeof(mv->tamanioM));
         fwrite(&version, sizeof(version), 1, mv->imagen);
         fwrite(&(mv->tamanioM), sizeof(mv->tamanioM), 1, mv->imagen);
-
-        printf("\ntam: %d",sizeof(mv->tabla_de_registros[1]));
         for(int i = 0; i<16; i++){
-            fwrite(&(mv->tabla_de_registros[i]), sizeof(long int), 1, mv->imagen);
-            printf("\n reg: %08X",mv->tabla_de_registros[i]);
+            for(int j = 0; j<4; j++){
+                aux = (mv->tabla_de_registros[i] >> (8*(3-j))) & 0x000000FF;
+                fwrite(&aux, sizeof(char), 1, mv->imagen);
+            }
         }
-        printf("\n primer for");
-        for(int j = 0; j<8; j++){   //Aca en la consigna dice 8 pero los segmentos son 5, habria que preguntarlo
-            fwrite(&(mv->tabla_de_segmentos[j].segmento), sizeof(mv->tabla_de_segmentos[j].segmento), 1, mv->imagen);
-            fwrite(&(mv->tabla_de_segmentos[j].tam), sizeof(mv->tabla_de_segmentos[j].segmento), 1, mv->imagen);
+        for(int i = 0; i<8; i++){   //Aca en la consigna dice 8 pero los segmentos son 5, habria que preguntarlo
+            for(int j = 0; j<2; j++){
+                aux = (mv->tabla_de_segmentos[i].segmento >> (8*(1-j))) & 0x00FF;
+                fwrite(&aux, sizeof(char), 1, mv->imagen);
+            }
+            for(int j = 0; j<2; j++){
+                aux = (mv->tabla_de_segmentos[i].tam >> (8*(1-j))) & 0x00FF;
+                fwrite(&aux, sizeof(char), 1, mv->imagen);
+            }
         }
-        printf("\n segundo for");
         for(int k = 0; k<mv->tamanioM; k++){
-            fwrite(&(mv->RAM[k]), sizeof(mv->RAM[k]), 1, mv->imagen);
+
+            aux = mv->RAM[k];
+            fwrite(&aux, sizeof(unsigned char), 1, mv->imagen);
         }
-        printf("\n ultimo for");
         fclose(mv->imagen);
     }
     else{
