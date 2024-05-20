@@ -19,8 +19,6 @@ void setea_cc(long int resultadoFunc, MV *mv){
 //2 operandos
 
 void MOV(TOperando *op1, TOperando *op2, MV *mv){
-    //printf("op1->valor: %x \n",op1->valor);
-    //printf("op2->valor: %x \n",op2->valor);
     op1->valor = op2->valor;
     reset_valor_op(op1,mv);
 }
@@ -320,7 +318,7 @@ cualquier tipo. Primero decrementa en 4 el valor del registro SP y luego guarda 
 posición de memoria apuntada por SP. */
 void PUSH(TOperando *op, TOperando *op2, MV *mv){
     mv->tabla_de_registros[6] -=4;
-    if(mv->tabla_de_registros[6]<mv->tabla_de_registros[3]){
+    if(mv->tabla_de_registros[6]<mv->tabla_de_segmentos[3].segmento){
         printf("Stack Overflow");
         exit(1);
     }
@@ -342,7 +340,10 @@ void POP(TOperando *op, TOperando *op2, MV *mv){
         printf("Stack Underflow")
         exit(1);
     }*/
-    //Depende de tipo Operando?
+    if((mv->tabla_de_registros[6]+4) > (mv->tabla_de_segmentos[3].segmento + mv->tabla_de_segmentos[3].tam) /*|| pila vacia*/){
+        printf("Stack Underflow");
+        exit(1);
+    }
     if(op->tipo == 0b00){
         unsigned int posRAM = mv->tabla_de_registros[6];
         for(int i=0; i<4; i++){
