@@ -134,6 +134,7 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
             posRAM += 1;
         }
         if(posRAM>=16384){
+            printf("\nfallo de seg set val op\n");
             printf("Fallo de segmento");
             exit(1);
         }

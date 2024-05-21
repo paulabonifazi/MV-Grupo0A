@@ -1,4 +1,5 @@
 #include "funciones.h"
+#include "Disassembler.h"
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
@@ -317,14 +318,15 @@ void NOT(TOperando *op, TOperando *op2, MV *mv){
 cualquier tipo. Primero decrementa en 4 el valor del registro SP y luego guarda el valor del operando en la
 posición de memoria apuntada por SP. */
 void PUSH(TOperando *op, TOperando *op2, MV *mv){
-    mv->tabla_de_registros[6] -=4;
-    if(mv->tabla_de_registros[6]<mv->tabla_de_segmentos[3].segmento){
+    printf("entre al push\n");
+    mv->tabla_de_registros[SP] -=4;
+    if(mv->tabla_de_registros[SP]<mv->tabla_de_registros[SS]){
         printf("Stack Overflow");
         exit(1);
     }
     //similar a lo que hace reset operando, pero en vez de tomar la posicion del operando, la toma de SP
     unsigned int aux_valor = 0;
-    unsigned int posRAM = mv->tabla_de_registros[6];
+    unsigned int posRAM = mv->tabla_de_registros[SP];
     for(int i=0; i<4; i++){
         aux_valor = (op->valor >> (24 - (i*8))) & 0x000000FF;
         aux_valor = aux_valor & 0x000000FF;
@@ -340,7 +342,8 @@ void POP(TOperando *op, TOperando *op2, MV *mv){
         printf("Stack Underflow")
         exit(1);
     }*/
-    if((mv->tabla_de_registros[6]+4) > (mv->tabla_de_segmentos[3].segmento + mv->tabla_de_segmentos[3].tam) /*|| pila vacia*/){
+    printf("\n\nentre a pop\n");
+    if((mv->tabla_de_registros[6]+4) > (mv->tabla_de_segmentos[3].segmento + mv->tabla_de_segmentos[3].tam)){ /*|| pila vacia*/
         printf("Stack Underflow");
         exit(1);
     }
@@ -381,8 +384,12 @@ tipo. Primero almacena en el tope de la pila el valor del IP, que indica la dire
 retornará luego de que la subrutina finalice. Luego, realiza un salto a la posición de memoria indicada por
 el operando.*/
 void CALL(TOperando *op, TOperando *op2, MV *mv){
-    mv->tabla_de_registros[6] -=4;
-    if(mv->tabla_de_registros[6]<mv->tabla_de_registros[3]){
+    mv->tabla_de_registros[SP] -=4;
+
+    printf("\nSP: %X\n", mv->tabla_de_registros[SP]);
+    printf("\nSS: %X\n", mv->tabla_de_registros[SS]);
+
+    if(mv->tabla_de_registros[SP]<mv->tabla_de_registros[SS]){
         printf("Stack Overflow");
         exit(1);
     }
@@ -390,11 +397,12 @@ void CALL(TOperando *op, TOperando *op2, MV *mv){
     unsigned int aux_valor = 0;
     unsigned int posRAM = mv->tabla_de_registros[6];
     for(int i=0; i<4; i++){
-        aux_valor = (mv->tabla_de_registros[5] >> (24 - (i*8))) & 0x000000FF;
+        aux_valor = (mv->tabla_de_registros[IP] >> (24 - (i*8))) & 0x000000FF;
         aux_valor = aux_valor & 0x000000FF;
         mv->RAM[posRAM++] = aux_valor;
     }
-    mv->tabla_de_registros[5] = op->valor;
+    printf("\ndentro del CALL valor que tiene la ip: %X\n", op->valor);
+    mv->tabla_de_registros[IP] = op->valor;
 }
 
 //0 operandos
@@ -491,6 +499,6 @@ void iniciaVectorFunciones(VectorFunciones vecF)
     vecF[0x1C]=&POP;
     vecF[0x1D]=&CALL;
 
-    vecF[0x1D]=&RET;
+    vecF[0x1E]=&RET;
     vecF[0x1F]=&STOP;
 }
