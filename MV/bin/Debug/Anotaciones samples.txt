@@ -1,0 +1,2 @@
+SAMPLE2
+pide una clave ingresada como string y luego un texto ingresado como hexa caracter a caracter, y devuelve el mensaje cifrado haciendo XOR de clave y texto

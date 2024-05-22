@@ -80,7 +80,11 @@ void SWAP(TOperando *op1, TOperando *op2, MV *mv){
 
 void CMP(TOperando *op1, TOperando *op2, MV *mv){
     long int aux;
+    //printf("\n");
+    //printf("\n op1: %x", op1->valor);
+    //printf("\n op2: %x", op2->valor);
     aux = op1->valor - op2->valor;
+    //printf("\nResultado CMP: %x\n",aux);
     setea_cc(aux, mv);
 }
 
@@ -151,6 +155,9 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
     //printf("%d \n",mv->tabla_de_registros[13]);
     //printf("%d \n",mv->RAM[posEDX]);
     if(op->valor == 1){         //READ
+        //printf("Cantidad celdas: %d\n",cantCeldas);
+        //printf("Tam celdas: %d\n",tamCeldas);
+        //printf("formato: %d\n",formato);
         for(int i = 0; i<cantCeldas; i++){
             printf("[%04X]: ",posEDX);
             if(formato & 0b1000) // Hexa
@@ -167,6 +174,8 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
             }
             for(int j=0; j<tamCeldas; j++)
                 mv->RAM[posEDX++] = entrada & (0x000000FF << (8*(tamCeldas-(j+1))));
+          //      printf("Pos edx: %x\n",posEDX-1);
+            //    printf("mv->RAM[posEDX]: %x",mv->RAM[posEDX-1]);
         }
     }
     else if(op->valor == 2){    //WRITE
@@ -208,24 +217,33 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
     }
     else if(op->valor == 3){ //STRING READ
         if(cantChar != -1){
-            for(int j=0; j<cantChar; j++){
+            int j = 0;
+            //printf("Cant char: %d", cantChar);
+            entradaChar = getchar();
+            while(j<cantChar && entradaChar != '\n'){
                 //scanf("%c",&entradaChar);
-                entradaChar = getchar();
+                //printf("getCahr: %d",entradaChar);
                 mv->RAM[posEDX++] = entradaChar;
+                entradaChar = getchar();
+                //printf(entradaChar != 10);
+                j++;
             }
             mv->RAM[posEDX] = '\0';
         }
         else{
+            //printf("En else \n");
             entradaChar = getchar();
-            while(entradaChar != '\0'){
+            while(entradaChar != 10){
                 mv->RAM[posEDX++] = entradaChar;
                 entradaChar = getchar();
             }
-            mv->RAM[posEDX] = entradaChar;
+            mv->RAM[posEDX] = '\0';
         }
+        //printf("Salio \n");
     }
     else if(op->valor == 4){    //STRING WRITE
         salidaChar = mv->RAM[posEDX++];
+        printf(" ");
         while(salidaChar != '\0'){
             printf("%c",salidaChar);
             salidaChar = mv->RAM[posEDX++];
@@ -260,32 +278,32 @@ void JMP(TOperando *op, TOperando *op2, MV *mv){
 }
 
 void JZ(TOperando *op, TOperando *op2, MV *mv){
-    if(mv->tabla_de_registros[8] == 0x01000000) // == 0
+    if(mv->tabla_de_registros[8] == 0x40000000) // == 0
         mv->tabla_de_registros[5] = op->valor;
 }
 
 void JP(TOperando *op, TOperando *op2, MV *mv){
-    if(mv->tabla_de_registros[8] != 0x01000000 && mv->tabla_de_registros[8] != 0x10000000) // >0
+    if(mv->tabla_de_registros[8] != 0x80000000 && mv->tabla_de_registros[8] != 0x40000000) // >0
         mv->tabla_de_registros[5] = op->valor;
 }
 
 void JN(TOperando *op, TOperando *op2, MV *mv){
-    if(mv->tabla_de_registros[8] == 0x10000000) // <0
+    if(mv->tabla_de_registros[8] == 0x80000000) // <0
         mv->tabla_de_registros[5] = op->valor;
 }
 
 void JNZ(TOperando *op, TOperando *op2, MV *mv){
-    if(mv->tabla_de_registros[8] != 0x01000000) // !=0
+    if(mv->tabla_de_registros[8] != 0x40000000) // !=0
         mv->tabla_de_registros[5] = op->valor;
 }
 
 void JNP(TOperando *op, TOperando *op2, MV *mv){
-    if(mv->tabla_de_registros[8] == 0x01000000 || mv->tabla_de_registros[8] == 0x10000000) // <=0
+    if(mv->tabla_de_registros[8] == 0x40000000 || mv->tabla_de_registros[8] == 0x80000000) // <=0
         mv->tabla_de_registros[5] = op->valor;
 }
 
 void JNN(TOperando *op, TOperando *op2, MV *mv){
-    if(mv->tabla_de_registros[8] != 0x10000000) // >=0
+    if(mv->tabla_de_registros[8] != 0x80000000) // >=0
         mv->tabla_de_registros[5] = op->valor;
 }
 
@@ -407,7 +425,7 @@ void CALL(TOperando *op, TOperando *op2, MV *mv){
 
 //0 operandos
 void STOP(TOperando *op, TOperando *op2, MV *mv){
-    mv->tabla_de_registros[5] = 0xFFFFFFFF;
+    mv->tabla_de_registros[5] = mv->tabla_de_segmentos[0].segmento + mv->tabla_de_segmentos[0].tam + 1;//0xFFFFFFFF;
 }
 
 

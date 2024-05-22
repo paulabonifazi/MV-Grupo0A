@@ -211,7 +211,7 @@ void printeaDisassembler(MV *mv){
     iniciaVectorFunciones(vecF);
 
     //la ejecucion se da cuando el IP no sobrepasa el code segment
-            while(mv->tabla_de_registros[IP] < mv->tabla_de_segmentos[CS].tam){
+            while(mv->tabla_de_registros[IP] <  mv->tabla_de_segmentos[CS].segmento + mv->tabla_de_segmentos[CS].tam/*mv->tabla_de_segmentos[CS].tam*/){
                 posInstr = mv->tabla_de_registros[IP];
                 decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
                 if((codOp >> 4) == 0){
