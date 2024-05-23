@@ -13,7 +13,7 @@ typedef struct{
     char tamCelda; //solo para memoria
 } TOperando;
 
-void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op, MV *mv, char *inst);
+void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op, MV *mv, unsigned char *inst);
 
 void set_valor_inmediato(TOperando *op, long int valor);
 

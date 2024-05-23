@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 
-void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv, char *inst){
+void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv, unsigned char *inst){
 
     *inst = get_instruccion(mv);
     *cod_op = 0;
@@ -13,7 +13,7 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv, c
         o = cod op -> bbaooooo & 00011111 (0x1F) -> es vector asi que es bit a bit
     */
     //set cod operacion
-    //printf("Instruccion: %d \n",*inst);
+    //printf("\n Instruccion: %x \n",*inst);
     *cod_op = (*inst) & 0x1F;
     if(((*cod_op >> 4)&0x01) == 0){
         // dos operandos
@@ -24,8 +24,10 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv, c
     }
     else if((*inst)>>6 != 0b11){
         // un operando
+        //printf("EE");
         op1->tipo = (*inst)>>6; //opA
         op2->tipo = 3;
+        //printf("\n op1 tipo: %x",op1->tipo);
         lee_operando(op1, mv);  //lectura op en base a tipo (opA)
     }
     else {
@@ -92,6 +94,7 @@ void lee_operando(TOperando *op, MV *mv){
         case 2:{    //registro
             op->valor = 0;
             char reg = get_instruccion(mv);
+            //printf("\n instr reg: %02x\n",reg);
             char sec_reg = (reg & 0b00110000) >> 4;
             char pos = (reg & 0b00001111);
             set_parteReg(op,sec_reg);

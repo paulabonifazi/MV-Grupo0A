@@ -336,9 +336,9 @@ void NOT(TOperando *op, TOperando *op2, MV *mv){
 cualquier tipo. Primero decrementa en 4 el valor del registro SP y luego guarda el valor del operando en la
 posición de memoria apuntada por SP. */
 void PUSH(TOperando *op, TOperando *op2, MV *mv){
-    printf("entre al push\n");
+    //printf("entre al push\n");
     mv->tabla_de_registros[SP] -=4;
-    if(mv->tabla_de_registros[SP]<mv->tabla_de_registros[SS]){
+    if(mv->tabla_de_registros[SP]</*mv->tabla_de_registros[SS]*/mv->tabla_de_segmentos[SS].segmento){
         printf("Stack Overflow");
         exit(1);
     }
@@ -360,22 +360,28 @@ void POP(TOperando *op, TOperando *op2, MV *mv){
         printf("Stack Underflow")
         exit(1);
     }*/
-    printf("\n\nentre a pop\n");
+    //printf("\n\nentre a pop\n");
+    //printf("\n op tipo: %d \n",op->tipo);
+    //printf("\nSP: %X\n", mv->tabla_de_registros[SP]);
     if((mv->tabla_de_registros[6]+4) > (mv->tabla_de_segmentos[3].segmento + mv->tabla_de_segmentos[3].tam)){ /*|| pila vacia*/
         printf("Stack Underflow");
         exit(1);
     }
-    if(op->tipo == 0b00){
+    /*if(op->tipo == 0b00){*/
         unsigned int posRAM = mv->tabla_de_registros[6];
         for(int i=0; i<4; i++){
             op->valor = op->valor | ((mv->RAM[posRAM++] << (24 - (i*8))) & (0x000000FF << (24 - (i*8))));
         }
-    }
+    /*}
     else if(op->tipo == 0b10){  //Registro
+        printf("\n tipo 2 \n");
+        printf("\n op parte reg: %d\n",op->parteReg);
         switch(op->parteReg) {
-            case 0b00: {
+            /*case 0b00: {
+                printf("Entro al case");
                 //registro de 4 bytes
-                mv->tabla_de_registros[mv->tabla_de_registros[6]] = op->valor;
+                op->valor = mv->tabla_de_registros[mv->tabla_de_registros[6]] = op->valor;
+                printf("Setea");
                 break;}
             case 0b01: {
                 //4to byte del registro
@@ -390,10 +396,31 @@ void POP(TOperando *op, TOperando *op2, MV *mv){
                 mv->tabla_de_registros[mv->tabla_de_registros[6]] = (mv->tabla_de_registros[mv->tabla_de_registros[6]] & 0xFFFF0000) | (op->valor & 0x0000FFFF);
                 break;}
         }
-    }
-
+         switch(op->parteReg) {
+            case 0b00: {
+                //registro de 4 bytes
+                op->valor = mv->tabla_de_registros[6];
+                break;}
+            case 0b01: {
+                //4to byte del registro
+                op->valor = mv->tabla_de_registros[op->posicion] & 0x000000FF;
+                op->valor = op->valor & 0x000000FF;
+                break;}
+            case 0b10: {
+                //3er byte del registro
+                op->valor = (mv->tabla_de_registros[op->posicion] & 0x0000FF00) >> 8;
+                op->valor = op->valor & 0x000000FF;
+                break;}
+            case 0b11: {
+                //registro de 2 bytes
+                op->valor = mv->tabla_de_registros[op->posicion] & 0x0000FFFF;
+                op->valor = op->valor & 0x0000FFFF;
+                break;}
+            }
+    }*/
+    reset_valor_op(op,mv);
     mv->tabla_de_registros[6] +=4;
-
+    //printf("\n IP: %x\n",mv->tabla_de_registros[IP]);
 }
 
 
@@ -404,10 +431,10 @@ el operando.*/
 void CALL(TOperando *op, TOperando *op2, MV *mv){
     mv->tabla_de_registros[SP] -=4;
 
-    printf("\nSP: %X\n", mv->tabla_de_registros[SP]);
-    printf("\nSS: %X\n", mv->tabla_de_registros[SS]);
+    //printf("\nSP: %X\n", mv->tabla_de_registros[SP]);
+    //printf("\nSS: %X\n", mv->tabla_de_registros[SS]);
 
-    if(mv->tabla_de_registros[SP]<mv->tabla_de_registros[SS]){
+    if(mv->tabla_de_registros[SP]</*mv->tabla_de_registros[SS]*/mv->tabla_de_segmentos[SS].segmento){
         printf("Stack Overflow");
         exit(1);
     }
@@ -419,8 +446,9 @@ void CALL(TOperando *op, TOperando *op2, MV *mv){
         aux_valor = aux_valor & 0x000000FF;
         mv->RAM[posRAM++] = aux_valor;
     }
-    printf("\ndentro del CALL valor que tiene la ip: %X\n", op->valor);
+    //printf("\ndentro del CALL valor que tiene la ip: %X\n", op->valor);
     mv->tabla_de_registros[IP] = op->valor;
+    //printf("\n salida ip en registros: %x\n",mv->tabla_de_registros[IP]);
 }
 
 //0 operandos
@@ -432,12 +460,14 @@ void STOP(TOperando *op, TOperando *op2, MV *mv){
 /* efectúa una retorno desde una subrutina. No requiere parámetros. Extrae el valor del tope de la
 pila y realiza un salto a esa dirección de memoria.*/
 void RET(TOperando *op, TOperando *op2, MV *mv){
+    //printf("ENTRA A RET");
     unsigned int posRAM = mv->tabla_de_registros[6];
     long int valor = 0;
     for(int i=0; i<4; i++){
         valor = valor | ((mv->RAM[posRAM++] << (24 - (i*8))) & (0x000000FF << (24 - (i*8))));
     }
     mv->tabla_de_registros[5] = valor;
+    mv->tabla_de_registros[SP] +=4;
 }
 
 void generaImagen(MV *mv){

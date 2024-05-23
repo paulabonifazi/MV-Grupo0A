@@ -1,7 +1,7 @@
 #include "Disassembler.h"
 #include <string.h>
 
-void cargaIns(TDisassembler *dis, short int posinstr, char instr, short int codOp){
+void cargaIns(TDisassembler *dis, short int posinstr, unsigned char instr, short int codOp){
     (*dis).posinstr = posinstr;
     (*dis).instr = instr;
     (*dis).codOp = codOp;

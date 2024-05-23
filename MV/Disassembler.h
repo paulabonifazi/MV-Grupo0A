@@ -53,7 +53,7 @@ typedef struct {
     short int codOp;
 }TDisassembler;
 
-void cargaIns(TDisassembler *dis, short int posinstr, char instr, short int  codOp);
+void cargaIns(TDisassembler *dis, short int posinstr, unsigned char instr, short int  codOp);
 void cargaOp(TDisassembler *dis, int nrodeop, TOperando operando);
 void escribeInstruccion(TOperando op, int tamanio);
 void mnemonicoOp(TOperando op);

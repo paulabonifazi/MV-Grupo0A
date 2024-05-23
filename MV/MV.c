@@ -101,10 +101,11 @@ void iniciaMV(FILE *programa, MV *mv){
 
                 mv->tabla_de_registros[IP] = mv->tabla_de_registros[IP] | (mv->tabla_de_registros[CS]<<16);
 
-                mv->tabla_de_registros[SP] = (SS<<16) | mv->tabla_de_segmentos[SS].segmento + mv->tabla_de_segmentos[SS].tam;
+                mv->tabla_de_registros[SP] = /*(SS<<16) |*/ mv->tabla_de_segmentos[SS].segmento + mv->tabla_de_segmentos[SS].tam;
 
-                printf("\nSP: %X\n", mv->tabla_de_registros[SP]);
-                printf("\nSS: %X\n", mv->tabla_de_registros[SS]);
+                //printf("\nSP: %X\n", mv->tabla_de_registros[SP]);
+                //printf("\nSS segmento: %X\n", mv->tabla_de_segmentos[SS].segmento);
+                //printf("\nSS tam: %X\n", mv->tabla_de_segmentos[SS].tam);
 
                 //cargo el codigo al code segment
                 //printf("mv->tabla_de_segmentos[CS].segmento: %d\n",mv->tabla_de_segmentos[CS].segmento);
@@ -201,7 +202,7 @@ void printeaDisassembler(MV *mv){
 
     TDisassembler dis;
     VectorFunciones vecF;
-    char instr;
+    unsigned char instr;
     short int codOp;
     short int posInstr;
     TOperando op1,op2;
@@ -265,7 +266,7 @@ void printeaDisassembler(MV *mv){
     el metodo tiene que llamar a una funcion para iniciar la mv*/
 void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
     MV mv;
-    char inst;
+    unsigned char inst;
     VectorFunciones vecF;
     FILE* programa;
     short int codOp;
