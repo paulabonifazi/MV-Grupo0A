@@ -107,7 +107,7 @@ void lee_operando(TOperando *op, MV *mv){
 
 char get_instruccion(MV *mv){
     int ip = mv->tabla_de_registros[5];
-    //printf("ip: %x \n",ip);
+    //printf("ip: %d \n",ip);
     //printf("AAAA: %x \n",(ip & 0xFFFF0000)>>16);
     char posSeg = mv->tabla_de_segmentos[(ip & 0xFFFF0000)>>16].segmento; //Busca indice de IP y devuelve el codigo en tabla segmentos
     //printf("Base Segmento: %x \n",posSeg);

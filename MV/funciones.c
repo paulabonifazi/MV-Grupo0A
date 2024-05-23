@@ -213,6 +213,8 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
                 }
             }
             printf("\n");
+            //printf("mv->tabla_de_registros[IP]: %d\n",mv->tabla_de_registros[IP]);
+            //printf("%d \n",mv->tabla_de_segmentos[CS].segmento + mv->tabla_de_segmentos[CS].tam);
         }
     }
     else if(op->valor == 3){ //STRING READ

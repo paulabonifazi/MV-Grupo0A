@@ -86,12 +86,19 @@ void iniciaMV(FILE *programa, MV *mv){
                 mv->tabla_de_segmentos[SS].segmento = base;
                 base += mv->tabla_de_segmentos[SS].tam;
 
+                /*printf("TABLA SEGMENTOS \n");
+                printf("seg \t tam\n");
+                for(int l=0; l<5; l++){
+                    printf("%d \t %d\n",mv->tabla_de_segmentos[l].segmento,mv->tabla_de_segmentos[l].tam);
+                }*/
+
                 fread(&aux, sizeof(aux), 1, programa);
                 tam = aux << 8;
                 fread(&aux, sizeof(aux), 1, programa);
                 tam = tam | (aux & 0x000000FF);
                 tam = tam & 0x0000FFFF;
                 mv->tabla_de_registros[IP] = tam; //ENTRY POINT
+                //printf("entry point: %d\n",mv->tabla_de_registros[IP]);
 
                 //cargo registros
                 for(int k = 0; k<5; k++){
@@ -111,7 +118,7 @@ void iniciaMV(FILE *programa, MV *mv){
                 //printf("mv->tabla_de_segmentos[CS].segmento: %d\n",mv->tabla_de_segmentos[CS].segmento);
                 for (int i=0; i<mv->tabla_de_segmentos[CS].tam; i++ ){
                     fread(&mv->RAM[mv->tabla_de_segmentos[CS].segmento + i], sizeof(char), 1, programa);
-                   // printf("mv->RAM[%d]: %d \n",mv->tabla_de_segmentos[CS].segmento + i,mv->RAM[mv->tabla_de_segmentos[CS].segmento + i]);
+                   //printf("mv->RAM[%x]: %x \n",mv->tabla_de_segmentos[CS].segmento + i,mv->RAM[mv->tabla_de_segmentos[CS].segmento + i]);
                 }
                 //Cargo constantes al KS
                 if(mv->tabla_de_segmentos[KS].tam > 0){
@@ -156,6 +163,7 @@ void iniciaMVimagen(MV *mv){
     fread(&tamMemo, sizeof(tamMemo), 1, img);
 
     if (strcmp(identificador, "VMI24")){
+        printf("ENTRO");
         if (version == 1){
             mv->tamanioM = tamMemo*1024;
             for(i=0; i<16; i++){        //cargo registros
@@ -183,6 +191,7 @@ void iniciaMVimagen(MV *mv){
                 fread(&aux, sizeof(aux), 1, img);
                 mv->RAM[j++] = aux;
             }
+            printf("\n bajo todfo");
         }
         else{
             printf("Version incorrecta");
@@ -209,11 +218,17 @@ void printeaDisassembler(MV *mv){
 
     printf("Ejecucion Maquina Virtual: \n");
     //inicializaDisassembler(&dis);
+    printf("TABLA SEGMENTOS \n");
+                printf("seg \t tam\n");
+                for(int l=0; l<5; l++){
+                    printf("%d \t %d\n",mv->tabla_de_segmentos[l].segmento,mv->tabla_de_segmentos[l].tam);
+                }
     iniciaVectorFunciones(vecF);
 
     //la ejecucion se da cuando el IP no sobrepasa el code segment
-            while(mv->tabla_de_registros[IP] <  mv->tabla_de_segmentos[CS].segmento + mv->tabla_de_segmentos[CS].tam/*mv->tabla_de_segmentos[CS].tam*/){
-                posInstr = mv->tabla_de_registros[IP];
+            while(mv->tabla_de_registros[IP] < mv->tabla_de_segmentos[CS].tam){
+                printf("posInstr: %x\n",mv->tabla_de_registros[IP]);
+                posInstr = mv->tabla_de_segmentos[(mv->tabla_de_registros[IP] & 0xFFFF0000)>>16].segmento + (mv->tabla_de_registros[IP] & 0x0000FFFF)/*mv->tabla_de_registros[IP]*/;
                 decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
                 if((codOp >> 4) == 0){
                     //dos operandos
@@ -310,7 +325,7 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
             printf("\n%s\n", mv.imagen);
 
         }
-
+    }
 
         if (disassembler != NULL){
             printeaDisassembler(&mv);
@@ -341,7 +356,7 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
                 exit(1);
             }
         }
-    }
+
 }
 
 
