@@ -63,6 +63,7 @@ void mnemonicoOp(TOperando op){
                     break;
                 case 0b11:  strcat(muestra,"b[");
                     break;
+                default: strcat(muestra,"[");
             }
             //strcat(muestra,"[");
             char aux[6];

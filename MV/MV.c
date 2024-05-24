@@ -59,6 +59,7 @@ void iniciaMV(FILE *programa, MV *mv){
                 tam = tam & 0x0000FFFF;
 
                 tamTotal += tam;
+
                 switch(i){
                     case 0: {
                         //mv->tabla_de_segmentos[CS].segmento = base;
@@ -237,8 +238,18 @@ void printeaDisassembler(MV *mv){
     //la ejecucion se da cuando el IP no sobrepasa el code segment
             while(mv->tabla_de_registros[IP] < mv->tabla_de_segmentos[CS].tam){
                 //printf("posInstr: %x\n",mv->tabla_de_registros[IP]);
+
+                 //printf("ip dentro del dis: %X\n", mv->tabla_de_registros[IP]);
+
+                if(mv->tabla_de_registros[IP] == 0b1){
+                        printf("codOp: %X\n", codOp);
+                        printf("op1:   tipo:%X,    valor: %X,    offset: %X\n", op1.tipo, op1.valor, op1.offset);
+                        printf("op2:   tipo:%X,    valor: %X,    offset: %X\n", op2.tipo, op2.valor, op2.offset);
+                    }
+
                 posInstr = mv->tabla_de_segmentos[(mv->tabla_de_registros[IP] & 0xFFFF0000)>>16].segmento + (mv->tabla_de_registros[IP] & 0x0000FFFF)/*mv->tabla_de_registros[IP]*/;
                 decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
+
                 if((codOp >> 4) == 0){
                     //dos operandos
                     cargaOp(&dis, 1, op1);
@@ -254,12 +265,7 @@ void printeaDisassembler(MV *mv){
 
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1F))){
                     cargaIns(&dis, posInstr, instr, codOp);
-                    /*
-                    no se porque no muestra el EP
-                    en vez de tener EP preguntar que IP&0xFFFF0000>>16 == posInstr? tipo la parte alta del IP almacena el EP
-                    printf("EP: %X\n", mv->EP);
-                    printf("postInts: %X\n", posInstr);
-                    */
+
                     if(mv->EP == posInstr){ //Para poder marcar el entry point en el disassembler
                         printf(">");
                     }
@@ -343,6 +349,7 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
             //la ejecucion se da cuando el IP no sobrepasa el code segment
             while(mv.tabla_de_registros[IP] < mv.tabla_de_segmentos[CS].tam){
                 decodifica_cod_op(&op1, &op2, &codOp, &mv, &inst);
+
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1D)) || (codOp == 0x1F) || (codOp == 0x1E)){
                     vecF[codOp](&op1, &op2, &mv);
                     if(mv.breakpoint == 1 && (codOp != 0x10 && op1.valor != 'F')){
