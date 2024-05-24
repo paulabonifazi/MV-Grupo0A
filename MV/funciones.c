@@ -159,7 +159,7 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
         //printf("Tam celdas: %d\n",tamCeldas);
         //printf("formato: %d\n",formato);
         for(int i = 0; i<cantCeldas; i++){
-            printf("[%04X]: ",posEDX);
+            printf(" [%04X]: ",posEDX);
             if(formato & 0b1000) // Hexa
                 scanf("%x",&entrada);
             else if(formato & 0b0100) //Octal

@@ -130,7 +130,7 @@
 	"MV.h"
 	"Operando.h"
 
-1716220612 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\main.c
+1716558928 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\main.c
 	<stdio.h>
 	<stdlib.h>
 	"Operando.h"
@@ -138,7 +138,7 @@
 	"MV.h"
 	"Disassembler.h"
 
-1716558870 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.c
+1716560943 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
