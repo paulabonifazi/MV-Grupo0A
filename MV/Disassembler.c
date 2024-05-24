@@ -56,7 +56,16 @@ void mnemonicoOp(TOperando op){
 
     switch(op.tipo){
         case 0:{ // memoria
-            strcat(muestra,"[");
+            //--------------------------------------------------------- agregar tam de la celda: l (long) = 00, w (word)=10, b (byte)= 11
+            switch (op.tamCelda) {
+                case 0b00:  strcat(muestra,"l[");
+                    break;
+                case 0b10:  strcat(muestra,"w[");
+                    break;
+                case 0b11:  strcat(muestra,"b[");
+                    break;
+            }
+            //strcat(muestra,"[");
             char aux[6];
             strcat(muestra,registros[op.posicion]);
             strcat(muestra," + ");

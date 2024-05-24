@@ -100,33 +100,33 @@
 	<string.h>
 	"Operando.h"
 
-1716241169 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\disassembler.c
+1716558918 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\disassembler.c
 	"Disassembler.h"
 	<string.h>
 
-1715706829 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\disassembler.h
+1716558263 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\disassembler.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	"Operando.h"
 
-1715878731 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.h
+1716558263 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.h
 	"MV.h"
 
-1716246656 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.h
+1716336690 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	<unistd.h>
 
-1716323117 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.c
+1716558885 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.c
 	"funciones.h"
 	"Disassembler.h"
 	<stdlib.h>
 	<time.h>
 	<stdio.h>
 
-1716241107 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.h
+1716336690 d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.h
 	"MV.h"
 	"Operando.h"
 
@@ -138,7 +138,7 @@
 	"MV.h"
 	"Disassembler.h"
 
-1716322878 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.c
+1716558870 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\mv.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -148,7 +148,7 @@
 	"Disassembler.h"
 	"Operando.h"
 
-1716321161 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.c
+1716558903 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.c
 	"Operando.h"
 	<stdlib.h>
 	<stdio.h>
