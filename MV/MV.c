@@ -39,6 +39,17 @@ void iniciaMV(FILE *programa, MV *mv){
             }
         }
         else if (version == 2){
+            /*
+            trate de arreglar el inicio de segmentos
+            for(int l=0; l<5; l++){
+                mv->tabla_de_registros[l]=-1;
+                mv->tabla_de_segmentos[l].segmento=-1;
+                mv->tabla_de_segmentos[l].tam=-1;
+            }
+            */
+
+            //printf("seg: %X     tam: %X", mv->tabla_de_segmentos[KS].segmento,  mv->tabla_de_segmentos[KS].tam);
+
             //while(tamTotal<16384 && i<5){
             while(tamTotal<(mv->tamanioM) && i<5){
                 fread(&aux, sizeof(aux), 1, programa);
@@ -107,12 +118,10 @@ void iniciaMV(FILE *programa, MV *mv){
                 }
 
                 mv->tabla_de_registros[IP] = mv->tabla_de_registros[IP] | (mv->tabla_de_registros[CS]<<16);
+                mv->EP = mv->tabla_de_registros[IP];
 
                 mv->tabla_de_registros[SP] = /*(SS<<16) |*/ mv->tabla_de_segmentos[SS].segmento + mv->tabla_de_segmentos[SS].tam;
 
-                //printf("\nSP: %X\n", mv->tabla_de_registros[SP]);
-                //printf("\nSS segmento: %X\n", mv->tabla_de_segmentos[SS].segmento);
-                //printf("\nSS tam: %X\n", mv->tabla_de_segmentos[SS].tam);
 
                 //cargo el codigo al code segment
                 //printf("mv->tabla_de_segmentos[CS].segmento: %d\n",mv->tabla_de_segmentos[CS].segmento);
@@ -245,6 +254,12 @@ void printeaDisassembler(MV *mv){
 
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1F))){
                     cargaIns(&dis, posInstr, instr, codOp);
+                    /*
+                    no se porque no muestra el EP
+                    en vez de tener EP preguntar que IP&0xFFFF0000>>16 == posInstr? tipo la parte alta del IP almacena el EP
+                    printf("EP: %X\n", mv->EP);
+                    printf("postInts: %X\n", posInstr);
+                    */
                     if(mv->EP == posInstr){ //Para poder marcar el entry point en el disassembler
                         printf(">");
                     }
@@ -252,12 +267,6 @@ void printeaDisassembler(MV *mv){
                         printf(" ");
                     }
                     muestra(dis);
-
-                    /*
-                    printf("\ncod operacion: %X \n",codOp);
-                    printf("\nop1 tipo: %X    op1 valor: %X     op1 pos: %X        op1 offset: %X\n", op1.tipo, op1.valor, op1.posicion, op1.offset);
-                    printf("\nop2 tipo: %X    op2 valor: %X     op1 pos: %X       op2 offset: %X\n",  op2.tipo, op2.valor, op2.posicion, op2.offset);
-                    */
 
                     vecF[codOp](&op1, &op2, mv);
                     if(mv->breakpoint == 1 && (codOp != 0x10 && op1.valor != 'F')){
@@ -334,10 +343,6 @@ void ejecutaMV(char arch[], char disassembler[], int tam, char img[]){
             //la ejecucion se da cuando el IP no sobrepasa el code segment
             while(mv.tabla_de_registros[IP] < mv.tabla_de_segmentos[CS].tam){
                 decodifica_cod_op(&op1, &op2, &codOp, &mv, &inst);
-
-                //------------------------------------------------------------creo que por aca deberiamos de hacer el while mv->breakpoint == 1 y analizar el enter
-                //para esperar a que la instruccion se imprima una vez de presionado enter
-
                 if(((0x00 <= codOp) && (codOp <= 0x0C)) || ((0x10 <= codOp) && (codOp <= 0x1D)) || (codOp == 0x1F) || (codOp == 0x1E)){
                     vecF[codOp](&op1, &op2, &mv);
                     if(mv.breakpoint == 1 && (codOp != 0x10 && op1.valor != 'F')){

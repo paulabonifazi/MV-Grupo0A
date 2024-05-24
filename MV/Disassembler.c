@@ -56,7 +56,6 @@ void mnemonicoOp(TOperando op){
 
     switch(op.tipo){
         case 0:{ // memoria
-            //--------------------------------------------------------- agregar tam de la celda: l (long) = 00, w (word)=10, b (byte)= 11
             switch (op.tamCelda) {
                 case 0b00:  strcat(muestra,"l[");
                     break;
@@ -68,6 +67,7 @@ void mnemonicoOp(TOperando op){
             //strcat(muestra,"[");
             char aux[6];
             strcat(muestra,registros[op.posicion]);
+            //--------------------------------------- aca tenemos que modificar para cuando tenemos cts negativas
             strcat(muestra," + ");
             sprintf(aux, "%d", op.offset);
             strcat(muestra,aux);
