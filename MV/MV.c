@@ -39,17 +39,6 @@ void iniciaMV(FILE *programa, MV *mv){
             }
         }
         else if (version == 2){
-            /*
-            trate de arreglar el inicio de segmentos
-            for(int l=0; l<5; l++){
-                mv->tabla_de_registros[l]=-1;
-                mv->tabla_de_segmentos[l].segmento=-1;
-                mv->tabla_de_segmentos[l].tam=-1;
-            }
-            */
-
-            //printf("seg: %X     tam: %X", mv->tabla_de_segmentos[KS].segmento,  mv->tabla_de_segmentos[KS].tam);
-
             //while(tamTotal<16384 && i<5){
             while(tamTotal<(mv->tamanioM) && i<5){
                 fread(&aux, sizeof(aux), 1, programa);
@@ -98,12 +87,6 @@ void iniciaMV(FILE *programa, MV *mv){
                 mv->tabla_de_segmentos[SS].segmento = base;
                 base += mv->tabla_de_segmentos[SS].tam;
 
-                /*printf("TABLA SEGMENTOS \n");
-                printf("seg \t tam\n");
-                for(int l=0; l<5; l++){
-                    printf("%d \t %d\n",mv->tabla_de_segmentos[l].segmento,mv->tabla_de_segmentos[l].tam);
-                }*/
-
                 fread(&aux, sizeof(aux), 1, programa);
                 tam = aux << 8;
                 fread(&aux, sizeof(aux), 1, programa);
@@ -123,12 +106,9 @@ void iniciaMV(FILE *programa, MV *mv){
 
                 mv->tabla_de_registros[SP] = /*(SS<<16) |*/ mv->tabla_de_segmentos[SS].segmento + mv->tabla_de_segmentos[SS].tam;
 
-
                 //cargo el codigo al code segment
-                //printf("mv->tabla_de_segmentos[CS].segmento: %d\n",mv->tabla_de_segmentos[CS].segmento);
                 for (int i=0; i<mv->tabla_de_segmentos[CS].tam; i++ ){
                     fread(&mv->RAM[mv->tabla_de_segmentos[CS].segmento + i], sizeof(char), 1, programa);
-                   //printf("mv->RAM[%x]: %x \n",mv->tabla_de_segmentos[CS].segmento + i,mv->RAM[mv->tabla_de_segmentos[CS].segmento + i]);
                 }
                 //Cargo constantes al KS
                 if(mv->tabla_de_segmentos[KS].tam > 0){
@@ -176,6 +156,7 @@ void iniciaMVimagen(MV *mv){
         printf("ENTRO");
         if (version == 1){
             mv->tamanioM = tamMemo*1024;
+            //---------------------------------------- hacer for dentro de cada uno para leer 4bytes de registro y segmentos!!
             for(i=0; i<16; i++){        //cargo registros
                 fread(&aux, sizeof(aux), 1, img);
                 mv->tabla_de_registros[i] = aux;
@@ -237,19 +218,13 @@ void printeaDisassembler(MV *mv){
 
     //la ejecucion se da cuando el IP no sobrepasa el code segment
             while(mv->tabla_de_registros[IP] < mv->tabla_de_segmentos[CS].tam){
-                //printf("posInstr: %x\n",mv->tabla_de_registros[IP]);
-
-                 //printf("ip dentro del dis: %X\n", mv->tabla_de_registros[IP]);
-
-                if(mv->tabla_de_registros[IP] == 0b1){
-                        printf("codOp: %X\n", codOp);
-                        printf("op1:   tipo:%X,    valor: %X,    offset: %X\n", op1.tipo, op1.valor, op1.offset);
-                        printf("op2:   tipo:%X,    valor: %X,    offset: %X\n", op2.tipo, op2.valor, op2.offset);
-                    }
-
                 posInstr = mv->tabla_de_segmentos[(mv->tabla_de_registros[IP] & 0xFFFF0000)>>16].segmento + (mv->tabla_de_registros[IP] & 0x0000FFFF)/*mv->tabla_de_registros[IP]*/;
                 decodifica_cod_op(&op1, &op2, &codOp, mv, &instr);
-
+                /*
+                printf("codOp: %X\n", codOp);
+                printf("op1:   tipo:%X,    valor: %X,    offset: %X\n", op1.tipo, op1.valor, op1.offset);
+                printf("op2:   tipo:%X,    valor: %X,    offset: %X\n", op2.tipo, op2.valor, op2.offset);
+                */
                 if((codOp >> 4) == 0){
                     //dos operandos
                     cargaOp(&dis, 1, op1);

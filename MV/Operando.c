@@ -54,6 +54,9 @@ void set_posicion(TOperando *op, unsigned int pos){
 }
 
 void set_offset(TOperando *op, long int offset){
+    if((offset & 0x8000) == 0x8000){
+        offset = offset | 0xFFFF0000;
+    }
     op->offset = offset;
 }
 
@@ -71,10 +74,10 @@ void lee_operando(TOperando *op, MV *mv){
             char tam_celda = ((tam_y_cod_reg>>6) & 0b11);
             //printf("tam_celda: %x",tam_celda);
             set_tam_celda(op,tam_celda);
-            char offset_h = get_instruccion(mv);
+            unsigned char offset_h = get_instruccion(mv);
             long int offset = offset_h;
             offset = offset<<8;
-            char offset_l = get_instruccion(mv);
+            unsigned char offset_l = get_instruccion(mv);
             offset += offset_l;
             set_offset(op, offset);
             set_valor_op(op,mv); // En base a la posicion y el offset se obtiene el valor de esa posicion de memoria y se almacena en op.valor
@@ -145,7 +148,7 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
             posRAM += 1;
         }
         if(posRAM>=16384){
-            //printf("\nfallo de seg set val op\n");
+            printf("\nfallo de seg set val op\n");
             printf("Fallo de segmento");
             exit(1);
         }

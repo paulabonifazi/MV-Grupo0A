@@ -24,14 +24,14 @@ void escribeInstruccion(TOperando op, int tamanio){
             break;
         }
         case 2:{ //inmediato
-            int auxh = 0,auxl = 0;
+            unsigned char auxh = 0,auxl = 0;
             auxh = ((op.valor & 0xFF00) >> 8) & 0x000000FF;
             auxl = op.valor & 0x000000FF;
             printf("%02X %02X ",auxh,auxl);
             break;
         }
         case 3:{ // memoria
-            char auxh = 0,auxl = 0;
+            unsigned char auxh = 0,auxl = 0;
             auxh = (op.offset & 0xFF00) >> 8;
             auxl = op.offset & 0x00FF;
             printf("0%01X %02X %02X ",op.posicion,auxh,auxl);
@@ -68,8 +68,8 @@ void mnemonicoOp(TOperando op){
             //strcat(muestra,"[");
             char aux[6];
             strcat(muestra,registros[op.posicion]);
-            //--------------------------------------- aca tenemos que modificar para cuando tenemos cts negativas
-            strcat(muestra," + ");
+            if(op.offset>0)
+                strcat(muestra," + ");
             sprintf(aux, "%d", op.offset);
             strcat(muestra,aux);
             strcat(muestra,"]");

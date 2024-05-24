@@ -400,7 +400,7 @@ void RET(TOperando *op, TOperando *op2, MV *mv){
     for(int i=0; i<4; i++){
         valor = valor | ((mv->RAM[posRAM++] << (24 - (i*8))) & (0x000000FF << (24 - (i*8))));
     }
-    mv->tabla_de_registros[IP] = valor;
+    mv->tabla_de_registros[IP] = valor - mv->tabla_de_segmentos[CS].segmento;
     mv->tabla_de_registros[SP] +=4;
 }
 
