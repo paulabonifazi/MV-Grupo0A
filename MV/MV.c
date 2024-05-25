@@ -226,7 +226,7 @@ void printeaDisassembler(MV *mv){
     printf("TABLA SEGMENTOS \n");
                 printf("seg \t tam\n");
                 for(int l=0; l<5; l++){
-                    printf("%d \t %d\n",mv->tabla_de_segmentos[l].segmento,mv->tabla_de_segmentos[l].tam);
+                    printf("%x \t %x\n",mv->tabla_de_segmentos[l].segmento,mv->tabla_de_segmentos[l].tam);
                 }
     iniciaVectorFunciones(vecF);
 
