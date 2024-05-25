@@ -185,45 +185,29 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
                 for(int j=0; j<tamCeldas; j++){
                     salida = salida | ((mv->RAM[posEDX++] << (8*(tamCeldas-(j+1)))) & (0x000000FF << (8*(tamCeldas-(j+1)))));
                 }
-                /*if((salida & 0x80000000) == 0x8000){
-                    salida = salida | 0xFFFF0000;
-                }*/
                 if(formato & 0b1000) // Hexa
                     printf("%% %08X ",salida);
                 if(formato & 0b0100) //Octal
                     printf("@ %o ",salida);
                 if(formato & 0b0001){ // Decimal
-                    /*if((salida & 0x00008000) == 0x00008000){
-                        salida = salida | 0xFFFF0000;
-                    }
-                    else{
-                        salida = salida & 0x0000FFFF;
-                    }*/
                     printf("%d ",salida);
                 }
             }
             printf("\n");
-            //printf("mv->tabla_de_registros[IP]: %d\n",mv->tabla_de_registros[IP]);
-            //printf("%d \n",mv->tabla_de_segmentos[CS].segmento + mv->tabla_de_segmentos[CS].tam);
         }
     }
     else if(op->valor == 3){ //STRING READ
         if(cantChar != -1){
             int j = 0;
-            //printf("Cant char: %d", cantChar);
             entradaChar = getchar();
             while(j<cantChar && entradaChar != '\n'){
-                //scanf("%c",&entradaChar);
-                //printf("getCahr: %d",entradaChar);
                 mv->RAM[posEDX++] = entradaChar;
                 entradaChar = getchar();
-                //printf(entradaChar != 10);
                 j++;
             }
             mv->RAM[posEDX] = '\0';
         }
         else{
-            //printf("En else \n");
             entradaChar = getchar();
             while(entradaChar != 10){
                 mv->RAM[posEDX++] = entradaChar;
@@ -231,7 +215,6 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
             }
             mv->RAM[posEDX] = '\0';
         }
-        //printf("Salio \n");
     }
     else if(op->valor == 4){    //STRING WRITE
         salidaChar = mv->RAM[posEDX++];

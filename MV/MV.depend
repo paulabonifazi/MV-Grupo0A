@@ -119,7 +119,7 @@
 	<string.h>
 	<unistd.h>
 
-1716580947 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.c
+1716596128 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\funciones.c
 	"funciones.h"
 	"Disassembler.h"
 	<stdlib.h>
@@ -148,7 +148,7 @@
 	"Disassembler.h"
 	"Operando.h"
 
-1716580300 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.c
+1716580985 source:d:\users\paula\documents\facultad\arquitectura de computadoras\mv\mv-grupo0a\mv\operando.c
 	"Operando.h"
 	<stdlib.h>
 	<stdio.h>

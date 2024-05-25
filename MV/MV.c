@@ -156,13 +156,22 @@ void iniciaMVimagen(MV *mv){
         printf("ENTRO");
         if (version == 1){
             mv->tamanioM = tamMemo*1024;
+
             //---------------------------------------- hacer for dentro de cada uno para leer 4bytes de registro y segmentos!!
             for(i=0; i<16; i++){        //cargo registros
-                fread(&aux, sizeof(aux), 1, img);
+                fread(&aux, sizeof(aux), 2, img);
+                printf("lo que levanta del vmi: %x\n", aux);
                 mv->tabla_de_registros[i] = aux;
+
             }
+            printf("\ntabla de registros:\n");
+            for(int l=0; l<16; l++){
+                printf("Registo[%x] = %x \n", l, mv->tabla_de_registros[l]);
+            }
+
             for(i=0; i<8; i++){         //cargo segmentos
-                fread(&aux, sizeof(aux), 1, img);
+                fread(&aux, sizeof(aux), 2, img);
+                //printf("lo que levanta del vmi: %x\n", aux);
                 mv->tabla_de_segmentos[i].tam = aux;
             }
 
@@ -177,12 +186,17 @@ void iniciaMVimagen(MV *mv){
             mv->tabla_de_segmentos[SS].segmento = base;
             base += mv->tabla_de_segmentos[SS].tam;
 
+            printf("tabla de segmentos:\n");
+            for(int w=0; w<8; w++){
+                printf("segmento %x:    segmento: %x    tamanio: %x \n", w, mv->tabla_de_segmentos[w].segmento, mv->tabla_de_segmentos[w].tam);
+            }
+
             j = 0;
             while(!feof(img)){
                 fread(&aux, sizeof(aux), 1, img);
                 mv->RAM[j++] = aux;
             }
-            printf("\n bajo todfo");
+            printf("\n bajo todo\n");
         }
         else{
             printf("Version incorrecta");
