@@ -243,9 +243,13 @@ void iniciaMVimagen(MV *mv){
             j = 0;
             while(!feof(img)){
                 fread(&aux, sizeof(aux), 1, img);
+                if(j == 0x598 ||j == 0x599 ||j == 0x59A ||j == 0x59B){
+                    printf("[%x]: %x",j,aux);
+                }
+
                 mv->RAM[j++] = aux;
             }
-
+            printf("\n");
            // printf("\n bajo todo\n");
         }
         else{

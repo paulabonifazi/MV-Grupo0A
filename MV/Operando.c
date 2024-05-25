@@ -134,9 +134,9 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
         //printf("\n posRAM: %X",posRAM);
         if(op->posicion > 4){
             posRAM = mv->tabla_de_registros[op->posicion] + op->offset;
-            //printf("\n\ op->posicion: %x\n",op->posicion);
-            //printf("\n\ mv->tabla_de_registros[op->posicion]: %x\n",mv->tabla_de_registros[op->posicion]);
-            //printf("\n\ op->offset: %x\n",op->offset);
+            printf("\n\ op->posicion: %x\n",op->posicion);
+            printf("\n\ mv->tabla_de_registros[op->posicion]: %x\n",mv->tabla_de_registros[op->posicion]);
+            printf("\n\ op->offset: %x\n",op->offset);
         }
         else{
             printf("\n\ op->posicion: %x\n",op->posicion);
