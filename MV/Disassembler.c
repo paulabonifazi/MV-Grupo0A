@@ -68,7 +68,7 @@ void mnemonicoOp(TOperando op){
             //strcat(muestra,"[");
             char aux[6];
             strcat(muestra,registros[op.posicion]);
-            if(op.offset>0)
+            if(op.offset>=0)
                 strcat(muestra," + ");
             sprintf(aux, "%d", op.offset);
             strcat(muestra,aux);

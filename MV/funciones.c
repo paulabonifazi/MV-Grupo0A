@@ -317,14 +317,22 @@ void PUSH(TOperando *op, TOperando *op2, MV *mv){
         printf("Stack Overflow");
         exit(1);
     }
+
     //similar a lo que hace reset operando, pero en vez de tomar la posicion del operando, la toma de SP
     unsigned int aux_valor = 0;
     unsigned int posRAM = mv->tabla_de_registros[SP];
+
     for(int i=0; i<4; i++){
+            //printf("A");
+        //printf("\n posram: %x",posRAM);
+        //printf("\n mv->ram[posram]: %x",mv->RAM[posRAM]);
         aux_valor = (op->valor >> (24 - (i*8))) & 0x000000FF;
         aux_valor = aux_valor & 0x000000FF;
+        //printf("\n aux: %x \n",aux_valor);
         mv->RAM[posRAM++] = aux_valor;
+       // printf("oa");
     }
+    //printf("fin push");
 }
 
 
