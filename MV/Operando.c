@@ -13,7 +13,6 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv, u
         o = cod op -> bbaooooo & 00011111 (0x1F) -> es vector asi que es bit a bit
     */
     //set cod operacion
-    //printf("\n Instruccion: %x \n",*inst);
     *cod_op = (*inst) & 0x1F;
     if(((*cod_op >> 4)&0x01) == 0){
         // dos operandos
@@ -24,10 +23,8 @@ void decodifica_cod_op(TOperando *op1,TOperando *op2,short int *cod_op,MV *mv, u
     }
     else if((*inst)>>6 != 0b11){
         // un operando
-        //printf("EE");
         op1->tipo = (*inst)>>6; //opA
         op2->tipo = 3;
-        //printf("\n op1 tipo: %x",op1->tipo);
         lee_operando(op1, mv);  //lectura op en base a tipo (opA)
     }
     else {
@@ -72,7 +69,6 @@ void lee_operando(TOperando *op, MV *mv){
             unsigned int pos = tam_y_cod_reg & 0x0000000F;
             set_posicion(op,pos);
             char tam_celda = ((tam_y_cod_reg>>6) & 0b11);
-            //printf("tam_celda: %x",tam_celda);
             set_tam_celda(op,tam_celda);
             unsigned char offset_h = get_instruccion(mv);
             long int offset = offset_h;
@@ -97,7 +93,6 @@ void lee_operando(TOperando *op, MV *mv){
         case 2:{    //registro
             op->valor = 0;
             char reg = get_instruccion(mv);
-            //printf("\n instr reg: %02x\n",reg);
             char sec_reg = (reg & 0b00110000) >> 4;
             char pos = (reg & 0b00001111);
             set_parteReg(op,sec_reg);
@@ -110,14 +105,9 @@ void lee_operando(TOperando *op, MV *mv){
 
 char get_instruccion(MV *mv){
     int ip = mv->tabla_de_registros[5];
-    //printf("ip: %d \n",ip);
-    //printf("AAAA: %x \n",(ip & 0xFFFF0000)>>16);
     char posSeg = mv->tabla_de_segmentos[(ip & 0xFFFF0000)>>16].segmento; //Busca indice de IP y devuelve el codigo en tabla segmentos
-    //printf("Base Segmento: %x \n",posSeg);
     long int posRAM = posSeg + (ip & 0x0000FFFF);//((mv->tabla_de_segmentos[posSeg].tam & 0xF0)>>4) + (ip & 0x0F); //Posicion DS en tabla segmento + offset IP
-    //printf("Pos ram: %x \n",posRAM);
     char inst = mv->RAM[posRAM];
-    //printf("instr: %x \n",inst);
 
     mv->tabla_de_registros[5] += 0x01; //Suma 1 al offset de ip
 
@@ -130,44 +120,24 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
         int cantCeldas = ((~(op->tamCelda))&0b11)+1;
         op->valor = 0;
         unsigned int posRAM;
-        //printf("\n EAX: %X",mv->tabla_de_registros[10]);
-        //printf("\n posRAM: %X",posRAM);
         if(op->posicion > 4){
-            posRAM = mv->tabla_de_registros[op->posicion] + op->offset;
-            printf("\n\ op->posicion: %x\n",op->posicion);
-            printf("\n\ mv->tabla_de_registros[op->posicion]: %x\n",mv->tabla_de_registros[op->posicion]);
-            printf("\n\ op->offset: %x\n",op->offset);
+            posRAM = (mv->tabla_de_registros[op->posicion]&0x0000FFFF) + op->offset;
         }
         else{
-            printf("\n\ op->posicion: %x\n",op->posicion);
-            printf("\n\ op->offset: %x\n",op->offset);
-            printf("\n\mv->tabla_de_segmentos[op->posicion].segmento: %x\n",mv->tabla_de_segmentos[op->posicion].segmento);
             posRAM = mv->tabla_de_segmentos[op->posicion].segmento + op->offset;
         }
-        //printf("\n((~(op->tamCelda))&0b11)+1: %d",(~(op->tamCelda))&0b11);
-        //printf("\n cant celdas: %d",cantCeldas);
 
-        printf("\n posRAM: %x",posRAM);
 
         while(i<cantCeldas && posRAM<16384){
-            printf("\nmv->RAM[posRAM]: %x",mv->RAM[posRAM]);
             op->valor = op->valor | ((mv->RAM[posRAM] << ((24-(8*op->tamCelda)) - (i*8))) & (0x000000FF << ((24-(8*op->tamCelda)) - (i*8))));
             i += 1;
             posRAM += 1;
-            printf("\n posRAM: %x",posRAM);
         }
-        printf("\n posRAM: %x",posRAM);
-        if(op->posicion < 5){
-            printf("\nop->valor: %x\n",op->valor);
-            op->valor = mv->tabla_de_segmentos[(op->valor&0x000F0000)>>16].segmento + (op->valor&0x0000FFFF);
-            printf("\nop->valor: %x\n",op->valor);
-        }
+
 
 
 
         if(posRAM>=16384){
-                printf("\n posRAM fallo: %x",posRAM);
-            printf("\nfallo de seg set val op\n");
             printf("Fallo de segmento");
             exit(1);
         }
@@ -177,13 +147,10 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
         if(cantCeldas == 1 && (op->valor & 0x00000080) == 0x80){
             op->valor = op->valor | 0xFFFFFF00;
         }
-        //printf("\nop->valor: %x\n",op->valor);
 
     }
     else if(op->tipo == 0b10){  //Registro
         if(op->posicion < 5){
-            //
-            //printf("REG: %d \n",mv->tabla_de_segmentos[op->posicion].segmento);
             op->valor = mv->tabla_de_segmentos[op->posicion].segmento;
         }
         else{
@@ -209,8 +176,6 @@ void set_valor_op(TOperando *op,MV *mv){ //Guarda en op el valor que esta almace
                 break;}
             }
         }
-        printf("op pos: %d \n", op->posicion);
-        printf("\nop->valor: %x\n",op->valor);
 
     }
     //Si es inmediato ya tiene el valor seteado de cuando se ley� el codigo de operacion
@@ -220,18 +185,14 @@ void reset_valor_op(TOperando *op,MV *mv){ //Guarda en la posicion a la cual apu
     if(op->tipo == 0b00){   //Memoria
         int i = 0;
         unsigned int aux_valor = 0;
-        //op->valor = 0;
         int cantCeldas = ((~(op->tamCelda))&0b11)+1;
         unsigned int posRAM;
         if(op->posicion > 4){ //Cambie 1 por 4 por los nuevos segmentos
-            posRAM = mv->tabla_de_registros[op->posicion] + op->offset;;
+            posRAM = (mv->tabla_de_registros[op->posicion]&0x0000FFFF) + op->offset;;
         }
         else{
             posRAM = mv->tabla_de_segmentos[op->posicion].segmento + op->offset;
         }
-        // ************************************************
-        // SI SE ROMPE ALGO PUEDE MUY PROBABLEMENTE SER ACA
-        // ************************************************
         while(i<cantCeldas && posRAM<16384){
             aux_valor = (op->valor >> ((24-(8*op->tamCelda)) - (i*8))) & 0x000000FF;
             aux_valor = aux_valor & 0x000000FF;
@@ -245,14 +206,9 @@ void reset_valor_op(TOperando *op,MV *mv){ //Guarda en la posicion a la cual apu
         }
     }
     else if(op->tipo == 0b10){  //Registro
-        //printf("op valor: %x",op->valor);
         if(op->posicion < 5){
             op->valor = mv->tabla_de_segmentos[op->posicion].segmento;
         }
-        /*else{
-            /* ******************************** REVISAR *****************************
-            op->valor = mv->tabla_de_segmentos[(op->valor&0x000F0000)>>16].segmento + (op->valor&0x0000FFFF);
-        }*/
         switch(op->parteReg) {
             case 0b00: {
                 //registro de 4 bytes

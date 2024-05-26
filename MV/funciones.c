@@ -80,11 +80,7 @@ void SWAP(TOperando *op1, TOperando *op2, MV *mv){
 
 void CMP(TOperando *op1, TOperando *op2, MV *mv){
     long int aux;
-    //printf("\n");
-    //printf("\n op1: %x", op1->valor);
-    //printf("\n op2: %x", op2->valor);
     aux = op1->valor - op2->valor;
-    //printf("\nResultado CMP: %x\n",aux);
     setea_cc(aux, mv);
 }
 
@@ -148,7 +144,7 @@ void SYS(TOperando *op, TOperando *op2, MV *mv){
     char cantCeldas = mv->tabla_de_registros[12] & 0x000000FF; // CL
     unsigned int cantChar = mv->tabla_de_registros[12] & 0x0000FFFF; // CX
     char formato = mv->tabla_de_registros[10] & 0x000000FF; //AL
-    int posEDX = mv->tabla_de_registros[13];
+    int posEDX = mv->tabla_de_registros[13] ;
     if(op->valor == 1){         //READ
         for(int i = 0; i<cantCeldas; i++){
             printf(" [%04X]: ",posEDX);
@@ -311,7 +307,6 @@ void NOT(TOperando *op, TOperando *op2, MV *mv){
 cualquier tipo. Primero decrementa en 4 el valor del registro SP y luego guarda el valor del operando en la
 posición de memoria apuntada por SP. */
 void PUSH(TOperando *op, TOperando *op2, MV *mv){
-    //printf("entre al push\n");
     mv->tabla_de_registros[SP] -=4;
     if(mv->tabla_de_registros[SP]<mv->tabla_de_segmentos[SS].segmento){
         printf("Stack Overflow");
@@ -323,16 +318,11 @@ void PUSH(TOperando *op, TOperando *op2, MV *mv){
     unsigned int posRAM = mv->tabla_de_registros[SP];
 
     for(int i=0; i<4; i++){
-            //printf("A");
-        //printf("\n posram: %x",posRAM);
-        //printf("\n mv->ram[posram]: %x",mv->RAM[posRAM]);
         aux_valor = (op->valor >> (24 - (i*8))) & 0x000000FF;
         aux_valor = aux_valor & 0x000000FF;
-        //printf("\n aux: %x \n",aux_valor);
         mv->RAM[posRAM++] = aux_valor;
-       // printf("oa");
     }
-    //printf("fin push");
+
 }
 
 
